@@ -17,6 +17,7 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
@@ -29,8 +30,8 @@ import com.parse.ParseUser;
 public class MainActivity extends ActionBarActivity implements View.OnClickListener {
 
 	private RelativeLayout RL;
+	private LinearLayout logo;
 	private EditText pinNumber;
-	private ImageView logo;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -41,7 +42,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 		setTitle("FP ColdStorage App");
 
 		RL = (RelativeLayout) findViewById(R.id.loginRelativeLayout);
-		logo = (ImageView) findViewById(R.id.loginImageView);
+		logo = (LinearLayout) findViewById(R.id.logoLinearLayout);
 		pinNumber = (EditText) findViewById(R.id.loginEditText);
 
 		RL.setOnClickListener(this);
@@ -67,7 +68,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
 	@Override
 	public void onClick(View v) {
-		if (v.getId() == R.id.loginRelativeLayout || v.getId() == R.id.loginImageView) {
+		if (v.getId() == R.id.loginRelativeLayout || v.getId() == R.id.logoLinearLayout) {
 			InputMethodManager imm = (InputMethodManager)getSystemService(INPUT_METHOD_SERVICE);
 			imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
 		}

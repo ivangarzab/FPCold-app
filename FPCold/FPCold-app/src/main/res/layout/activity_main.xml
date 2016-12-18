@@ -18,14 +18,7 @@
                 android:id="@+id/loginRelativeLayout"
                 android:background="#333333">
 
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/loginImageView"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="50sp"
-        android:src="@drawable/logo"/>
+
 
     <EditText
         android:layout_width="wrap_content"
@@ -52,5 +45,81 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="20sp"
         android:background="#009900"/>
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:id="@+id/logoLinearLayout"
+        android:layout_height="100sp"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="60dp">
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:layout_weight="1"
+            android:id="@+id/fpLinearLayout"
+            android:layout_gravity="left">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="First"
+                android:id="@+id/firstTextView"
+                android:textColor="#3399FF"
+                android:textSize="46sp"
+                android:typeface="serif"
+                android:layout_weight="1"/>
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/logoImageView"
+                android:src="@drawable/icon"
+                android:layout_weight="1"
+                android:paddingLeft="3sp"
+                android:paddingRight="3sp"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Produce"
+                android:id="@+id/produceTextView"
+                android:textColor="#3399FF"
+                android:textSize="46sp"
+                android:typeface="serif"
+                android:layout_weight="1"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:layout_gravity="right"
+            android:layout_weight="1"
+            android:id="@+id/csLinearLayout"
+            android:paddingRight="8dp">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/coldTextView"
+                android:text="Cold"
+                android:typeface="serif"
+                android:layout_weight="1"
+                android:textColor="#7FFF00"
+                android:textSize="35sp"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/storageTextView"
+                android:text="Storage"
+                android:typeface="serif"
+                android:layout_weight="1"
+                android:textColor="#7FFF00"
+                android:textSize="35sp"
+                android:paddingLeft="6dp"/>
+        </LinearLayout>
+
+    </LinearLayout>
+
 
 </RelativeLayout>
