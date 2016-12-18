@@ -8,15 +8,29 @@
  */
 package com.parse.starter;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
+import android.widget.Toast;
 
+import com.parse.LogInCallback;
 import com.parse.ParseAnalytics;
+import com.parse.ParseException;
+import com.parse.ParseUser;
 
 
-public class MainActivity extends ActionBarActivity {
+public class MainActivity extends ActionBarActivity implements View.OnClickListener {
+
+	private RelativeLayout RL;
+	private EditText pinNumber;
+	private ImageView logo;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -24,27 +38,42 @@ public class MainActivity extends ActionBarActivity {
 		setContentView(R.layout.activity_main);
 
 		ParseAnalytics.trackAppOpenedInBackground(getIntent());
+		setTitle("FP ColdStorage App");
+
+		RL = (RelativeLayout) findViewById(R.id.loginRelativeLayout);
+		logo = (ImageView) findViewById(R.id.loginImageView);
+		pinNumber = (EditText) findViewById(R.id.loginEditText);
+
+		RL.setOnClickListener(this);
+		logo.setOnClickListener(this);
+	}
+
+	public void loginAction(View view) {
+		String pin = pinNumber.getText().toString();
+
+		ParseUser.logInInBackground(pin, pin, new LogInCallback() {
+			@Override
+			public void done(ParseUser user, ParseException e) {
+				if (user != null) {
+					Toast.makeText(getApplicationContext(), "Log in was successful!", Toast.LENGTH_LONG).show();
+					//Intent i = new Intent(getApplicationContext(), HomeActivity.class);
+					//startActivity(i);
+				}
+				else
+					Toast.makeText(getApplicationContext(), "Unable to log in.  Please try again!", Toast.LENGTH_LONG).show();
+			}
+		});
 	}
 
 	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-	// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.menu_main, menu);
-		return true;
-	}
-
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-    // Handle action bar item clicks here. The action bar will
-    // automatically handle clicks on the Home/Up button, so long
-    // as you specify a parent activity in AndroidManifest.xml.
-    	int id = item.getItemId();
-
-    //noinspection SimplifiableIfStatement
-    	if (id == R.id.action_settings) {
-			return true;
+	public void onClick(View v) {
+		if (v.getId() == R.id.loginRelativeLayout || v.getId() == R.id.loginImageView) {
+			InputMethodManager imm = (InputMethodManager)getSystemService(INPUT_METHOD_SERVICE);
+			imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
 		}
+	}
 
-		return super.onOptionsItemSelected(item);
+	public void onBackPressed() {
+		// DO NOTHING WHEN BACK BUTTON IS PRESSED FOR THIS ACTIVITY
 	}
 }
