@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/FPCold.iml" filepath="$PROJECT_DIR$/FPCold.iml" />
+      <module fileurl="file://$PROJECT_DIR$/FPCold-app/FPCold-app.iml" filepath="$PROJECT_DIR$/FPCold-app/FPCold-app.iml" />
+    </modules>
+  </component>
+</project>
