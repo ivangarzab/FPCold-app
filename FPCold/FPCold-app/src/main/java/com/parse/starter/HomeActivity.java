@@ -38,7 +38,7 @@ public class HomeActivity extends AppCompatActivity {
 		greet = (TextView) findViewById(R.id.greetingTextView);
 		announcement = (TextView) findViewById(R.id.announcementTextView);
 
-		greet.setText("Welcome " +getCurrentUser());
+		greet.setText("Welcome " + getCurrentUser());
 	}
 
 	@Override
@@ -73,25 +73,38 @@ public class HomeActivity extends AppCompatActivity {
 	}
 
 	public void homeButtonAction(View view) {
-		Intent i;
-		if (view.getId() == R.id.inHomeButton)
-			//i = new Intent(context, InboundActivity.class);
-			Toast.makeText(getApplicationContext(), "INBOUND!", Toast.LENGTH_LONG).show();
-		else if (view.getId() == R.id.outHomeButton)
+		Intent i = null;
+		boolean flag = false;
+		if (view.getId() == R.id.inHomeButton) {
+			i = new Intent(context, InboundActivity.class);
+			flag = true;
+			//Toast.makeText(getApplicationContext(), "INBOUND!", Toast.LENGTH_LONG).show();
+		}
+		else if (view.getId() == R.id.outHomeButton) {
 			//i = new Intent(context, OutboundActivity.class);
+			//flag = true;
 			Toast.makeText(getApplicationContext(), "OUTBOUND!", Toast.LENGTH_LONG).show();
-		else if (view.getId() == R.id.transferHomeButton)
+		}
+		else if (view.getId() == R.id.transferHomeButton) {
 			//i = new Intent(context, TransferActivity.class);
+			//flag = true;
 			Toast.makeText(getApplicationContext(), "TRANSFER!", Toast.LENGTH_LONG).show();
-		else if (view.getId() == R.id.invnetoryHomeButton)
+		}
+		else if (view.getId() == R.id.invnetoryHomeButton) {
 			//i = new Intent(context, InventoryActivity.class);
+			//flag = true;
 			Toast.makeText(getApplicationContext(), "INVENTORY!", Toast.LENGTH_LONG).show();
+		}
 		else if (view.getId() == R.id.settingsHomeButton) {
-			if (TIER == 1)
+			if (TIER == 1) {
 				//i = new Intent(context, SettingsActivity.class);
+				//flag = true;
 				Toast.makeText(getApplicationContext(), "SETTINGS!", Toast.LENGTH_LONG).show();
+			}
 			else denyAccess(context);
 		}
+
+		if (flag == true) startActivity(i);
 	}
 
 	public void onBackPressed() {

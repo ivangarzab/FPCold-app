@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              >
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/leftTitleTextView"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Left Number"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:textColor="@color/colorButton"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/leftSubTextView"
+        android:text="Left Title"
+        android:layout_below="@+id/leftTitleTextView"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:textColor="@color/colorAccent"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/rightTitleTextView"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Right Number"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:textColor="@color/colorButton"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/rightSubTextView"
+        android:text="Right Title"
+        android:layout_below="@+id/rightTitleTextView"
+        android:layout_alignRight="@+id/rightTitleTextView"
+        android:textColor="@color/colorAccent"/>
+
+</RelativeLayout>

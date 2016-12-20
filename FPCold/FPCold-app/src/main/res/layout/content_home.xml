@@ -40,8 +40,9 @@
         android:layout_height="match_parent"
         android:id="@+id/homeLinearLayout"
         android:layout_below="@id/textClock"
+        android:layout_above="@+id/announcementTextView"
         android:layout_marginTop="10dp"
-        android:layout_marginBottom="60sp">
+        >
 
         <LinearLayout
             android:orientation="horizontal"
@@ -114,13 +115,14 @@
     </LinearLayout>
 
     <TextView
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/announcementTextView"
         android:text="Every good week starts with a Monday!"
-        android:layout_below="@+id/homeLinearLayout"
         android:textColor="#ffffff"
-        />
+        android:layout_alignParentBottom="true"
+        android:layout_marginTop="15dp"
+        android:layout_marginBottom="15dp"/>
 
 
 </RelativeLayout>
