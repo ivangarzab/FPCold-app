@@ -56,9 +56,9 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 			@Override
 			public void done(ParseUser user, ParseException e) {
 				if (user != null) {
-					Toast.makeText(getApplicationContext(), "Log in was successful!", Toast.LENGTH_LONG).show();
-					//Intent i = new Intent(getApplicationContext(), HomeActivity.class);
-					//startActivity(i);
+					//Toast.makeText(getApplicationContext(), "Log in was successful!", Toast.LENGTH_LONG).show();
+					Intent i = new Intent(getApplicationContext(), HomeActivity.class);
+					startActivity(i);
 				}
 				else
 					Toast.makeText(getApplicationContext(), "Unable to log in.  Please try again!", Toast.LENGTH_LONG).show();
