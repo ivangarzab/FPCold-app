@@ -46,8 +46,9 @@
             android:name=".InboundActivity"
             android:label="@string/title_activity_inbound"
             android:parentActivityName=".HomeActivity"
-            android:windowSoftInputMode="stateAlwaysHidden|adjustPan"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="stateAlwaysHidden|adjustPan">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.parse.starter.HomeActivity"/>

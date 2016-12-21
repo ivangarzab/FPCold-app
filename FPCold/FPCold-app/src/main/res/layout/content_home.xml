@@ -12,7 +12,7 @@
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="com.parse.starter.HomeActivity"
     tools:showIn="@layout/activity_home"
-    android:background="#333333">
+    android:background="@color/colorBackground">
 
     <TextView
         android:layout_width="wrap_content"
@@ -23,7 +23,7 @@
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:textColor="#ffffff"/>
+        android:textColor="@color/colorMainText"/>
 
     <TextClock
         android:layout_width="wrap_content"
@@ -32,7 +32,7 @@
         android:layout_below="@+id/greetingTextView"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:textColor="#ffffff"/>
+        android:textColor="@color/colorMainText"/>
 
     <LinearLayout
         android:orientation="vertical"
@@ -59,7 +59,7 @@
                 android:onClick="homeButtonAction"
                 android:layout_weight="1"
                 android:background="@drawable/in_button"
-                android:textColor="#FFFFFF"
+                android:textColor="@color/colorMainText"
                 />
             <Button
                 android:layout_width="match_parent"
@@ -71,7 +71,7 @@
                 android:background="@drawable/transfer_button"
                 android:layout_marginLeft="5sp"
                 android:layout_marginRight="5sp"
-                android:textColor="#FFFFFF"/>
+                android:textColor="@color/colorMainText"/>
             <Button
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -80,7 +80,7 @@
                 android:onClick="homeButtonAction"
                 android:layout_weight="1"
                 android:background="@drawable/out_button"
-                android:textColor="#FFFFFF"/>
+                android:textColor="@color/colorMainText"/>
         </LinearLayout>
 
         <LinearLayout
@@ -99,7 +99,7 @@
                 android:layout_weight="1"
                 android:layout_marginRight="10sp"
                 android:background="@drawable/rest_button"
-                android:textColor="#FFFFFF"/>
+                android:textColor="@color/colorMainText"/>
             <Button
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -109,7 +109,7 @@
                 android:layout_weight="1"
                 android:layout_marginLeft="10sp"
                 android:background="@drawable/rest_button"
-                android:textColor="#FFFFFF"/>
+                android:textColor="@color/colorMainText"/>
         </LinearLayout>
 
     </LinearLayout>
@@ -119,7 +119,7 @@
         android:layout_height="wrap_content"
         android:id="@+id/announcementTextView"
         android:text="Every good week starts with a Monday!"
-        android:textColor="#ffffff"
+        android:textColor="@color/colorMainText"
         android:layout_alignParentBottom="true"
         android:layout_marginTop="15dp"
         android:layout_marginBottom="15dp"/>

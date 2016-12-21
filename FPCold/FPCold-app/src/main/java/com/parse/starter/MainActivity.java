@@ -29,6 +29,7 @@ import com.parse.ParseUser;
 
 public class MainActivity extends ActionBarActivity implements View.OnClickListener {
 
+	// Activity's UI
 	private RelativeLayout RL;
 	private LinearLayout logo;
 	private EditText pinNumber;
@@ -41,14 +42,20 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 		ParseAnalytics.trackAppOpenedInBackground(getIntent());
 		setTitle("FP ColdStorage App");
 
+		// Initiate the UI for this activity
 		RL = (RelativeLayout) findViewById(R.id.loginRelativeLayout);
 		logo = (LinearLayout) findViewById(R.id.logoLinearLayout);
 		pinNumber = (EditText) findViewById(R.id.loginEditText);
 
+		// Set up native OnClickListeners
 		RL.setOnClickListener(this);
 		logo.setOnClickListener(this);
 	}
 
+	/**
+	 * Access server to log in user based on the information provided
+	 * @param view : Pressed button's View
+	 */
 	public void loginAction(View view) {
 		String pin = pinNumber.getText().toString();
 
@@ -66,6 +73,10 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 		});
 	}
 
+	/**
+	 * Hides the SoftInputKeyboard
+	 * @param v : View of the component pressed
+	 */
 	@Override
 	public void onClick(View v) {
 		if (v.getId() == R.id.loginRelativeLayout || v.getId() == R.id.logoLinearLayout) {
@@ -74,7 +85,8 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 		}
 	}
 
-	public void onBackPressed() {
-		// DO NOTHING WHEN BACK BUTTON IS PRESSED FOR THIS ACTIVITY
-	}
+	/**
+	 * Do nothing when back button is pressed for this activity
+	 */
+	public void onBackPressed() { }
 }

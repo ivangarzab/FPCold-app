@@ -121,6 +121,7 @@ public class InboundActivity extends AppCompatActivity implements View.OnClickLi
 			}
 		});
 
+		// Retrieve all of the racks and their IDs from the server
 		ParseQuery<ParseObject> query = new ParseQuery<ParseObject>("Storage");
 		query.findInBackground(new FindCallback<ParseObject>() {
 			@Override
@@ -162,16 +163,20 @@ public class InboundActivity extends AppCompatActivity implements View.OnClickLi
 		return super.onOptionsItemSelected(item);
 	}
 
-	/*
-	Method receiving the results from the Barcode Scanner app
-	if flag is false:
-		assign results to first EditText (pallet)
-	else if flag is true:
-		assign results to second EditText (location)
-	else if no scan is done, Toast the user
+	/**
+	 * Method receiving the results from the Barcode Scanner app
+	 *   if flag is false:
+	 *      assign results to first EditText (pallet)
+	 *   else if flag is true:
+	 *      assign results to second EditText (location)
+	 *   else if no scan is done, Toast the user
+	 * @param requestCode : Necessary for the receiving of information from BarcodeScanner
+	 * @param resultCode : Necessary for the receiving of information from BarcodeScanner
+	 * @param intent : Necessary for the receiving of information from BarcodeScanner
 	 */
 	public void onActivityResult(int requestCode, int resultCode, Intent intent) {
-		IntentResult scanningResult = IntentIntegrator.parseActivityResult(requestCode, resultCode, intent);
+		IntentResult scanningResult = IntentIntegrator.parseActivityResult(requestCode,
+				resultCode, intent);
 		if (scanningResult != null) {
 			if (!flag) {
 				pallet_number.setText(scanningResult.getContents());
@@ -181,34 +186,80 @@ public class InboundActivity extends AppCompatActivity implements View.OnClickLi
 			}
 		}
 		else {
-			Toast t = Toast.makeText(getApplicationContext(), "No scan data received!", Toast.LENGTH_SHORT);
+			Toast t = Toast.makeText(getApplicationContext(),
+					"No scan data received!", Toast.LENGTH_SHORT);
 			t.show();
 		}
 
 	}
 
-	public void storageAction() {
-		final String palletNo = pallet_number.getText().toString();
-		final String locationNo = location_number.getText().toString();
+	/**
+	 * Takes care of both of the buttons' action:
+	 *   Checks for errors on the input
+	 *   if the button = 'Save & Next'
+	 *    then call the corresponding method and clear EditText fields
+	 *   else if button = 'Finish'
+	 *    then call the corresponding method and go back to HomeActivity
+	 * @param view : View of the Button which calls on the method
+	 */
+	public void storageButtonAction(View view) {
+		// Get pallet tag and location number from Activity
+		String pal = pallet_number.getText().toString();
+		String loc = location_number.getText().toString();
+		// Get the location position in the server
+		int storage_position = rack_numbers.indexOf(loc);
 
-		int storage_position = rack_numbers.indexOf(locationNo);
+		// if one of the fields is missing, Toast the user and return
+		if (pal.equals("") || loc.equals("")) {
+			Toast.makeText(context,
+					"One ore more fields are missing! Please, try again.",
+					Toast.LENGTH_LONG).show();
+			return;
+		}
 
+		// if the rack location does not exist in server, Toast the user and return
 		if (storage_position ==-1) {
-			Toast.makeText(context, "Rack location number is invalid! Please, try again.", Toast.LENGTH_LONG).show();
+			Toast.makeText(context,
+					"Rack location number is invalid! Please, try again.",
+					Toast.LENGTH_LONG).show();
 			location_number.setText("");
 			return;
 		}
 
+		// Next & Save button clicked
+		if (view.getId() == R.id.inboundNextButton) {
+			inStorageAction(pal, loc, storage_position);
+		}
+		// Finish button clicked
+		else if (view.getId() == R.id.inboundFinishButton) {
+			inStorageAction(pal, loc, storage_position);
+			///// Go back to HomeActivity
+			Intent i = new Intent(context, HomeActivity.class);
+			startActivity(i);
+		}
+	}
+
+	/**
+	 * Stores the desired palletNo and locationNo in the server
+	 *   Check for errors on the pallet EditText
+	 *   Call updateList when done
+	 * @param palletNo : pallet Number
+	 * @param locationNo : location Number
+	 * @param position : position of location Number on rack_numbers to get server object ID
+	 */
+	public void inStorageAction(final String palletNo, final String locationNo, int position) {
 		for (String p : pallets) {
 			if (p.contains(palletNo)) {
-				Toast.makeText(context, "Pallet has already been stored in this order! Please, try again.", Toast.LENGTH_LONG).show();
+				Toast.makeText(context,
+						"Pallet has already been stored in this order! Please, try again.",
+						Toast.LENGTH_LONG).show();
 				pallet_number.setText("");
 				return;
 			}
 		}
 
 		ParseQuery<ParseObject> query = ParseQuery.getQuery("Storage");
-		query.getInBackground(rack_ids.get(storage_position), new GetCallback<ParseObject>() {
+		query.getInBackground(rack_ids.get(position), new GetCallback<ParseObject>() {
 			@Override
 			public void done(ParseObject object, ParseException e) {
 				if (e == null) {
@@ -228,20 +279,36 @@ public class InboundActivity extends AppCompatActivity implements View.OnClickLi
 		});
 	}
 
+	/**
+	 * Updates list to show the new information and scrolls to the bottom of it
+	 * @param pallet : pallet tag to be added to listView
+	 * @param location : location number to be added to the listView
+	 */
 	public void updateList(String pallet, String location) {
+		// Add the new pallet tag and location number to the respective ArrayLists
 		pallets.add(pallet);
 		locations.add(location);
+		// Notify the Adapter to update the view of the listView
 		SA.notifyDataSetChanged();
-		//lv.setAdapter(SA);
+
+		// Scrolling to bottom of listView
+		lv.post(new Runnable() {
+			@Override
+			public void run() {
+				// Select the last row so it will scroll into view...
+				lv.setSelection(SA.getCount() - 1);
+			}
+		});
 	}
 
-	public void nextButtonAction(View view) {
-		storageAction();
-	}
-
+	/**
+	 * Hides the SoftInputKeyboard
+	 * @param v : View of the component pressed
+	 */
 	@Override
 	public void onClick(View v) {
-		if (v.getId() == R.id.inboundRelativeLayout || v.getId() == R.id.inboundInstructionsTextView) {
+		if (v.getId() == R.id.inboundRelativeLayout ||
+				v.getId() == R.id.inboundInstructionsTextView) {
 			InputMethodManager imm = (InputMethodManager)getSystemService(INPUT_METHOD_SERVICE);
 			imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
 		}

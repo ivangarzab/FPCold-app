@@ -19,11 +19,15 @@ import com.parse.ParseUser;
 
 public class HomeActivity extends AppCompatActivity {
 
-	public static int TIER;
+	// Current User loged in for static use
 	public static ParseUser CURRENT_USER;
+	// Current User's Tier priviledges for static use
+	public static int TIER;
 
+	// Activity's Context
 	final private Context context = this;
 
+	// TextViews for greeting the user and the announcements
 	private TextView greet, announcement;
 
 	@Override
@@ -72,6 +76,10 @@ public class HomeActivity extends AppCompatActivity {
 		return CURRENT_USER.getString("name");
 	}
 
+	/**
+	 * Decide which button was pressed and perform the corresponding action
+	 * @param view : Pressed button's View
+	 */
 	public void homeButtonAction(View view) {
 		Intent i = null;
 		boolean flag = false;
@@ -107,10 +115,16 @@ public class HomeActivity extends AppCompatActivity {
 		if (flag == true) startActivity(i);
 	}
 
-	public void onBackPressed() {
-		// DO NOTHING WHEN BACK BUTTON IS PRESSED FOR THIS ACTIVITY
-	}
+	/**
+	 * Do nothing when back button is pressed for this activity
+	 */
+	public void onBackPressed() { }
 
+	/**
+	 * Static method for the use all around the app
+	 * if a lower-tier user tries accessing upper-tier areas, deny access through pop-up message
+	 * @param context : Activitie's Context
+	 */
 	public static void denyAccess(Context context) {
 		AlertDialog.Builder adb = new AlertDialog.Builder(context);
 		adb.setTitle("Oops!");

@@ -13,7 +13,8 @@
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:textColor="@color/colorButton"/>
+        android:textColor="@color/colorButton"
+        android:paddingLeft="3dp"/>
 
     <TextView
         android:layout_width="wrap_content"
@@ -23,7 +24,8 @@
         android:layout_below="@+id/leftTitleTextView"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:textColor="@color/colorAccent"/>
+        android:textColor="@color/colorSecondary"
+        android:paddingLeft="3dp"/>
 
     <TextView
         android:layout_width="wrap_content"
@@ -34,7 +36,8 @@
         android:layout_alignParentTop="true"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
-        android:textColor="@color/colorButton"/>
+        android:textColor="@color/colorButton"
+        android:paddingRight="3dp"/>
 
     <TextView
         android:layout_width="wrap_content"
@@ -43,6 +46,16 @@
         android:text="Right Title"
         android:layout_below="@+id/rightTitleTextView"
         android:layout_alignRight="@+id/rightTitleTextView"
-        android:textColor="@color/colorAccent"/>
+        android:textColor="@color/colorSecondary"
+        android:paddingRight="3dp"/>
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/imageView"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:src="@drawable/arrow_right"
+        android:layout_marginTop="8dp"/>
 
 </RelativeLayout>

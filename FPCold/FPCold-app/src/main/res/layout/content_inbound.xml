@@ -12,7 +12,7 @@
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="com.parse.starter.InboundActivity"
     tools:showIn="@layout/activity_inbound"
-    android:background="#333333"
+    android:background="@color/colorBackground"
     android:id="@+id/inboundRelativeLayout">
 
     <TextView
@@ -24,7 +24,7 @@
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:textColor="#FFFFFF"/>
+        android:textColor="@color/colorMainText"/>
 
     <LinearLayout
         android:orientation="vertical"
@@ -47,7 +47,7 @@
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
                 android:src="@drawable/camera"
-                android:background="#333333"/>
+                android:background="@color/colorBackground"/>
             <EditText
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
@@ -57,9 +57,9 @@
                 android:layout_marginLeft="10dp"
                 android:hint="Pallet Tag"
                 android:singleLine="true"
-                android:textColorHint="#2880d8"
-                android:textColor="#3399FF"
-                android:textColorHighlight="#3399FF"/>
+                android:textColorHint="@color/colorSecondaryDark"
+                android:textColor="@color/colorSecondary"
+                android:textColorHighlight="@color/colorSecondaryLight"/>
         </RelativeLayout>
 
         <RelativeLayout
@@ -75,7 +75,7 @@
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
                 android:src="@drawable/camera"
-                android:background="#333333"/>
+                android:background="@color/colorBackground"/>
             <EditText
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
@@ -85,9 +85,9 @@
                 android:layout_marginLeft="10dp"
                 android:hint="Location Tag"
                 android:singleLine="true"
-                android:textColorHint="#2880d8"
-                android:textColor="#3399FF"
-                android:textColorHighlight="#3399FF"/>
+                android:textColorHint="@color/colorSecondaryDark"
+                android:textColor="@color/colorSecondary"
+                android:textColorHighlight="@color/colorSecondaryLight"/>
         </RelativeLayout>
     </LinearLayout>
 
@@ -98,14 +98,14 @@
         android:layout_below="@+id/scannersLinearLayout"
         android:layout_above="@+id/inboundButtonsLinearLayout"
         android:layout_marginTop="15sp"
-        android:background="#404040">
+        android:background="@color/colorBackgroundLight">
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/inboundInfoTextView"
             android:text="Pallets Stored:"
-            android:textColor="#FFFFFF"
+            android:textColor="@color/colorMainText"
             android:textSize="20sp"
             android:layout_marginTop="3dp"
             android:paddingLeft="6dp"/>
@@ -116,6 +116,8 @@
             android:id="@+id/checkedInboundListView"
             android:layout_below="@+id/inboundInfoTextView"
             android:scrollbarAlwaysDrawVerticalTrack="true"
+            android:scrollbarThumbVertical="@drawable/custom_storage_scrollbar"
+            android:fadeScrollbars="false"
             tools:listitem="@layout/custom_storage_row"/>
 
     </RelativeLayout>
@@ -137,10 +139,9 @@
             android:layout_marginLeft="8sp"
             android:layout_marginRight="8sp"
             android:text="Save &amp; Next"
-            android:textColor="#FFFFFF"
-            android:background="#3399FF"
-            android:isScrollContainer="false"
-            android:onClick="nextButtonAction"/>
+            android:textColor="@color/colorMainText"
+            android:background="@color/colorSecondary"
+            android:onClick="storageButtonAction"/>
 
         <Button
             android:layout_width="match_parent"
@@ -150,11 +151,10 @@
             android:layout_marginLeft="8sp"
             android:layout_marginRight="8sp"
             android:text="FINISH"
-            android:textColor="#FFFFFF"
-            android:background="#3399FF"
-            android:isScrollContainer="false"/>
+            android:textColor="@color/colorMainText"
+            android:background="@color/colorSecondary"
+            android:onClick="storageButtonAction"/>
 
     </LinearLayout>
-
 
 </RelativeLayout>
