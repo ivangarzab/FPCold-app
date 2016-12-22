@@ -11,9 +11,11 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -104,6 +106,20 @@ public class InOutActivity extends AppCompatActivity implements View.OnClickList
 		// Assigning the implementaiton of OnClickListener
 		RL.setOnClickListener(this);
 		instructions.setOnClickListener(this);
+
+		// Set IME Action behavior
+		first_number.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+			@Override
+			public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
+				boolean handled = false;
+				if (i == EditorInfo.IME_ACTION_NEXT) {
+					second_number.requestFocus();
+					handled = true;
+				}
+
+				return handled;
+			}
+		});
 
 		// Set the extra OnClickListeners to call external app Barcode Scanner
 		first_image.setOnClickListener(new View.OnClickListener() {

@@ -11,15 +11,19 @@ package com.parse.starter;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
+import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.parse.LogInCallback;
@@ -51,6 +55,19 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 		// Set up native OnClickListeners
 		RL.setOnClickListener(this);
 		logo.setOnClickListener(this);
+
+		pinNumber.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+			@Override
+			public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
+				boolean handled = false;
+				if (i == EditorInfo.IME_ACTION_GO) {
+					loginAction(null);
+					handled = true;
+				}
+
+				return handled;
+			}
+		});
 	}
 
 	/**
