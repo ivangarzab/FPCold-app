@@ -14,6 +14,7 @@ import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -40,7 +41,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 		setContentView(R.layout.activity_main);
 
 		ParseAnalytics.trackAppOpenedInBackground(getIntent());
-		setTitle("FP ColdStorage App");
+		setTitle("");
 
 		// Initiate the UI for this activity
 		RL = (RelativeLayout) findViewById(R.id.loginRelativeLayout);
