@@ -84,14 +84,16 @@ public class HomeActivity extends AppCompatActivity {
 		Intent i = null;
 		boolean flag = false;
 		if (view.getId() == R.id.inHomeButton) {
-			i = new Intent(context, InboundActivity.class);
+			i = new Intent(context, InOutActivity.class);
+			i.putExtra("type", 'i');
 			flag = true;
 			//Toast.makeText(getApplicationContext(), "INBOUND!", Toast.LENGTH_LONG).show();
 		}
 		else if (view.getId() == R.id.outHomeButton) {
-			//i = new Intent(context, OutboundActivity.class);
-			//flag = true;
-			Toast.makeText(getApplicationContext(), "OUTBOUND!", Toast.LENGTH_LONG).show();
+			i = new Intent(context, InOutActivity.class);
+			i.putExtra("type", 'o');
+			flag = true;
+			//Toast.makeText(getApplicationContext(), "OUTBOUND!", Toast.LENGTH_LONG).show();
 		}
 		else if (view.getId() == R.id.transferHomeButton) {
 			//i = new Intent(context, TransferActivity.class);
@@ -128,7 +130,7 @@ public class HomeActivity extends AppCompatActivity {
 	public static void denyAccess(Context context) {
 		AlertDialog.Builder adb = new AlertDialog.Builder(context);
 		adb.setTitle("Oops!");
-		adb.setMessage("You do not have the privilege to access this!")
+		adb.setMessage("You do not have the priviledge to access this!")
 				.setCancelable(false)
 				.setNegativeButton("GO BACK", new DialogInterface.OnClickListener() {
 					@Override
