@@ -3,7 +3,9 @@ package com.parse.starter;
 import android.IntentIntegrator;
 import android.IntentResult;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -154,14 +156,18 @@ public class InOutActivity extends AppCompatActivity implements View.OnClickList
 		int id = item.getItemId();
 
 		//noinspection SimplifiableIfStatement
-
-		if (id == R.id.logout) {
-			ParseUser.logOut();
-			Intent i = new Intent(getApplicationContext(), MainActivity.class);
-			startActivity(i);
-			return true;
+		switch (item.getItemId()) {
+			case R.id.logout:
+				ParseUser.logOut();
+				Intent i = new Intent(getApplicationContext(), MainActivity.class);
+				startActivity(i);
+				return true;
+			case android.R.id.home:
+				finishAction();
+				return true;
+			default:
+				return super.onOptionsItemSelected(item);
 		}
-		return super.onOptionsItemSelected(item);
 	}
 
 	/**
@@ -238,20 +244,20 @@ public class InOutActivity extends AppCompatActivity implements View.OnClickList
 	 * @param view : View of the Button which calls on the method
 	 */
 	public void storageButtonAction(View view) {
-		// Get pallet tag and location number from Activity
-		String first_field = first_number.getText().toString();
-		String second_field = second_number.getText().toString();
-
-		// if one of the fields is missing, Toast the user and return
-		if (first_field.equals("") || second_field.equals("")) {
-			Toast.makeText(context,
-					"One ore more fields are missing! Please, try again.",
-					Toast.LENGTH_LONG).show();
-			return;
-		}
-
 		// Next & Save button clicked
 		if (view.getId() == R.id.inoutNextButton) {
+			// Get pallet tag and location number from Activity
+			String first_field = first_number.getText().toString();
+			String second_field = second_number.getText().toString();
+
+			// if one of the fields is missing, Toast the user and return
+			if (first_field.equals("") || second_field.equals("")) {
+				Toast.makeText(context,
+						"One ore more fields are missing! Please, try again.",
+						Toast.LENGTH_LONG).show();
+				return;
+			}
+
 			if (TYPE == 'i')
 				inStorageAction(first_field, second_field);
 			else if (TYPE == 'o')
@@ -260,8 +266,7 @@ public class InOutActivity extends AppCompatActivity implements View.OnClickList
 		// Finish button clicked
 		else if (view.getId() == R.id.inoutFinishButton) {
 			// Go back to HomeActivity
-			Intent i = new Intent(context, HomeActivity.class);
-			startActivity(i);
+			finishAction();
 		}
 	}
 
@@ -407,13 +412,26 @@ public class InOutActivity extends AppCompatActivity implements View.OnClickList
 		});
 	}
 
-	public void finishAction(boolean flag) {
-		if (flag == true) {
-
-		}
-		else { // flag == false
-
-		}
+	public void finishAction() {
+		AlertDialog.Builder adb = new AlertDialog.Builder(context);
+		adb.setTitle("One Second...");
+		adb.setMessage("Are you sure you want to end this transaction?")
+				.setCancelable(false)
+				.setPositiveButton("YES", new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						Intent i = new Intent(getApplicationContext(), HomeActivity.class);
+						startActivity(i);
+					}
+				})
+				.setNegativeButton("STAY", new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						dialog.cancel();
+					}
+				});
+		AlertDialog ad = adb.create();
+		ad.show();
 	}
 
 	/**
