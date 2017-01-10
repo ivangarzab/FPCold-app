@@ -93,7 +93,7 @@
             <Button
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:id="@+id/invnetoryHomeButton"
+                android:id="@+id/inventoryHomeButton"
                 android:text="INVENTORY"
                 android:onClick="homeButtonAction"
                 android:layout_weight="1"

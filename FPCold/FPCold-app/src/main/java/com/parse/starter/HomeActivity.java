@@ -100,10 +100,10 @@ public class HomeActivity extends AppCompatActivity {
 			//flag = true;
 			Toast.makeText(getApplicationContext(), "TRANSFER!", Toast.LENGTH_LONG).show();
 		}
-		else if (view.getId() == R.id.invnetoryHomeButton) {
-			//i = new Intent(context, InventoryActivity.class);
-			//flag = true;
-			Toast.makeText(getApplicationContext(), "INVENTORY!", Toast.LENGTH_LONG).show();
+		else if (view.getId() == R.id.inventoryHomeButton) {
+			i = new Intent(context, InventoryActivity.class);
+			flag = true;
+			//Toast.makeText(getApplicationContext(), "INVENTORY!", Toast.LENGTH_LONG).show();
 		}
 		else if (view.getId() == R.id.settingsHomeButton) {
 			if (TIER == 1) {
