@@ -12,6 +12,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -23,9 +24,17 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.parse.FindCallback;
+import com.parse.ParseException;
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
 import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.List;
+
+import static android.R.id.list;
 
 public class InventoryActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -37,9 +46,12 @@ public class InventoryActivity extends AppCompatActivity implements View.OnClick
 	private RelativeLayout RL;
 	private TextView top_instructions, bot_instructions;
 	private EditText pallet_tag, location_number;
-	private Button pallet_button, location_button;
 	private ImageButton pallet_camera, location_camera;
-	private ImageButton pallet_search, location_search;
+
+	// Virutal storage variables
+	ArrayList<String> rack_numbers;
+	ArrayList<List<String>> rack_contents;
+	//ArrayList<String> rackDates;
 
 	// Supporting flag for calling the external Barcode Scanner app
 	boolean flag;
@@ -60,14 +72,12 @@ public class InventoryActivity extends AppCompatActivity implements View.OnClick
 		bot_instructions = (TextView)findViewById(R.id.inventoryBotInstructionsTextView);
 
 		pallet_tag = (EditText)findViewById(R.id.inventoryTopEditText);
-		pallet_button = (Button)findViewById(R.id.inventoryTopAllButton);
 		pallet_camera = (ImageButton)findViewById(R.id.inventoryTopImageButton);
-		pallet_search = (ImageButton)findViewById(R.id.inventoryTopSearchButton);
-
 		location_number = (EditText)findViewById(R.id.inventoryBotEditText);
-		location_button = (Button)findViewById(R.id.inventoryBotAllButton);
 		location_camera = (ImageButton)findViewById(R.id.inventoryBotImageButton);
-		location_search = (ImageButton)findViewById(R.id.inventoryBotSearchButton);
+
+		rack_numbers = new ArrayList<String>();
+		rack_contents = new ArrayList<List<String>>();
 
 		RL.setOnClickListener(this);
 		top_instructions.setOnClickListener(this);
@@ -89,6 +99,24 @@ public class InventoryActivity extends AppCompatActivity implements View.OnClick
 				flag = true;
 				IntentIntegrator scanIntegrator = new IntentIntegrator(activity);
 				scanIntegrator.initiateScan();
+			}
+		});
+
+		// Retrieve all of the racks and their IDs from the server
+		ParseQuery<ParseObject> query = new ParseQuery<ParseObject>("Storage");
+		query.findInBackground(new FindCallback<ParseObject>() {
+			@Override
+			public void done(List<ParseObject> objects, ParseException e) {
+				if (e == null) {
+					if (objects.size() > 0) {
+						for (ParseObject obj : objects) {
+							rack_numbers.add(obj.getString("rackNumber"));
+
+							List<String> list = obj.getList("content");
+							rack_contents.add(list);
+						}
+					}
+				}
 			}
 		});
 
@@ -151,27 +179,60 @@ public class InventoryActivity extends AppCompatActivity implements View.OnClick
 	}
 
 	public void searchPallet(View view) {
-		// Perform pallet search here!
+		String pallet = pallet_tag.getText().toString();
+		if (pallet.equals("")) {
+			searchError('p');
+			return;
+		}
 
-		String title = "Pallet #" + pallet_tag.getText().toString();
+		int rack_position = -1;
+		for (List<String> list : rack_contents) {
+			if (list.contains(pallet)) {
+				rack_position = rack_contents.indexOf(list);
+				break;
+			}
+		}
+		if (rack_position == -1) {
+			searchError('p');
+			return;
+		}
 
-		String location = "Location: " +"\n";
-		String date_in = "\nDate in: ";
+		String title = "Pallet #" + pallet;
+
+		String location = "Location: " + rack_numbers.get(rack_position) +"\n";
+		String date_in = "\nDate in: COMING SOON";
 		String msg = location + date_in;
 
 		searchAction(title, msg);
 	}
 
 	public void searchLocation(View view) {
-		//Perform location search here!
+		String location = location_number.getText().toString();
+		if (location.equals("")) {
+			searchError('l');
+			return;
+		}
 
-		String title = "Location #" +location_number.getText().toString() + " contents";
+		int rack_position = -1;
+		for (String loc : rack_numbers) {
+			if (loc.equals(location)) {
+				rack_position = rack_numbers.indexOf(location);
+			}
+		}
+		if (rack_position == -1) {
+			searchError('l');
+			return;
+		}
+
+		String title = "Location #" +location + " contents";
 
 		String msg = "\tPallet #\t\t\t\t\tDate in" + "\n";
-		String[] contents = {"123", "234", "345", "456", "567", "678"};
-		String[] dates = {"01012017", "01012017", "01012017", "01062017", "01062017", "01322017"};
-		for (int i = 0; i < contents.length; i++) {
-			msg += "\t" + contents[i] + "\t\t\t\t\t\t" + dates[i] + "\n";
+		List<String> content = rack_contents.get(rack_position);
+		//List<String> dates = rack_dates.get(rack_position);
+		String date = "COMING SOON";
+		for (int i = 0; i < content.size(); i++) {
+			msg += "\t" + content.get(i) + "\t\t\t\t\t\t" + date + "\n";
+			//msg += "\t" + content.get(i) + "\t\t\t\t\t\t" + dates.get(i) + "\n";
 		}
 
 		searchAction(title, msg);
@@ -183,6 +244,30 @@ public class InventoryActivity extends AppCompatActivity implements View.OnClick
 		adb.setMessage(message)
 				.setCancelable(false)
 				.setNegativeButton("CONFIRM", new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						dialog.cancel();
+					}
+				});
+		AlertDialog ad = adb.create();
+		ad.show();
+	}
+
+	public void searchError(char c) {
+		String message = "";
+		if (c == 'l') {
+			message = "There was an error with the location number!\nPlease, try again.";
+		}
+		else if (c == 'p') {
+			message = "There was an error with the pallet tag!\nPlease, try again.";
+		}
+		else return;
+
+		AlertDialog.Builder adb = new AlertDialog.Builder(context);
+		adb.setTitle("Oops...");
+		adb.setMessage(message)
+				.setCancelable(false)
+				.setNegativeButton("GO BACK", new DialogInterface.OnClickListener() {
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
 						dialog.cancel();
