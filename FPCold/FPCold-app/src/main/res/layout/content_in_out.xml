@@ -100,7 +100,7 @@
         android:layout_below="@+id/scannersLinearLayout"
         android:layout_above="@+id/inoutButtonsLinearLayout"
         android:layout_marginTop="15sp"
-        android:background="@color/colorBackgroundLight">
+        android:background="@drawable/custom_list_view">
 
         <TextView
             android:layout_width="match_parent"
