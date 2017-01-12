@@ -226,13 +226,12 @@ public class InventoryActivity extends AppCompatActivity implements View.OnClick
 
 		String title = "Location #" +location + " contents";
 
-		String msg = "\tPallet #\t\t\t\t\tDate in" + "\n";
+		String msg = String.format("%1$8s %2$56s\n", "Pallet #", "Date in");
 		List<String> content = rack_contents.get(rack_position);
 		//List<String> dates = rack_dates.get(rack_position);
 		String date = "COMING SOON";
 		for (int i = 0; i < content.size(); i++) {
-			msg += "\t" + content.get(i) + "\t\t\t\t\t\t" + date + "\n";
-			//msg += "\t" + content.get(i) + "\t\t\t\t\t\t" + dates.get(i) + "\n";
+			msg += String.format("%1$5s %2$40s\n", content.get(i), date);
 		}
 
 		searchAction(title, msg);
