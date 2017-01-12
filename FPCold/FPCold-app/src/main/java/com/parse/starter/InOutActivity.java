@@ -12,6 +12,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.InputType;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -137,13 +138,33 @@ public class InOutActivity extends AppCompatActivity implements View.OnClickList
 		RL.setOnClickListener(this);
 		instructions.setOnClickListener(this);
 
-		// Set IME Action behavior
+		// Hide the keyboard from EditTexts
+		first_number.setInputType(InputType.TYPE_NULL);
+		second_number.setInputType(InputType.TYPE_NULL);
+
+		// Set IME Action behaviors
 		first_number.setOnEditorActionListener(new TextView.OnEditorActionListener() {
 			@Override
 			public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
 				boolean handled = false;
 				if (i == EditorInfo.IME_ACTION_NEXT) {
-					second_number.requestFocus();
+					keybaordAction(findViewById(R.id.inoutSecondEditText +1));
+					first_number.setInputType(InputType.TYPE_NULL);
+					handled = true;
+				}
+
+				return handled;
+			}
+		});
+
+		second_number.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+			@Override
+			public boolean onEditorAction(TextView textView, int i, KeyEvent event) {
+				boolean handled = false;
+				if (i == EditorInfo.IME_ACTION_DONE) {
+					second_number.setInputType(InputType.TYPE_NULL);
+					InputMethodManager imm = (InputMethodManager)getSystemService(INPUT_METHOD_SERVICE);
+					imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
 					handled = true;
 				}
 
@@ -283,6 +304,28 @@ public class InOutActivity extends AppCompatActivity implements View.OnClickList
 	}
 
 	/**
+	 * Let the respective EditText input text through the soft keyboard
+	 * @param view : View which calls the method
+	 */
+	public void keybaordAction(View view) {
+		int id = view.getId();
+
+		if (id == R.id.inoutFirstKeyboardImageButton) {
+			first_number.requestFocus();
+			first_number.setInputType(InputType.TYPE_CLASS_TEXT);
+			InputMethodManager mgr = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+			mgr.showSoftInput(first_number, InputMethodManager.SHOW_FORCED);
+		}
+		else if (id == R.id.inoutSecondKeyboardImageButton) {
+			second_number.requestFocus();
+			second_number.setInputType(InputType.TYPE_CLASS_TEXT);
+			InputMethodManager mgr = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+			mgr.showSoftInput(second_number, InputMethodManager.SHOW_FORCED);
+		}
+		else return;
+	}
+
+	/**
 	 * Takes care of both of the buttons' action:
 	 *   Checks for errors on the input
 	 *   if the button = 'Save & Next'
@@ -324,6 +367,7 @@ public class InOutActivity extends AppCompatActivity implements View.OnClickList
 	 *   Call updateList when done
 	 * @param palletNo : pallet Number
 	 * @param locationNo : location Number
+	 * @param update : decides whether to call updateList at the end or not
 	 */
 	public void inStorageAction(final String palletNo, final String locationNo,
 								final boolean update) {
@@ -377,6 +421,7 @@ public class InOutActivity extends AppCompatActivity implements View.OnClickList
 	 * Unloads the desired palletNo from the locationNo @ the server
 	 * @param palletNo : pallet Number
 	 * @param locationNo : location Number
+	 * @param update : decides whether to call updateList at the end or not
 	 */
 	public void outStorageAction(final String palletNo, final String locationNo,
 								 final boolean update) {
@@ -460,6 +505,7 @@ public class InOutActivity extends AppCompatActivity implements View.OnClickList
 				lv.setSelection(SA.getCount() - 1);
 			}
 		});
+		first_number.requestFocus();
 	}
 
 	/**

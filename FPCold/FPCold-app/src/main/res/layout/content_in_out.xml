@@ -54,13 +54,24 @@
                 android:id="@+id/inoutFirstEditText"
                 android:layout_toRightOf="@+id/inoutFirstImageButton"
                 android:layout_toEndOf="@+id/inoutFirstImageButton"
+                android:layout_toLeftOf="@+id/inoutFirstKeyboardImageButton"
                 android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
                 android:hint="First Tag"
                 android:singleLine="true"
                 android:imeOptions="actionNext"
                 android:textColorHint="@color/colorSecondaryDark"
                 android:textColor="@color/colorSecondary"
                 android:textColorHighlight="@color/colorSecondaryLight"/>
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/inoutFirstKeyboardImageButton"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true"
+                android:src="@drawable/keyboard"
+                android:background="@color/colorBackground"
+                android:onClick="keybaordAction"/>
         </RelativeLayout>
 
         <RelativeLayout
@@ -78,18 +89,29 @@
                 android:src="@drawable/camera"
                 android:background="@color/colorBackground"/>
             <EditText
-                android:layout_width="fill_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/inoutSecondEditText"
                 android:layout_toRightOf="@+id/inoutSecondImageButton"
                 android:layout_toEndOf="@+id/inoutSecondImageButton"
+                android:layout_toLeftOf="@+id/inoutSecondKeyboardImageButton"
                 android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
                 android:hint="Second Tag"
                 android:singleLine="true"
                 android:imeOptions="actionDone"
                 android:textColorHint="@color/colorSecondaryDark"
                 android:textColor="@color/colorSecondary"
                 android:textColorHighlight="@color/colorSecondaryLight"/>
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/inoutSecondKeyboardImageButton"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true"
+                android:src="@drawable/keyboard"
+                android:background="@color/colorBackground"
+                android:onClick="keybaordAction"/>
         </RelativeLayout>
     </LinearLayout>
 
