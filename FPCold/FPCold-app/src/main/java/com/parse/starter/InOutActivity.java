@@ -28,8 +28,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.parse.DeleteCallback;
 import com.parse.FindCallback;
-import com.parse.GetCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
@@ -61,9 +61,8 @@ public class InOutActivity extends AppCompatActivity implements View.OnClickList
 	private ArrayList<String> pallets;
 	private ArrayList<String> locations;
 
-	// Variables to store database information temporarily
+	// Variable to store database information temporarily
 	private ArrayList<String> rack_numbers;
-	private ArrayList<String> rack_ids;
 
 	// Supporting flag for calling the external Barcode Scanner app
 	boolean flag;
@@ -94,16 +93,15 @@ public class InOutActivity extends AppCompatActivity implements View.OnClickList
 		second_image = (ImageButton)findViewById(R.id.inoutSecondImageButton);
 
 		///// Arrays for temporal storage
-		rack_numbers = new ArrayList<String>();
-		rack_ids = new ArrayList<String>();
+		rack_numbers = new ArrayList<>();
 
 		// Set up the activity based on the type of transaction to be performed
 		activitySetup(TYPE);
 
 		///// Prepare ListView
 		lv = (ListView)findViewById(R.id.checkedInoutListView);
-		pallets = new ArrayList<String>();
-		locations = new ArrayList<String>();
+		pallets = new ArrayList<>();
+		locations = new ArrayList<>();
 		SA = new StorageListView(activity, TYPE, pallets, locations);
 		lv.setAdapter(SA);
 		//////// Set up the longClickListener in order to delete items from the list
@@ -191,21 +189,23 @@ public class InOutActivity extends AppCompatActivity implements View.OnClickList
 			}
 		});
 
-		// Retrieve all of the racks and their IDs from the server
-		ParseQuery<ParseObject> query = new ParseQuery<ParseObject>("Storage");
-		query.findInBackground(new FindCallback<ParseObject>() {
-			@Override
-			public void done(List<ParseObject> objects, ParseException e) {
-				if (e == null) {
-					if (objects.size() > 0) {
-						for (ParseObject obj : objects) {
-							rack_numbers.add(obj.getString("rackNumber"));
-							rack_ids.add(obj.getObjectId());
+		// Populate the rack_numbers list for the outbound to check the virtual storage quicker
+		if (TYPE == 'o') {
+			// Retrieve all of the racks and their IDs from the server
+			ParseQuery<ParseObject> query = new ParseQuery<>("Product");
+			query.findInBackground(new FindCallback<ParseObject>() {
+				@Override
+				public void done(List<ParseObject> objects, ParseException e) {
+					if (e == null) {
+						if (objects.size() > 0) {
+							for (ParseObject obj : objects) {
+								rack_numbers.add(obj.getString("location"));
+							}
 						}
 					}
 				}
-			}
-		});
+			});
+		}
 	}
 
 	@Override
@@ -322,7 +322,6 @@ public class InOutActivity extends AppCompatActivity implements View.OnClickList
 			InputMethodManager mgr = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
 			mgr.showSoftInput(second_number, InputMethodManager.SHOW_FORCED);
 		}
-		else return;
 	}
 
 	/**
@@ -371,18 +370,6 @@ public class InOutActivity extends AppCompatActivity implements View.OnClickList
 	 */
 	public void inStorageAction(final String palletNo, final String locationNo,
 								final boolean update) {
-		// position of location Number on rack_numbers to get server object ID
-		int storage_position = rack_numbers.indexOf(locationNo);
-
-		// if the rack location does not exist in server, Toast the user and return
-		if (storage_position ==-1) {
-			Toast.makeText(context,
-					"Rack location number is invalid! Please, try again.",
-					Toast.LENGTH_LONG).show();
-			second_number.setText("");
-			return;
-		}
-
 		// If the pallet is already on the pallet list attached to ListView
 		/// then Toast the user and return
 		if (pallets.contains(palletNo) && update) {
@@ -393,26 +380,18 @@ public class InOutActivity extends AppCompatActivity implements View.OnClickList
 			return;
 		}
 
-		// Try to store the new palletNo on the stated locationNo in the server
-		ParseQuery<ParseObject> query = ParseQuery.getQuery("Storage");
-		query.getInBackground(rack_ids.get(storage_position), new GetCallback<ParseObject>() {
+		// Save the new product into the virtual storage
+		/// When done, reset EditText fields and update list if desired
+		ParseObject product = new ParseObject("Product");
+		product.put("tag", palletNo);
+		product.put("location", locationNo);
+		product.put("dateIn", HomeActivity.DATE);
+		product.saveEventually(new SaveCallback() {
 			@Override
-			public void done(ParseObject object, ParseException e) {
-				if (e == null) {
-					// list contains the contents of the location in the server
-					List<String> list = object.getList("content");
-					// Update list and put back into the server
-					list.add(palletNo);
-					object.put("content", list);
-					object.saveEventually(new SaveCallback() {
-						@Override
-						public void done(ParseException e) {
-							if (update) updateList(palletNo, locationNo);
-							first_number.setText("");
-							second_number.setText("");
-						}
-					});
-				}
+			public void done(ParseException e) {
+				if (update) updateList(palletNo, locationNo);
+				first_number.setText("");
+				second_number.setText("");
 			}
 		});
 	}
@@ -427,6 +406,7 @@ public class InOutActivity extends AppCompatActivity implements View.OnClickList
 								 final boolean update) {
 		// position of location Number on rack_numbers to get server object ID
 		int storage_position = rack_numbers.indexOf(locationNo);
+		Log.i("TRASH", palletNo +" " +locationNo);
 
 		// if the rack location does not exist in server
 		/// then Toast the user and return
@@ -444,42 +424,33 @@ public class InOutActivity extends AppCompatActivity implements View.OnClickList
 			Toast.makeText(context,
 					"Pallet has already been stored in this order! Please, try again.",
 					Toast.LENGTH_LONG).show();
-			first_number.setText("");
+			second_number.setText("");
 			return;
 		}
 
-		// Try to get the palletNo out of the stated location
-		ParseQuery<ParseObject> query = ParseQuery.getQuery("Storage");
-		query.getInBackground(rack_ids.get(storage_position), new GetCallback<ParseObject>() {
+		ParseQuery<ParseObject> query = new ParseQuery<>("Product");
+		query.findInBackground(new FindCallback<ParseObject>() {
 			@Override
-			public void done(ParseObject object, ParseException e) {
+			public void done(List<ParseObject> objects, ParseException e) {
 				if (e == null) {
-					// list contains the contents of the location in the server
-					List<String> list = object.getList("content");
-					// if the palletNo is found in the contents of the list
-					/// then update and clear fields
-					if (list.contains(palletNo)) {
-						// Update list and put back into the server
-						list.remove(palletNo);
-						object.put("content", list);
-						object.saveEventually(new SaveCallback() {
-							@Override
-							public void done(ParseException e) {
-								if (update) updateList(palletNo, locationNo);
-								first_number.setText("");
-								second_number.setText("");
-							}
-						});
+					for (ParseObject object : objects) {
+						if (object.get("location").equals(locationNo)
+								&& object.get("tag").equals(palletNo)) {
+							object.deleteInBackground(new DeleteCallback() {
+								@Override
+								public void done(ParseException e) {
+									if (update) updateList(palletNo, locationNo);
+									first_number.setText("");
+									second_number.setText("");
+								}
+							});
+							return;
+						}
 					}
-					// if the pallet is not contained on the given location on server
-					/// then Toast user with error
-					else {
-						Toast.makeText(context,
-								"Pallet tag is not stored on this location! Please, try again.",
-								Toast.LENGTH_LONG).show();
-						//second_number.setText("");
-						//return;
-					}
+					Toast.makeText(context,
+							"Pallet tag is not stored on this location! Please, try again.",
+							Toast.LENGTH_LONG).show();
+
 				}
 			}
 		});

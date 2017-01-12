@@ -9,6 +9,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -17,12 +18,17 @@ import android.widget.Toast;
 
 import com.parse.ParseUser;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 public class HomeActivity extends AppCompatActivity {
 
 	// Current User loged in for static use
 	public static ParseUser CURRENT_USER;
 	// Current User's Tier priviledges for static use
 	public static int TIER;
+	// Today's date
+	public static String DATE;
 
 	// Activity's Context
 	final private Context context = this;
@@ -43,6 +49,9 @@ public class HomeActivity extends AppCompatActivity {
 		announcement = (TextView) findViewById(R.id.announcementTextView);
 
 		greet.setText("Welcome " + getCurrentUser());
+
+		SimpleDateFormat datestamp = new SimpleDateFormat("MM-dd-yy");
+		DATE = datestamp.format(new Date());
 	}
 
 	@Override
@@ -114,7 +123,7 @@ public class HomeActivity extends AppCompatActivity {
 			else denyAccess(context);
 		}
 
-		if (flag == true) startActivity(i);
+		if (flag) startActivity(i);
 	}
 
 	/**
