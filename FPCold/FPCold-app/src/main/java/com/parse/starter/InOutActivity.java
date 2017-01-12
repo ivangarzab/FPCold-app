@@ -17,6 +17,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
@@ -102,6 +103,33 @@ public class InOutActivity extends AppCompatActivity implements View.OnClickList
 		locations = new ArrayList<String>();
 		SA = new StorageListView(activity, TYPE, pallets, locations);
 		lv.setAdapter(SA);
+		//////// Set up the longClickListener in order to delete items from the list
+		lv.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+			@Override
+			public boolean onItemLongClick(AdapterView<?> adapterView, View view,
+										   final int i, long l) {
+				AlertDialog.Builder adb = new AlertDialog.Builder(context);
+				adb.setTitle("Warning!");
+				adb.setMessage("Would you like to revert this action?")
+						.setCancelable(false)
+						.setPositiveButton("YES", new DialogInterface.OnClickListener() {
+							@Override
+							public void onClick(DialogInterface dialog, int which) {
+								takeOutList(i);
+							}
+						})
+						.setNegativeButton("NO", new DialogInterface.OnClickListener() {
+							@Override
+							public void onClick(DialogInterface dialog, int which) {
+								dialog.cancel();
+							}
+						});
+				AlertDialog ad = adb.create();
+				ad.show();
+
+				return true;
+			}
+		});
 
 		// Assigning the implementaiton of OnClickListener
 		RL.setOnClickListener(this);
@@ -172,7 +200,7 @@ public class InOutActivity extends AppCompatActivity implements View.OnClickList
 		int id = item.getItemId();
 
 		//noinspection SimplifiableIfStatement
-		switch (item.getItemId()) {
+		switch (id) {
 			case R.id.logout:
 				ParseUser.logOut();
 				Intent i = new Intent(getApplicationContext(), MainActivity.class);
@@ -275,9 +303,9 @@ public class InOutActivity extends AppCompatActivity implements View.OnClickList
 			}
 
 			if (TYPE == 'i')
-				inStorageAction(first_field, second_field);
+				inStorageAction(first_field, second_field, true);
 			else if (TYPE == 'o')
-				outStorageAction(second_field, first_field);
+				outStorageAction(second_field, first_field, true);
 		}
 		// Finish button clicked
 		else if (view.getId() == R.id.inoutFinishButton) {
@@ -293,7 +321,8 @@ public class InOutActivity extends AppCompatActivity implements View.OnClickList
 	 * @param palletNo : pallet Number
 	 * @param locationNo : location Number
 	 */
-	public void inStorageAction(final String palletNo, final String locationNo) {
+	public void inStorageAction(final String palletNo, final String locationNo,
+								final boolean update) {
 		// position of location Number on rack_numbers to get server object ID
 		int storage_position = rack_numbers.indexOf(locationNo);
 
@@ -308,7 +337,7 @@ public class InOutActivity extends AppCompatActivity implements View.OnClickList
 
 		// If the pallet is already on the pallet list attached to ListView
 		/// then Toast the user and return
-		if (pallets.contains(palletNo)) {
+		if (pallets.contains(palletNo) && update) {
 			Toast.makeText(context,
 					"Pallet has already been stored in this order! Please, try again.",
 					Toast.LENGTH_LONG).show();
@@ -330,7 +359,7 @@ public class InOutActivity extends AppCompatActivity implements View.OnClickList
 					object.saveEventually(new SaveCallback() {
 						@Override
 						public void done(ParseException e) {
-							updateList(palletNo, locationNo);
+							if (update) updateList(palletNo, locationNo);
 							first_number.setText("");
 							second_number.setText("");
 						}
@@ -345,7 +374,8 @@ public class InOutActivity extends AppCompatActivity implements View.OnClickList
 	 * @param palletNo : pallet Number
 	 * @param locationNo : location Number
 	 */
-	public void outStorageAction(final String palletNo, final String locationNo) {
+	public void outStorageAction(final String palletNo, final String locationNo,
+								 final boolean update) {
 		// position of location Number on rack_numbers to get server object ID
 		int storage_position = rack_numbers.indexOf(locationNo);
 
@@ -361,7 +391,7 @@ public class InOutActivity extends AppCompatActivity implements View.OnClickList
 
 		// If the pallet is already on the pallet list attached to ListView
 		/// then Toast the user and return
-		if (pallets.contains(palletNo)) {
+		if (pallets.contains(palletNo) && update) {
 			Toast.makeText(context,
 					"Pallet has already been stored in this order! Please, try again.",
 					Toast.LENGTH_LONG).show();
@@ -386,7 +416,7 @@ public class InOutActivity extends AppCompatActivity implements View.OnClickList
 						object.saveEventually(new SaveCallback() {
 							@Override
 							public void done(ParseException e) {
-								updateList(palletNo, locationNo);
+								if (update) updateList(palletNo, locationNo);
 								first_number.setText("");
 								second_number.setText("");
 							}
@@ -426,6 +456,28 @@ public class InOutActivity extends AppCompatActivity implements View.OnClickList
 				lv.setSelection(SA.getCount() - 1);
 			}
 		});
+	}
+
+	/**
+	 * Reverts the action performed (either IN or OUT) and updates the list accordingly
+	 * @param position : The position of the pallet+location pair to revert action to
+	 */
+	public void takeOutList(int position) {
+		// if we're on an Inbound, take the item out of the virtual storage but update locally
+		if (TYPE == 'i') {
+			outStorageAction(pallets.get(position), locations.get(position), false);
+		}
+		// else if we're on an Outbound, put the item back into the virtual storage
+		// but update locally
+		else if (TYPE == 'o') {
+			inStorageAction(pallets.get(position), locations.get(position), false);
+		}
+		else return;
+
+		// Get the pallet nad location out from the ListVIew's list & update
+		pallets.remove(position);
+		locations.remove(position);
+		SA.notifyDataSetChanged();
 	}
 
 	public void finishAction() {

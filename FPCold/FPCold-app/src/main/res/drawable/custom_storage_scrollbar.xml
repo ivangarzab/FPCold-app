@@ -4,7 +4,7 @@
     <gradient
         android:angle="45"
         android:endColor="@color/colorBackgroundLight"
-        android:centerColor="@color/colorButton"
+        android:centerColor="@color/colorBackgroundLight"
         android:startColor="@color/colorBackgroundLight" />
 
     <corners android:radius="8dp" />
