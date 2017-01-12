@@ -7,6 +7,8 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -261,6 +263,7 @@ public class InOutActivity extends AppCompatActivity implements View.OnClickList
 		// We are performing an inbound
 		if (c == 'i') {
 			setTitle("IN");
+			getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.rgb(0,51,0)));
 			inst = "First scan pallet tag to be stored " +
 					"followed by the location number where it will be stored to.";
 			first_number.setHint(pallet_hint);
@@ -269,6 +272,7 @@ public class InOutActivity extends AppCompatActivity implements View.OnClickList
 		// We are performing an outbound
 		else if (c == 'o') {
 			setTitle("OUT");
+			getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.rgb(102,0,0)));
 			inst = "First scan the location number to be unload " +
 					"followed by the pallet tag that will be unloaded.";
 			first_number.setHint(location_hint);
