@@ -49,9 +49,9 @@ public class InventoryActivity extends AppCompatActivity implements View.OnClick
 	private ImageButton pallet_camera, location_camera;
 
 	// Virutal storage variables
-	ArrayList<String> rack_numbers;
-	ArrayList<List<String>> rack_contents;
-	//ArrayList<String> rackDates;
+	ArrayList<String> dates;
+	ArrayList<String> location_numbers;
+	ArrayList<String> pallet_numbers;
 
 	// Supporting flag for calling the external Barcode Scanner app
 	boolean flag;
@@ -76,8 +76,9 @@ public class InventoryActivity extends AppCompatActivity implements View.OnClick
 		location_number = (EditText)findViewById(R.id.inventoryBotEditText);
 		location_camera = (ImageButton)findViewById(R.id.inventoryBotImageButton);
 
-		rack_numbers = new ArrayList<String>();
-		rack_contents = new ArrayList<List<String>>();
+		dates = new ArrayList<>();
+		location_numbers = new ArrayList<>();
+		pallet_numbers = new ArrayList<>();
 
 		RL.setOnClickListener(this);
 		top_instructions.setOnClickListener(this);
@@ -103,22 +104,22 @@ public class InventoryActivity extends AppCompatActivity implements View.OnClick
 		});
 
 		// Retrieve all of the racks and their IDs from the server
-		ParseQuery<ParseObject> query = new ParseQuery<ParseObject>("Storage");
+		ParseQuery<ParseObject> query = new ParseQuery<>("Product");
 		query.findInBackground(new FindCallback<ParseObject>() {
 			@Override
 			public void done(List<ParseObject> objects, ParseException e) {
 				if (e == null) {
 					if (objects.size() > 0) {
 						for (ParseObject obj : objects) {
-							rack_numbers.add(obj.getString("rackNumber"));
-
-							List<String> list = obj.getList("content");
-							rack_contents.add(list);
+							dates.add(obj.getString("dateIn"));
+							location_numbers.add(obj.getString("location"));
+							pallet_numbers.add(obj.getString("tag"));
 						}
 					}
 				}
 			}
 		});
+
 
 	}
 
@@ -137,7 +138,7 @@ public class InventoryActivity extends AppCompatActivity implements View.OnClick
 		int id = item.getItemId();
 
 		//noinspection SimplifiableIfStatement
-		switch (item.getItemId()) {
+		switch (id) {
 			case R.id.logout:
 				ParseUser.logOut();
 				Intent i = new Intent(getApplicationContext(), MainActivity.class);
@@ -179,61 +180,59 @@ public class InventoryActivity extends AppCompatActivity implements View.OnClick
 	}
 
 	public void searchPallet(View view) {
+		// if the pallet field is empty, throw an error
 		String pallet = pallet_tag.getText().toString();
 		if (pallet.equals("")) {
 			searchError('p');
 			return;
 		}
 
-		int rack_position = -1;
-		for (List<String> list : rack_contents) {
-			if (list.contains(pallet)) {
-				rack_position = rack_contents.indexOf(list);
-				break;
-			}
-		}
-		if (rack_position == -1) {
+		// if the pallet does not exist, throw an error
+		int position;
+		if (!(pallet_numbers.contains(pallet))) {
 			searchError('p');
 			return;
 		}
+		else {
+			Log.i("TRASH", "WORKING POSTION");
+			position = pallet_numbers.indexOf(pallet);
+		}
 
+		// Set up Strings for the formatting of the AlertDialog
 		String title = "Pallet #" + pallet;
 
-		String location = "Location: " + rack_numbers.get(rack_position) +"\n";
-		String date_in = "\nDate in: COMING SOON";
+		String location = "Location: " + location_numbers.get(position) + "\n";
+		String date_in = "\nDate in: " + dates.get(position) + "\n";
 		String msg = location + date_in;
-
+		// Call the AlertDialog
 		searchAction(title, msg);
 	}
 
 	public void searchLocation(View view) {
+		// if the location field is empty, throw an error
 		String location = location_number.getText().toString();
 		if (location.equals("")) {
 			searchError('l');
 			return;
 		}
 
-		int rack_position = -1;
-		for (String loc : rack_numbers) {
-			if (loc.equals(location)) {
-				rack_position = rack_numbers.indexOf(location);
-			}
-		}
-		if (rack_position == -1) {
+		// if the location does not exist, throw an error
+		if (!(location_numbers.contains(location))) {
 			searchError('l');
 			return;
 		}
 
-		String title = "Location #" +location + " contents";
+		// Set up Strings for the formatting of the AlertDialog
+		String title = "Location #" +location;
 
-		String msg = String.format("%1$8s %2$56s\n", "Pallet #", "Date in");
-		List<String> content = rack_contents.get(rack_position);
-		//List<String> dates = rack_dates.get(rack_position);
-		String date = "COMING SOON";
-		for (int i = 0; i < content.size(); i++) {
-			msg += String.format("%1$5s %2$40s\n", content.get(i), date);
+		String msg = String.format("%1$-8s %2$32s\n", "Date in", "Pallet #");
+		/// Search for the pallet tags with the desired location
+		for (int i = 0; i < pallet_numbers.size(); i++) {
+			if (location_numbers.get(i).equals(location))
+				msg += String.format("%1$-30s %2$-10s%n", dates.get(i), pallet_numbers.get(i));
 		}
 
+		// Call the AlertDialog
 		searchAction(title, msg);
 	}
 
@@ -253,12 +252,14 @@ public class InventoryActivity extends AppCompatActivity implements View.OnClick
 	}
 
 	public void searchError(char c) {
-		String message = "";
+		String message;
 		if (c == 'l') {
 			message = "There was an error with the location number!\nPlease, try again.";
+			location_number.setText("");
 		}
 		else if (c == 'p') {
 			message = "There was an error with the pallet tag!\nPlease, try again.";
+			pallet_tag.setText("");
 		}
 		else return;
 
@@ -289,11 +290,11 @@ public class InventoryActivity extends AppCompatActivity implements View.OnClick
 			Toast.makeText(getApplicationContext(), "Batch Search", Toast.LENGTH_LONG).show();
 		}
 		else if (view.getId() == R.id.inventoryBotAllButton) {
-			//i = new Intent(context, InventoryList.class);
-			//startActivity(i);
+			i = new Intent(context, InventoryList.class);
+			i.putExtra("type", 'l');
+			startActivity(i);
 			Toast.makeText(getApplicationContext(), "All Inventory", Toast.LENGTH_LONG).show();
 		}
-		else return;
 	}
 
 	/**

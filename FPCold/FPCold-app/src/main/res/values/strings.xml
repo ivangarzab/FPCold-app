@@ -18,4 +18,5 @@
     <string name="title_activity_inbound">Inbound Activity</string>
     <string name="title_activity_in_out">In/Out Activity</string>
     <string name="title_activity_inventory">Inventory Activity</string>
+    <string name="title_activity_inventory_list">Inventory List</string>
 </resources>

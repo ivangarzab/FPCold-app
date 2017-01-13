@@ -74,6 +74,16 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.parse.starter.HomeActivity"/>
         </activity>
+        <activity
+            android:name=".InventoryList"
+            android:label="@string/title_activity_inventory_list"
+            android:parentActivityName=".InventoryActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.parse.starter.InventoryActivity"/>
+        </activity>
     </application>
 
 </manifest>

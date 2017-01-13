@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/firstFieldTextView"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="FirstField"
+        android:textSize="20sp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:textColor="@color/colorButton"
+        android:paddingLeft="3dp"
+        android:paddingTop="3sp"
+        android:paddingBottom="3sp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/secondFieldTextView"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="SecondField"
+        android:textSize="20sp"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:textColor="@color/colorButton"
+        android:paddingTop="3sp"
+        android:paddingBottom="3sp"
+        android:gravity="right"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/thirdFieldTextView"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="ThirdField"
+        android:textSize="20sp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:textColor="@color/colorButton"
+        android:paddingRight="3dp"
+        android:paddingTop="3sp"
+        android:paddingBottom="3sp"/>
+
+
+</RelativeLayout>
