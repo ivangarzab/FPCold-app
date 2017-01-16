@@ -1,7 +1,9 @@
 package com.parse.starter;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -11,6 +13,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -70,9 +73,43 @@ public class InventoryList extends AppCompatActivity {
 		dates = new ArrayList<>();
 		IA = new InventoryListView(activity, TYPE, pallets, locations, dates);
 
+		// Set up the activity depending on the active filter (TYPE)
 		activitySetup(TYPE);
 
-		// Retrieve all of the racks and their IDs from the server
+		// Unrack product when a row is long-clicked
+		/*
+		lv.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+			@Override
+			public boolean onItemLongClick(AdapterView<?> adapterView, View view,
+										   final int i, long l) {
+				AlertDialog.Builder adb = new AlertDialog.Builder(context);
+				adb.setTitle("Warning!");
+				adb.setMessage("Would you like to unrack this product")
+						.setCancelable(false)
+						.setPositiveButton("YES", new DialogInterface.OnClickListener() {
+							@Override
+							public void onClick(DialogInterface dialog, int which) {
+								Intent i = new Intent(context, InOutActivity.class);
+								i.putExtra("type", 'o');
+								i.putExtra("inventory", true);
+								i.putExtra("pallet", pallets.get(i));
+								i.putExtra("location", locations.get(i));
+							}
+						})
+						.setNegativeButton("NO", new DialogInterface.OnClickListener() {
+							@Override
+							public void onClick(DialogInterface dialog, int which) {
+								dialog.cancel();
+							}
+						});
+				AlertDialog ad = adb.create();
+				ad.show();
+
+				return true;
+			}
+		});		*/
+
+		// Retrieve all of the rack numbers, product tags and their dates
 		ParseQuery<ParseObject> query = new ParseQuery<>("Product");
 		if (TYPE == 'l')
 			query.addDescendingOrder("location");
@@ -121,21 +158,25 @@ public class InventoryList extends AppCompatActivity {
 		}
 	}
 
+	/**
+	 * Set up activity's title and column headings depending on TYPE
+	 * @param t : type of filter to be applied to the list
+	 */
 	private void activitySetup(char t) {
 		if (t == 'p') {
-			setTitle("Inventory List: pallet filter");
+			setTitle("Inventory List: by pallet");
 			title1.setText("PALLET");
 			title2.setText("LOCATION");
 			title3.setText("DATE IN");
 		}
 		else if (t == 'l') {
-			setTitle("Inventory List: location filter");
+			setTitle("Inventory List: by location");
 			title1.setText("LOCATION");
 			title2.setText("PALLET");
 			title3.setText("DATE IN");
 		}
 		else if (t == 'd') {
-			setTitle("Inventory List: date filter");
+			setTitle("Inventory List: by date");
 			title1.setText("DATE IN");
 			title2.setText("PALLET");
 			title3.setText("LOCATION");
