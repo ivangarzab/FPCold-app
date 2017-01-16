@@ -68,6 +68,7 @@
             android:name=".TransferActivity"
             android:label="@string/title_activity_transfer"
             android:parentActivityName=".HomeActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
