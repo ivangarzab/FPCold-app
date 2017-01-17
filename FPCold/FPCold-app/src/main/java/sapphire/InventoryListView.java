@@ -13,34 +13,35 @@ import com.parse.starter.R;
 import java.util.ArrayList;
 
 /**
- * Created by Sapphire on 12/20/2016.
- * Custom Array Adapter for the InOutActivity
+ * Created by Sapphire on 1/13/2017.
+ * Custom ArrayAdapter for InventoryList
  */
-public class StorageListView extends BaseAdapter {
+
+public class InventoryListView extends BaseAdapter {
 
 	// Necessary for the BaseAdapter extension
 	private LayoutInflater inflater;
 
-	// Decisive variable for the type of storing
 	private char type;
-	// Two array list with the information of concern:
-	/// pal: pallet tags
-	private ArrayList<String> pal;
-	/// loc : location numbers
-	private ArrayList<String> loc;
+
+	private ArrayList<String> pallets;
+	private ArrayList<String> locations;
+	private ArrayList<String> dates;
 
 	/**
 	 * Constructor
 	 * @param context : context of the activity using the object
-	 * @param t : type of call from activity
-	 * @param p : pallet tag ArrayList
-	 * @param l : location number ArrayList
+	 * @param p : pallets ArrayList
+	 * @param l : locations ArrayList
+	 * @param d : dates ArrayList
 	 */
-	public StorageListView(Activity context, char t, ArrayList<String> p, ArrayList<String> l) {
+	public InventoryListView(Activity context, char t, ArrayList<String> p,
+							 ArrayList<String> l, ArrayList<String> d) {
 		super();
 		this.type = t;
-		this.pal = p;
-		this.loc= l;
+		this.pallets = p;
+		this. locations = l;
+		this.dates = d;
 		this.inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 	}
 
@@ -50,8 +51,8 @@ public class StorageListView extends BaseAdapter {
 	 */
 	@Override
 	public int getCount() {
-		if (pal.size() == loc.size())
-			return pal.size();
+		if (pallets.size() == locations.size() && pallets.size() == dates.size())
+			return pallets.size();
 		else return -1;
 	}
 
@@ -86,24 +87,26 @@ public class StorageListView extends BaseAdapter {
 	public View getView(int position, View convertView, ViewGroup parent) {
 		View vi = convertView;
 		if (convertView == null)
-			vi = inflater.inflate(R.layout.custom_storage_row, null);
+			vi = inflater.inflate(R.layout.custom_inventory_row, null);
 
-		TextView left_title = (TextView)vi.findViewById(R.id.leftTitleTextView);
-		TextView left_sub = (TextView)vi.findViewById(R.id.leftSubTextView);
-		TextView right_title = (TextView)vi.findViewById(R.id.rightTitleTextView);
-		TextView right_sub = (TextView)vi.findViewById(R.id.rightSubTextView);
+		TextView first = (TextView)vi.findViewById(R.id.firstFieldTextView);
+		TextView second = (TextView)vi.findViewById(R.id.secondFieldTextView);
+		TextView third = (TextView)vi.findViewById(R.id.thirdFieldTextView);
 
-		if (type == 'i') {
-			left_title.setText(pal.get(position));
-			right_title.setText(loc.get(position));
-			left_sub.setText("Pallet Tag");
-			right_sub.setText("Location Number");
+		if (type == 'l') {
+			first.setText(locations.get(position));
+			second.setText(pallets.get(position));
+			third.setText(dates.get(position));
 		}
-		else if (type == 'o') {
-			left_title.setText(loc.get(position));
-			right_title.setText(pal.get(position));
-			left_sub.setText("Location Number");
-			right_sub.setText("Pallet Tag");
+		else if (type == 'd') {
+			first.setText(dates.get(position));
+			second.setText(pallets.get(position));
+			third.setText(locations.get(position));
+		}
+		else if (type == 'p') {
+			first.setText(pallets.get(position));
+			second.setText(locations.get(position));
+			third.setText(dates.get(position));
 		}
 
 		return vi;

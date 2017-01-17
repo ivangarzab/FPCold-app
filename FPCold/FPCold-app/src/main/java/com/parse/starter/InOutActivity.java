@@ -525,7 +525,7 @@ public class InOutActivity extends AppCompatActivity implements View.OnClickList
 
 	/**
 	 * Hides the SoftInputKeyboard
-	 * @param v : View of the component pressed
+	 * @param v : View of the component calling the method
 	 */
 	@Override
 	public void onClick(View v) {
