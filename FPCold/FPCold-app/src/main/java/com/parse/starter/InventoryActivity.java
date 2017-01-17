@@ -206,6 +206,9 @@ public class InventoryActivity extends AppCompatActivity implements View.OnClick
 		String msg = location + date_in;
 		// Call the AlertDialog
 		searchAction(title, msg);
+
+		// Reset location field
+		pallet_tag.setText("");
 	}
 
 	public void searchLocation(View view) {
@@ -234,6 +237,9 @@ public class InventoryActivity extends AppCompatActivity implements View.OnClick
 
 		// Call the AlertDialog
 		searchAction(title, msg);
+
+		// Reset location field
+		location_number.setText("");
 	}
 
 	public void searchAction(String title, String message) {
