@@ -10,10 +10,8 @@
     <option name="TOOL_WINDOW_CONFIGURED_FILTER" value="Show only selected application" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="b7ebd028-a641-4da1-8340-aa517d543491" name="Default" comment="Reset the fields once the search is done">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/misc.xml" afterPath="$PROJECT_DIR$/.idea/misc.xml" />
+    <list default="true" id="b7ebd028-a641-4da1-8340-aa517d543491" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/FPCold-app/src/main/java/com/parse/starter/InventoryActivity.java" afterPath="$PROJECT_DIR$/FPCold-app/src/main/java/com/parse/starter/InventoryActivity.java" />
     </list>
     <ignored path="FPCold.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -2046,11 +2044,18 @@
       <option name="project" value="LOCAL" />
       <updated>1484692896442</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="Reset the fields once the search is done (again)">
+      <created>1484694220228</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1484694220228</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-8" y="-8" width="1874" height="1096" extended-state="6" />
+    <frame x="-8" y="-8" width="1874" height="1096" extended-state="7" />
     <editor active="false" />
     <layout>
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
@@ -2103,7 +2108,8 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Fixes and Updates&#10;  -  Fixed the layout for TransferActivity&#10;     +  Added extra EditText as instructed&#10;  -  Continued with the coding of such class" />
     <MESSAGE value="Finished most functionality for TRANSFER&#10;  -  Fixed manifest&#10;  -  Finished functionality of layout + class" />
-    <option name="LAST_COMMIT_MESSAGE" value="Finished most functionality for TRANSFER&#10;  -  Fixed manifest&#10;  -  Finished functionality of layout + class" />
+    <MESSAGE value="Reset the fields once the search is done (again)" />
+    <option name="LAST_COMMIT_MESSAGE" value="Reset the fields once the search is done (again)" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager />
