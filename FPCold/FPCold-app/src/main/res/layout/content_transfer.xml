@@ -172,7 +172,7 @@
             android:text="TRANSFER"
             android:textColor="@color/colorMainText"
             android:background="@color/colorSecondary"
-            />
+            android:onClick="transferButtonAction"/>
 
         <Button
             android:layout_width="match_parent"
@@ -184,7 +184,7 @@
             android:text="FINISH"
             android:textColor="@color/colorMainText"
             android:background="@color/colorSecondary"
-            />
+            android:onClick="transferButtonAction"/>
 
     </LinearLayout>
 
