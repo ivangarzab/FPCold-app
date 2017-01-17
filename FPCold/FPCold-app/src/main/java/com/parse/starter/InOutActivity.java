@@ -65,7 +65,7 @@ public class InOutActivity extends AppCompatActivity implements View.OnClickList
 	private ArrayList<String> rack_numbers;
 
 	// Supporting flag for calling the external Barcode Scanner app
-	boolean flag;
+	private boolean flag;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {

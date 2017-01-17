@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
-    android:id="@+id/inoutRelativeLayout"
+    android:id="@+id/transferRelativeLayout"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -11,16 +11,16 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="com.parse.starter.InOutActivity"
-    tools:showIn="@layout/activity_in_out"
-    android:background="@color/colorBackground">
+    tools:context="com.parse.starter.TransferActivity"
+    android:background="@color/colorBackground"
+    tools:showIn="@layout/activity_transfer">
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/inoutInstructionsTextView"
+        android:id="@+id/transferInstructionsTextView"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="First scan FIRST TAG to be used followed by the SECOND TAG to be used as well."
+        android:text="First scan the pallet tag to be moved, followed by the location where the pallet is to be moved."
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
@@ -30,20 +30,20 @@
         android:orientation="vertical"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/inoutScannersLinearLayout"
-        android:layout_below="@+id/inoutInstructionsTextView"
+        android:id="@+id/transferScannersLinearLayout"
+        android:layout_below="@+id/transferInstructionsTextView"
         android:layout_marginTop="35sp">
 
 
         <RelativeLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/topFieldRelativeLayout"
+            android:id="@+id/transferPalletRelativeLayout"
             android:layout_weight="1">
             <ImageButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/inoutFirstImageButton"
+                android:id="@+id/transferFirstImageButton"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
                 android:src="@drawable/camera"
@@ -51,78 +51,85 @@
             <EditText
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/inoutFirstEditText"
-                android:layout_toRightOf="@+id/inoutFirstImageButton"
-                android:layout_toEndOf="@+id/inoutFirstImageButton"
-                android:layout_toLeftOf="@+id/inoutFirstKeyboardImageButton"
+                android:id="@+id/transferFirstEditText"
+                android:layout_toRightOf="@+id/transferFirstImageButton"
+                android:layout_toEndOf="@+id/transferFirstImageButton"
                 android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp"
-                android:hint="First Tag"
+                android:hint="Pallet Tag"
                 android:singleLine="true"
                 android:imeOptions="actionNext"
                 android:textColorHint="@color/colorSecondaryDark"
                 android:textColor="@color/colorSecondary"
                 android:textColorHighlight="@color/colorSecondaryLight"/>
-            <ImageButton
+        </RelativeLayout>
+
+        <RelativeLayout
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+             android:id="@+id/transferOldLocationRelativeLayout"
+             android:layout_marginTop="20dp"
+             android:layout_weight="1">
+             <ImageButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/inoutFirstKeyboardImageButton"
-                android:layout_alignParentRight="true"
-                android:layout_alignParentEnd="true"
-                android:src="@drawable/keyboard"
-                android:background="@color/colorBackground"
-                android:onClick="keybaordAction"/>
+                android:id="@+id/transferSecondImageButton"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:src="@drawable/camera"
+                android:background="@color/colorBackground"/>
+             <EditText
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/transferSecondEditText"
+                android:layout_toRightOf="@+id/transferSecondImageButton"
+                android:layout_toEndOf="@+id/transferSecondImageButton"
+                android:layout_marginLeft="10dp"
+                android:hint="Old Location Number"
+                android:singleLine="true"
+                android:imeOptions="actionNext"
+                android:textColorHint="@color/colorSecondaryDark"
+                android:textColor="@color/colorSecondary"
+                android:textColorHighlight="@color/colorSecondaryLight"/>
         </RelativeLayout>
 
         <RelativeLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/botFieldRelativeLayout"
-            android:layout_marginTop="25dp"
+            android:id="@+id/transferNewLocationRelativeLayout"
+            android:layout_marginTop="20dp"
             android:layout_weight="1">
             <ImageButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/inoutSecondImageButton"
+                android:id="@+id/transferThirdImageButton"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
                 android:src="@drawable/camera"
                 android:background="@color/colorBackground"/>
             <EditText
-                android:layout_width="wrap_content"
+                android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/inoutSecondEditText"
-                android:layout_toRightOf="@+id/inoutSecondImageButton"
-                android:layout_toEndOf="@+id/inoutSecondImageButton"
-                android:layout_toLeftOf="@+id/inoutSecondKeyboardImageButton"
+                android:id="@+id/transferThirdEditText"
+                android:layout_toRightOf="@+id/transferThirdImageButton"
+                android:layout_toEndOf="@+id/transferThirdImageButton"
                 android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp"
-                android:hint="Second Tag"
+                android:hint="New Location Number"
                 android:singleLine="true"
                 android:imeOptions="actionDone"
                 android:textColorHint="@color/colorSecondaryDark"
                 android:textColor="@color/colorSecondary"
                 android:textColorHighlight="@color/colorSecondaryLight"/>
-            <ImageButton
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/inoutSecondKeyboardImageButton"
-                android:layout_alignParentRight="true"
-                android:layout_alignParentEnd="true"
-                android:src="@drawable/keyboard"
-                android:background="@color/colorBackground"
-                android:onClick="keybaordAction"/>
         </RelativeLayout>
     </LinearLayout>
 
     <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/inoutMsgRelativeLayout"
-        android:layout_below="@+id/inoutScannersLinearLayout"
-        android:layout_above="@+id/inoutButtonsLinearLayout"
+        android:id="@+id/inoutMsgLinearLayout"
+        android:layout_below="@+id/transferScannersLinearLayout"
+        android:layout_above="@+id/transferButtonsLinearLayout"
         android:layout_marginTop="15sp"
-        android:background="@drawable/custom_list_view">
+        android:background="@color/colorBackgroundLight">
 
         <TextView
             android:layout_width="match_parent"
@@ -150,7 +157,7 @@
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/inoutButtonsLinearLayout"
+        android:id="@+id/transferButtonsLinearLayout"
         android:layout_alignParentBottom="true"
         android:layout_marginTop="15sp"
         android:isScrollContainer="false">
@@ -158,28 +165,27 @@
         <Button
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:id="@+id/inoutNextButton"
+            android:id="@+id/transferButton"
             android:layout_weight="1"
             android:layout_marginLeft="8sp"
             android:layout_marginRight="8sp"
-            android:text="Save &amp; Next"
+            android:text="TRANSFER"
             android:textColor="@color/colorMainText"
             android:background="@color/colorSecondary"
-            android:onClick="storageButtonAction"/>
+            android:onClick="transferButtonAction"/>
 
         <Button
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:id="@+id/inoutFinishButton"
+            android:id="@+id/transferFinishButton"
             android:layout_weight="1"
             android:layout_marginLeft="8sp"
             android:layout_marginRight="8sp"
             android:text="FINISH"
             android:textColor="@color/colorMainText"
             android:background="@color/colorSecondary"
-            android:onClick="storageButtonAction"/>
+            android:onClick="transferButtonAction"/>
 
     </LinearLayout>
-
 
 </RelativeLayout>

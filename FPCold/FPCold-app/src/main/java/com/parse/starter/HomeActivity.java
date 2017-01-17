@@ -105,9 +105,9 @@ public class HomeActivity extends AppCompatActivity {
 			//Toast.makeText(getApplicationContext(), "OUTBOUND!", Toast.LENGTH_LONG).show();
 		}
 		else if (view.getId() == R.id.transferHomeButton) {
-			//i = new Intent(context, TransferActivity.class);
-			//flag = true;
-			Toast.makeText(getApplicationContext(), "TRANSFER!", Toast.LENGTH_LONG).show();
+			i = new Intent(context, TransferActivity.class);
+			flag = true;
+			//Toast.makeText(getApplicationContext(), "TRANSFER!", Toast.LENGTH_LONG).show();
 		}
 		else if (view.getId() == R.id.inventoryHomeButton) {
 			i = new Intent(context, InventoryActivity.class);
