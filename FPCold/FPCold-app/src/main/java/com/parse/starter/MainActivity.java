@@ -9,6 +9,8 @@
 package com.parse.starter;
 
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
@@ -36,7 +38,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
 	// Activity's UI
 	private RelativeLayout RL;
-	private LinearLayout logo;
+	private ImageView logo;
 	private EditText pinNumber;
 
 	@Override
@@ -46,10 +48,11 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
 		ParseAnalytics.trackAppOpenedInBackground(getIntent());
 		setTitle("");
+		getSupportActionBar().setElevation(0);
 
 		// Initiate the UI for this activity
 		RL = (RelativeLayout) findViewById(R.id.loginRelativeLayout);
-		logo = (LinearLayout) findViewById(R.id.logoLinearLayout);
+		logo = (ImageView) findViewById(R.id.mainImageView);
 		pinNumber = (EditText) findViewById(R.id.loginEditText);
 
 		// Set up native OnClickListeners
@@ -103,7 +106,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 	 */
 	@Override
 	public void onClick(View v) {
-		if (v.getId() == R.id.loginRelativeLayout || v.getId() == R.id.logoLinearLayout) {
+		if (v.getId() == R.id.loginRelativeLayout || v.getId() == R.id.mainImageView) {
 			InputMethodManager imm = (InputMethodManager)getSystemService(INPUT_METHOD_SERVICE);
 			imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
 		}
