@@ -54,13 +54,24 @@
                 android:id="@+id/transferFirstEditText"
                 android:layout_toRightOf="@+id/transferFirstImageButton"
                 android:layout_toEndOf="@+id/transferFirstImageButton"
+                android:layout_toLeftOf="@+id/transferFirstKeyboardImageButton"
                 android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
                 android:hint="Pallet Tag"
                 android:singleLine="true"
                 android:imeOptions="actionNext"
                 android:textColorHint="@color/colorSecondaryDark"
                 android:textColor="@color/colorSecondary"
                 android:textColorHighlight="@color/colorSecondaryLight"/>
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/transferFirstKeyboardImageButton"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true"
+                android:src="@drawable/keyboard"
+                android:background="@color/colorBackground"
+                android:onClick="keyboardAction"/>
         </RelativeLayout>
 
         <RelativeLayout
@@ -83,13 +94,24 @@
                 android:id="@+id/transferSecondEditText"
                 android:layout_toRightOf="@+id/transferSecondImageButton"
                 android:layout_toEndOf="@+id/transferSecondImageButton"
+                android:layout_toLeftOf="@+id/transferSecondKeyboardImageButton"
                 android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
                 android:hint="Old Location Number"
                 android:singleLine="true"
                 android:imeOptions="actionNext"
                 android:textColorHint="@color/colorSecondaryDark"
                 android:textColor="@color/colorSecondary"
                 android:textColorHighlight="@color/colorSecondaryLight"/>
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/transferSecondKeyboardImageButton"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true"
+                android:src="@drawable/keyboard"
+                android:background="@color/colorBackground"
+                android:onClick="keyboardAction"/>
         </RelativeLayout>
 
         <RelativeLayout
@@ -112,13 +134,24 @@
                 android:id="@+id/transferThirdEditText"
                 android:layout_toRightOf="@+id/transferThirdImageButton"
                 android:layout_toEndOf="@+id/transferThirdImageButton"
+                android:layout_toLeftOf="@+id/transferThirdKeyboardImageButton"
                 android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
                 android:hint="New Location Number"
                 android:singleLine="true"
                 android:imeOptions="actionDone"
                 android:textColorHint="@color/colorSecondaryDark"
                 android:textColor="@color/colorSecondary"
                 android:textColorHighlight="@color/colorSecondaryLight"/>
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/transferThirdKeyboardImageButton"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true"
+                android:src="@drawable/keyboard"
+                android:background="@color/colorBackground"
+                android:onClick="keyboardAction"/>
         </RelativeLayout>
     </LinearLayout>
 
@@ -129,7 +162,7 @@
         android:layout_below="@+id/transferScannersLinearLayout"
         android:layout_above="@+id/transferButtonsLinearLayout"
         android:layout_marginTop="15sp"
-        android:background="@color/colorBackgroundLight">
+        android:background="@drawable/custom_list_view">
 
         <TextView
             android:layout_width="match_parent"

@@ -71,7 +71,7 @@
                 android:layout_alignParentEnd="true"
                 android:src="@drawable/keyboard"
                 android:background="@color/colorBackground"
-                android:onClick="keybaordAction"/>
+                android:onClick="keyboardAction"/>
         </RelativeLayout>
 
         <RelativeLayout
@@ -111,7 +111,7 @@
                 android:layout_alignParentEnd="true"
                 android:src="@drawable/keyboard"
                 android:background="@color/colorBackground"
-                android:onClick="keybaordAction"/>
+                android:onClick="keyboardAction"/>
         </RelativeLayout>
     </LinearLayout>
 

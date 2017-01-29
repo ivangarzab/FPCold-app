@@ -52,6 +52,30 @@
                 android:layout_marginLeft="6sp"
                 android:src="@drawable/camera"
                 android:background="@color/colorBackgroundLight"/>
+            <EditText
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/inventoryTopEditText"
+                android:layout_toRightOf="@+id/inventoryTopImageButton"
+                android:layout_toEndOf="@+id/inventoryTopImageButton"
+                android:layout_toLeftOf="@+id/inventoryTopKeyboardImageButton"
+                android:layout_marginStart="10dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="5dp"
+                android:hint="Pallet Tag"
+                android:singleLine="true"
+                android:imeOptions="actionDone"
+                android:textColorHint="@color/colorSecondaryDark"
+                android:textColor="@color/colorSecondary"
+                android:textColorHighlight="@color/colorSecondaryLight"/>
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/inventoryTopKeyboardImageButton"
+                android:layout_toLeftOf="@+id/inventoryTopSearchButton"
+                android:src="@drawable/keyboard"
+                android:background="@color/colorBackgroundLight"
+                android:onClick="keyboardAction"/>
             <ImageButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -63,20 +87,6 @@
                 android:src="@drawable/search"
                 android:background="@color/colorBackgroundLight"
                 android:onClick="searchPallet"/>
-            <EditText
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/inventoryTopEditText"
-                android:layout_toRightOf="@+id/inventoryTopImageButton"
-                android:layout_toEndOf="@+id/inventoryTopImageButton"
-                android:layout_toLeftOf="@id/inventoryTopSearchButton"
-                android:layout_marginLeft="10dp"
-                android:hint="Pallet Tag"
-                android:singleLine="true"
-                android:imeOptions="actionDone"
-                android:textColorHint="@color/colorSecondaryDark"
-                android:textColor="@color/colorSecondary"
-                android:textColorHighlight="@color/colorSecondaryLight"/>
         </RelativeLayout>
 
         <TextView
@@ -151,6 +161,30 @@
                 android:layout_marginLeft="6sp"
                 android:src="@drawable/camera"
                 android:background="@color/colorBackgroundLight"/>
+            <EditText
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/inventoryBotEditText"
+                android:layout_toRightOf="@+id/inventoryBotImageButton"
+                android:layout_toEndOf="@+id/inventoryBotImageButton"
+                android:layout_toLeftOf="@+id/inventoryBotKeyboardImageButton"
+                android:layout_marginStart="10dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="5dp"
+                android:hint="Location Number"
+                android:singleLine="true"
+                android:imeOptions="actionDone"
+                android:textColorHint="@color/colorSecondaryDark"
+                android:textColor="@color/colorSecondary"
+                android:textColorHighlight="@color/colorSecondaryLight"/>
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/inventoryBotKeyboardImageButton"
+                android:layout_toLeftOf="@+id/inventoryBotSearchButton"
+                android:src="@drawable/keyboard"
+                android:background="@color/colorBackgroundLight"
+                android:onClick="keyboardAction"/>
             <ImageButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -162,20 +196,6 @@
                 android:src="@drawable/search"
                 android:background="@color/colorBackgroundLight"
                 android:onClick="searchLocation"/>
-            <EditText
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/inventoryBotEditText"
-                android:layout_toRightOf="@+id/inventoryBotImageButton"
-                android:layout_toEndOf="@+id/inventoryBotImageButton"
-                android:layout_toLeftOf="@id/inventoryBotSearchButton"
-                android:layout_marginLeft="10dp"
-                android:hint="Location Number"
-                android:singleLine="true"
-                android:imeOptions="actionDone"
-                android:textColorHint="@color/colorSecondaryDark"
-                android:textColor="@color/colorSecondary"
-                android:textColorHighlight="@color/colorSecondaryLight"/>
         </RelativeLayout>
 
         <TextView

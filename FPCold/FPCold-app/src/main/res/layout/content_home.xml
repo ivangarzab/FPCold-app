@@ -25,13 +25,24 @@
         android:layout_alignParentStart="true"
         android:textColor="@color/colorMainText"/>
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/homeDateTextView"
+        android:text="DATE"
+        android:textSize="15sp"
+        android:layout_below="@+id/greetingTextView"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:textColor="@color/colorMainText"/>
+
     <TextClock
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/textClock"
         android:layout_below="@+id/greetingTextView"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
+        android:layout_toRightOf="@+id/homeDateTextView"
+        android:layout_marginLeft="6sp"
         android:textColor="@color/colorMainText"/>
 
     <LinearLayout

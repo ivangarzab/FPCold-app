@@ -12,10 +12,13 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.InputType;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
@@ -83,6 +86,37 @@ public class InventoryActivity extends AppCompatActivity implements View.OnClick
 		RL.setOnClickListener(this);
 		top_instructions.setOnClickListener(this);
 		bot_instructions.setOnClickListener(this);
+
+		pallet_tag.setInputType(InputType.TYPE_NULL);
+		location_number.setInputType(InputType.TYPE_NULL);
+
+		pallet_tag.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+			@Override
+			public boolean onEditorAction(TextView v, int i, KeyEvent event) {
+				boolean handled = false;
+				if (i == EditorInfo.IME_ACTION_DONE) {
+					pallet_tag.setInputType(InputType.TYPE_NULL);
+					hideKeyboard();
+					handled = true;
+				}
+
+				return handled;
+			}
+		});
+
+		location_number.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+			@Override
+			public boolean onEditorAction(TextView v, int i, KeyEvent event) {
+				boolean handled = false;
+				if (i == EditorInfo.IME_ACTION_DONE) {
+					location_number.setInputType(InputType.TYPE_NULL);
+					hideKeyboard();
+					handled = true;
+				}
+
+				return handled;
+			}
+		});
 
 		// Set the extra OnClickListeners to call external app Barcode Scanner
 		pallet_camera.setOnClickListener(new View.OnClickListener() {
@@ -177,6 +211,27 @@ public class InventoryActivity extends AppCompatActivity implements View.OnClick
 			t.show();
 		}
 
+	}
+
+	/**
+	 * Let the respective EditText input text through the soft keyboard
+	 * @param view : View which calls the method
+	 */
+	public void keyboardAction(View view) {
+		int id = view.getId();
+
+		if (id == R.id.inventoryTopKeyboardImageButton) {
+			pallet_tag.requestFocus();
+			pallet_tag.setInputType(InputType.TYPE_CLASS_TEXT);
+			InputMethodManager mgr = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+			mgr.showSoftInput(pallet_tag, InputMethodManager.SHOW_FORCED);
+		}
+		else if (id == R.id.inventoryBotKeyboardImageButton) {
+			location_number.requestFocus();
+			location_number.setInputType(InputType.TYPE_CLASS_TEXT);
+			InputMethodManager mgr = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+			mgr.showSoftInput(location_number, InputMethodManager.SHOW_FORCED);
+		}
 	}
 
 	public void searchPallet(View view) {
@@ -299,12 +354,12 @@ public class InventoryActivity extends AppCompatActivity implements View.OnClick
 			i = new Intent(context, InventoryList.class);
 			i.putExtra("type", 'l');
 			startActivity(i);
-			Toast.makeText(getApplicationContext(), "All Inventory", Toast.LENGTH_LONG).show();
+			//Toast.makeText(getApplicationContext(), "All Inventory", Toast.LENGTH_LONG).show();
 		}
 	}
 
 	/**
-	 * Hides the SoftInputKeyboard
+	 * * Handle the native onClick Action
 	 * @param v : View of the component calling the method
 	 */
 	@Override
@@ -314,9 +369,15 @@ public class InventoryActivity extends AppCompatActivity implements View.OnClick
 				v.getId() == R.id.inventoryBotInstructionsTextView ||
 				v.getId() == R.id.inventoryTopLinearLayout ||
 				v.getId() == R.id.inventoryBotLinearLayout) {
-			InputMethodManager imm = (InputMethodManager)getSystemService(INPUT_METHOD_SERVICE);
-			imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+			hideKeyboard();
 		}
 	}
 
+	/**
+	 * Hides the SoftInputKeyboard
+	 */
+	public void hideKeyboard() {
+		InputMethodManager imm = (InputMethodManager)getSystemService(INPUT_METHOD_SERVICE);
+		imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+	}
 }

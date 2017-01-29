@@ -23,6 +23,9 @@ import java.util.Date;
 
 public class HomeActivity extends AppCompatActivity {
 
+	// Activity's Context
+	final private Context context = this;
+
 	// Current User loged in for static use
 	public static ParseUser CURRENT_USER;
 	// Current User's Tier priviledges for static use
@@ -30,11 +33,8 @@ public class HomeActivity extends AppCompatActivity {
 	// Today's date
 	public static String DATE;
 
-	// Activity's Context
-	final private Context context = this;
-
 	// TextViews for greeting the user and the announcements
-	private TextView greet, announcement;
+	private TextView greet, date, announcement;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -46,12 +46,14 @@ public class HomeActivity extends AppCompatActivity {
 		setTitle("Dashboard");
 
 		greet = (TextView) findViewById(R.id.greetingTextView);
+		date = (TextView)findViewById(R.id.homeDateTextView);
 		announcement = (TextView) findViewById(R.id.announcementTextView);
 
 		greet.setText("Welcome " + getCurrentUser());
 
 		SimpleDateFormat datestamp = new SimpleDateFormat("MM-dd-yy");
 		DATE = datestamp.format(new Date());
+		date.setText(DATE);
 	}
 
 	@Override

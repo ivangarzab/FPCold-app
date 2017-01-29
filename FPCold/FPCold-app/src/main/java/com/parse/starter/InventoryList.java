@@ -112,9 +112,9 @@ public class InventoryList extends AppCompatActivity {
 		// Retrieve all of the rack numbers, product tags and their dates
 		ParseQuery<ParseObject> query = new ParseQuery<>("Product");
 		if (TYPE == 'l')
-			query.addDescendingOrder("location");
+			query.addAscendingOrder("location");
 		if (TYPE == 'd')
-			query.addDescendingOrder("dateIn");
+			query.addAscendingOrder("dateIn");
 		query.findInBackground(new FindCallback<ParseObject>() {
 			@Override
 			public void done(List<ParseObject> objects, ParseException e) {

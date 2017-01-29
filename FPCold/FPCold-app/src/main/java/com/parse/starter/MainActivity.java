@@ -75,8 +75,14 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 	 * @param view : Pressed button's View
 	 */
 	public void loginAction(View view) {
+		// Hide SoftInputKeyboard
+		InputMethodManager imm = (InputMethodManager)getSystemService(INPUT_METHOD_SERVICE);
+		imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+
+		// User PIN #
 		String pin = pinNumber.getText().toString();
 
+		// Attempt to login with Parse
 		ParseUser.logInInBackground(pin, pin, new LogInCallback() {
 			@Override
 			public void done(ParseUser user, ParseException e) {
@@ -92,7 +98,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 	}
 
 	/**
-	 * Hides the SoftInputKeyboard
+	 * Hides the SoftInputKeyboard when clicking on the layout
 	 * @param v : View of the component pressed
 	 */
 	@Override

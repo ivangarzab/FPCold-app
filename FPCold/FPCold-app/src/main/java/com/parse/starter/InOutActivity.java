@@ -79,9 +79,8 @@ public class InOutActivity extends AppCompatActivity implements View.OnClickList
 		Intent i = getIntent();
 		TYPE = i.getCharExtra("type", 'c');
 
-		// Initialization of all variables
+		// Initialization of variables
 		RL = (RelativeLayout)findViewById(R.id.inoutRelativeLayout);
-		lv = (ListView)findViewById(R.id.checkedInoutListView);
 
 		///// UI variables
 		instructions = (TextView)findViewById(R.id.inoutInstructionsTextView);
@@ -138,7 +137,9 @@ public class InOutActivity extends AppCompatActivity implements View.OnClickList
 
 		// Hide the keyboard from EditTexts
 		first_number.setInputType(InputType.TYPE_NULL);
+		first_number.setOnClickListener(this);
 		second_number.setInputType(InputType.TYPE_NULL);
+		second_number.setOnClickListener(this);
 
 		// Set IME Action behaviors
 		first_number.setOnEditorActionListener(new TextView.OnEditorActionListener() {
@@ -146,7 +147,7 @@ public class InOutActivity extends AppCompatActivity implements View.OnClickList
 			public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
 				boolean handled = false;
 				if (i == EditorInfo.IME_ACTION_NEXT) {
-					keybaordAction(findViewById(R.id.inoutSecondEditText +1));
+					keyboardAction(findViewById(R.id.inoutSecondEditText +1));
 					first_number.setInputType(InputType.TYPE_NULL);
 					handled = true;
 				}
@@ -161,8 +162,7 @@ public class InOutActivity extends AppCompatActivity implements View.OnClickList
 				boolean handled = false;
 				if (i == EditorInfo.IME_ACTION_DONE) {
 					second_number.setInputType(InputType.TYPE_NULL);
-					InputMethodManager imm = (InputMethodManager)getSystemService(INPUT_METHOD_SERVICE);
-					imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+					hideKeyboard();
 					handled = true;
 				}
 
@@ -284,7 +284,8 @@ public class InOutActivity extends AppCompatActivity implements View.OnClickList
 		// We are performing an inbound
 		if (c == 'i') {
 			setTitle("IN");
-			getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.rgb(0,51,0)));
+			getSupportActionBar().setBackgroundDrawable(
+					new ColorDrawable(getResources().getColor(R.color.colorInbound)));
 			inst = "First scan pallet tag to be stored " +
 					"followed by the location number where it will be stored to.";
 			first_number.setHint(pallet_hint);
@@ -293,7 +294,8 @@ public class InOutActivity extends AppCompatActivity implements View.OnClickList
 		// We are performing an outbound
 		else if (c == 'o') {
 			setTitle("OUT");
-			getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.rgb(102,0,0)));
+			getSupportActionBar().setBackgroundDrawable(
+					new ColorDrawable(getResources().getColor(R.color.colorOutbound)));
 			inst = "First scan the location number to be unload " +
 					"followed by the pallet tag that will be unloaded.";
 			first_number.setHint(location_hint);
@@ -307,7 +309,7 @@ public class InOutActivity extends AppCompatActivity implements View.OnClickList
 	 * Let the respective EditText input text through the soft keyboard
 	 * @param view : View which calls the method
 	 */
-	public void keybaordAction(View view) {
+	public void keyboardAction(View view) {
 		int id = view.getId();
 
 		if (id == R.id.inoutFirstKeyboardImageButton) {
@@ -509,6 +511,7 @@ public class InOutActivity extends AppCompatActivity implements View.OnClickList
 				.setPositiveButton("YES", new DialogInterface.OnClickListener() {
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
+						hideKeyboard();
 						Intent i = new Intent(getApplicationContext(), HomeActivity.class);
 						startActivity(i);
 					}
@@ -524,16 +527,25 @@ public class InOutActivity extends AppCompatActivity implements View.OnClickList
 	}
 
 	/**
-	 * Hides the SoftInputKeyboard
+	 * Handle the native onClick Action
 	 * @param v : View of the component calling the method
 	 */
 	@Override
 	public void onClick(View v) {
-		if (v.getId() == R.id.inoutRelativeLayout ||
-				v.getId() == R.id.inoutInstructionsTextView) {
-			InputMethodManager imm = (InputMethodManager)getSystemService(INPUT_METHOD_SERVICE);
-			imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+		if (v.getId() == R.id.inoutRelativeLayout || v.getId() == R.id.inoutInstructionsTextView) {
+			hideKeyboard();
+		}
+		else if (v.getId() == R.id.inoutFirstImageButton
+				|| v.getId() == R.id.inoutSecondImageButton) {
+			hideKeyboard();
 		}
 	}
 
+	/**
+	 * Hides the SoftInputKeyboard
+	 */
+	public void hideKeyboard() {
+		InputMethodManager imm = (InputMethodManager)getSystemService(INPUT_METHOD_SERVICE);
+		imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+	}
 }

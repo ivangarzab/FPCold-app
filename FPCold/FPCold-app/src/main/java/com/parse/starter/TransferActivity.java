@@ -7,11 +7,14 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.InputType;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -74,6 +77,8 @@ public class TransferActivity extends AppCompatActivity implements View.OnClickL
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
 		setTitle("TRANSFER");
+		getSupportActionBar().setBackgroundDrawable(
+				new ColorDrawable(getResources().getColor(R.color.colorTransfer)));
 
 		// Initialization of all variables
 		RL = (RelativeLayout)findViewById(R.id.transferRelativeLayout);
@@ -103,13 +108,19 @@ public class TransferActivity extends AppCompatActivity implements View.OnClickL
 		RL.setOnClickListener(this);
 		instructions.setOnClickListener(this);
 
+		// Hide the keyboard from EditTexts
+		pallet_tag.setInputType(InputType.TYPE_NULL);
+		old_location.setInputType(InputType.TYPE_NULL);
+		new_location.setInputType(InputType.TYPE_NULL);
+
 		// Set IME Action behavior
 		pallet_tag.setOnEditorActionListener(new TextView.OnEditorActionListener() {
 			@Override
 			public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
 				boolean handled = false;
 				if (i == EditorInfo.IME_ACTION_NEXT) {
-					old_location.requestFocus();
+					keyboardAction(findViewById(R.id.transferSecondEditText +1));
+					pallet_tag.setInputType(InputType.TYPE_NULL);
 					handled = true;
 				}
 
@@ -122,7 +133,22 @@ public class TransferActivity extends AppCompatActivity implements View.OnClickL
 			public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
 				boolean handled = false;
 				if (i == EditorInfo.IME_ACTION_NEXT) {
-					new_location.requestFocus();
+					keyboardAction(findViewById(R.id.transferThirdEditText +1));
+					old_location.setInputType(InputType.TYPE_NULL);
+					handled = true;
+				}
+
+				return handled;
+			}
+		});
+
+		new_location.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+			@Override
+			public boolean onEditorAction(TextView v, int i, KeyEvent event) {
+				boolean handled = false;
+				if (i == EditorInfo.IME_ACTION_DONE) {
+					new_location.setInputType(InputType.TYPE_NULL);
+					hideKeyboard();
 					handled = true;
 				}
 
@@ -235,6 +261,33 @@ public class TransferActivity extends AppCompatActivity implements View.OnClickL
 			t.show();
 		}
 
+	}
+
+	/**
+	 * Let the respective EditText input text through the soft keyboard
+	 * @param view : View which calls the method
+	 */
+	public void keyboardAction(View view) {
+		int id = view.getId();
+
+		if (id == R.id.transferFirstKeyboardImageButton) {
+			pallet_tag.requestFocus();
+			pallet_tag.setInputType(InputType.TYPE_CLASS_TEXT);
+			InputMethodManager mgr = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+			mgr.showSoftInput(pallet_tag, InputMethodManager.SHOW_FORCED);
+		}
+		else if (id == R.id.transferSecondKeyboardImageButton) {
+			old_location.requestFocus();
+			old_location.setInputType(InputType.TYPE_CLASS_TEXT);
+			InputMethodManager mgr = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+			mgr.showSoftInput(old_location, InputMethodManager.SHOW_FORCED);
+		}
+		else if (id == R.id.transferThirdKeyboardImageButton) {
+			new_location.requestFocus();
+			new_location.setInputType(InputType.TYPE_CLASS_TEXT);
+			InputMethodManager mgr = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+			mgr.showSoftInput(new_location, InputMethodManager.SHOW_FORCED);
+		}
 	}
 
 	public void transferButtonAction(View view) {
@@ -350,15 +403,22 @@ public class TransferActivity extends AppCompatActivity implements View.OnClickL
 	}
 
 	/**
-	 * Hides the SoftInputKeyboard
+	 * Handle the native onClick Action
 	 * @param v : View of the component pressed
 	 */
 	@Override
 	public void onClick(View v) {
 		if (v.getId() == R.id.transferRelativeLayout||
 				v.getId() == R.id.transferInstructionsTextView) {
-			InputMethodManager imm = (InputMethodManager)getSystemService(INPUT_METHOD_SERVICE);
-			imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+			hideKeyboard();
 		}
+	}
+
+	/**
+	 * Hides the SoftInputKeyboard
+	 */
+	public void hideKeyboard() {
+		InputMethodManager imm = (InputMethodManager)getSystemService(INPUT_METHOD_SERVICE);
+		imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
 	}
 }
