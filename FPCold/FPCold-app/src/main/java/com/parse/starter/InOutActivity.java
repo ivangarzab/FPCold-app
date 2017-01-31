@@ -383,11 +383,13 @@ public class InOutActivity extends AppCompatActivity implements View.OnClickList
 		}
 
 		// Save the new product into the virtual storage
-		/// When done, reset EditText fields and update list if desired
+		// and reset EditText fields and update list if desired
 		ParseObject product = new ParseObject("Product");
 		product.put("tag", palletNo);
 		product.put("location", locationNo);
 		product.put("dateIn", HomeActivity.DATE);
+		product.saveEventually();
+		/*
 		product.saveEventually(new SaveCallback() {
 			@Override
 			public void done(ParseException e) {
@@ -396,6 +398,10 @@ public class InOutActivity extends AppCompatActivity implements View.OnClickList
 				second_number.setText("");
 			}
 		});
+		*/
+		if (update) updateList(palletNo, locationNo);
+		first_number.setText("");
+		second_number.setText("");
 	}
 
 	/**
@@ -430,6 +436,13 @@ public class InOutActivity extends AppCompatActivity implements View.OnClickList
 			return;
 		}
 
+		ParseObject obj = new ParseObject("Product");
+		try {
+			obj.fetch();
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+
 		ParseQuery<ParseObject> query = new ParseQuery<>("Product");
 		query.findInBackground(new FindCallback<ParseObject>() {
 			@Override
@@ -438,7 +451,7 @@ public class InOutActivity extends AppCompatActivity implements View.OnClickList
 					for (ParseObject object : objects) {
 						if (object.get("location").equals(locationNo)
 								&& object.get("tag").equals(palletNo)) {
-							object.deleteInBackground(new DeleteCallback() {
+							object.deleteEventually(new DeleteCallback() {
 								@Override
 								public void done(ParseException e) {
 									if (update) updateList(palletNo, locationNo);
