@@ -185,10 +185,12 @@ public class InOutActivity extends AppCompatActivity implements View.OnClickList
 
 		// Populate the virtual_locations list for the outbound to check for existence of locations
 		//  on the local virtual storage
-		for (Product p : HomeActivity.V_STORAGE) {
-			String l = p.getLocation();
-			if (!(virtual_locations.contains(l))) {
-				virtual_locations.add(l);
+		if (TYPE == 'o') {
+			for (Product p : HomeActivity.V_STORAGE) {
+				String l = p.getLocation();
+				if (!(virtual_locations.contains(l))) {
+					virtual_locations.add(l);
+				}
 			}
 		}
 	}
@@ -370,7 +372,7 @@ public class InOutActivity extends AppCompatActivity implements View.OnClickList
 		// Save the new product into the virtual storage and TAKE_IN list
 		Product p = new Product(palletNo, locationNo, HomeActivity.DATE);
 		HomeActivity.V_STORAGE.add(p);
-		MainActivity.TAKE_IN.add(p);
+		//MainActivity.TAKE_IN.add(p);
 		// Reset EditText fields and update list if desired
 		if (update) updateList(palletNo, locationNo);
 		first_number.setText("");
@@ -411,7 +413,7 @@ public class InOutActivity extends AppCompatActivity implements View.OnClickList
 		for (Product p : HomeActivity.V_STORAGE) {
 			if (p.getTag().equals(palletNo) && p.getLocation().equals(locationNo)) {
 				HomeActivity.V_STORAGE.remove(p);
-				MainActivity.TAKE_OUT.add(p);
+				//MainActivity.TAKE_OUT.add(p);
 
 				if (update) updateList(palletNo, locationNo);
 				first_number.setText("");

@@ -1,19 +1,13 @@
 package com.parse.starter;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -27,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import sapphire.InventoryListView;
+import sapphire.Product;
 
 public class InventoryList extends AppCompatActivity {
 
@@ -48,6 +43,9 @@ public class InventoryList extends AppCompatActivity {
 	private ArrayList<String> pallets;
 	private ArrayList<String> locations;
 	private ArrayList<String> dates;
+
+	// Virutal Storage holder for sorting
+	private ArrayList<Product> VS;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -109,27 +107,13 @@ public class InventoryList extends AppCompatActivity {
 			}
 		});		*/
 
-		// Retrieve all of the rack numbers, product tags and their dates
-		ParseQuery<ParseObject> query = new ParseQuery<>("Product");
-		if (TYPE == 'l')
-			query.addAscendingOrder("location");
-		if (TYPE == 'd')
-			query.addAscendingOrder("dateIn");
-		query.findInBackground(new FindCallback<ParseObject>() {
-			@Override
-			public void done(List<ParseObject> objects, ParseException e) {
-				if (e == null) {
-					if (objects.size() > 0) {
-						for (ParseObject obj : objects) {
-							pallets.add(obj.getString("tag"));
-							locations.add(obj.getString("location"));
-							dates.add(obj.getString("dateIn"));
-						}
-						lv.setAdapter(IA);
-					}
-				}
-			}
-		});
+		// Show the inventory WITHOUT any sorting
+		for (Product p : HomeActivity.V_STORAGE) {
+			pallets.add(p.getTag());
+			locations.add(p.getLocation());
+			dates.add(p.getDate());
+		}
+		lv.setAdapter(IA);
 	}
 
 	@Override

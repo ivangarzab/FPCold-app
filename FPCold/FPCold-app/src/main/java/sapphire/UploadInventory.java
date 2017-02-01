@@ -58,60 +58,6 @@ public class UploadInventory extends AsyncTask<Void, Void, Void> {
 
 	@Override
 	protected Void doInBackground(Void... params) {
-		// IN
-		if (MainActivity.TAKE_IN.size() > 0) {
-			for (final Product i : MainActivity.TAKE_IN) {
-				ParseObject product = new ParseObject("Product");
-				product.put("tag", i.getTag());
-				product.put("location", i.getLocation());
-				product.put("dateIn", i.getDate());
-				product.saveInBackground();
-
-				MainActivity.TAKE_IN = new ArrayList<>();
-			}
-		}
-
-		// OUT
-		//// if Product doesn't have an ObjectID, do something!
-		if (MainActivity.TAKE_OUT.size() > 0) {
-			for (final Product o : MainActivity.TAKE_OUT) {
-				ParseQuery<ParseObject> query = ParseQuery.getQuery("Product");
-				query.getInBackground(o.getObjectID(), new GetCallback<ParseObject>() {
-					public void done(ParseObject object, ParseException e) {
-						if (e == null) {
-							object.deleteInBackground();
-						}
-					}
-				});
-				MainActivity.TAKE_OUT = new ArrayList<>();
-			}
-		}
-
-		// TRANSFER
-		if (MainActivity.TAKE_TRANSFER.size() > 0) {
-			for (final Product t : MainActivity.TAKE_TRANSFER) {
-				ParseQuery<ParseObject> query = ParseQuery.getQuery("Product");
-				query.getInBackground(t.getObjectID(), new GetCallback<ParseObject>() {
-					public void done(ParseObject object, ParseException e) {
-						if (e == null) {
-							if (!(object.getString("location").equals(t.getLocation()))) {
-								object.put("location", t.getLocation());
-								object.saveInBackground();
-
-							}
-						}
-					}
-				});
-				MainActivity.TAKE_TRANSFER = new ArrayList<>();
-			}
-		}
-
-		return null;
-	}
-
-	/*
-	@Override
-	protected Void doInBackground(Void... params) {
 		// Cloud Storage
 		final ArrayList<Product> CS = new ArrayList<>();
 		// Lists to divide the Local Storage(LS) into two
@@ -158,7 +104,7 @@ public class UploadInventory extends AsyncTask<Void, Void, Void> {
 		updateINs(tag_list);
 
 		return null;
-	}	*/
+	}
 
 	private void updateINs(ArrayList<Product> prod) {
 		for (final Product p : prod) {
@@ -166,9 +112,10 @@ public class UploadInventory extends AsyncTask<Void, Void, Void> {
 			product.put("tag", p.getTag());
 			product.put("location", p.getLocation());
 			product.put("dateIn", p.getDate());
-			product.saveEventually();
+			product.saveInBackground();
+
+			updateProduct(p);
 		}
-		//updateProducts(prod);
 	}
 
 	private void updateOUTs(ArrayList<Product> prod) {
@@ -177,7 +124,7 @@ public class UploadInventory extends AsyncTask<Void, Void, Void> {
 			query.getInBackground(p.getObjectID(), new GetCallback<ParseObject>() {
 				public void done(ParseObject object, ParseException e) {
 					if (e == null) {
-						object.deleteEventually();
+						object.deleteInBackground();
 					}
 				}
 			});
@@ -201,21 +148,25 @@ public class UploadInventory extends AsyncTask<Void, Void, Void> {
 		}
 	}
 
-	private void updateProducts(final ArrayList<Product> prod) {
+	private void updateProduct(final Product prod) {
 		ParseQuery<ParseObject> query = new ParseQuery<>("Product");
-		query.addAscendingOrder("dateIn");
 		query.findInBackground(new FindCallback<ParseObject>() {
 			@Override
 			public void done(List<ParseObject> objects, ParseException e) {
 				if (e == null) {
 					for (ParseObject obj : objects) {
 						String tag = obj.getString("tag");
-						if (prod.contains(tag)) {
-							HomeActivity.V_STORAGE.get(prod.indexOf(tag)).setObjectID(obj.getObjectId());
+						if (prod.getTag().equals(tag)) {
+							prod.setObjectID(obj.getObjectId());
 						}
 					}
 				}
 			}
 		});
+		for (Product p : HomeActivity.V_STORAGE) {
+			if (p.getTag().equals(prod.getTag())) {
+				p.setObjectID(prod.getObjectID());
+			}
+		}
 	}
 }

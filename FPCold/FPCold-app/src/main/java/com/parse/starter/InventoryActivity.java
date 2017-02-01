@@ -37,6 +37,8 @@ import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
 
+import sapphire.Product;
+
 import static android.R.id.list;
 
 public class InventoryActivity extends AppCompatActivity implements View.OnClickListener {
@@ -51,10 +53,8 @@ public class InventoryActivity extends AppCompatActivity implements View.OnClick
 	private EditText pallet_tag, location_number;
 	private ImageButton pallet_camera, location_camera;
 
-	// Virutal storage variables
-	ArrayList<String> dates;
-	ArrayList<String> location_numbers;
-	ArrayList<String> pallet_numbers;
+	// Virutal storage variable for error support
+	ArrayList<String> virtual_locations;
 
 	// Supporting flag for calling the external Barcode Scanner app
 	boolean flag;
@@ -79,9 +79,13 @@ public class InventoryActivity extends AppCompatActivity implements View.OnClick
 		location_number = (EditText)findViewById(R.id.inventoryBotEditText);
 		location_camera = (ImageButton)findViewById(R.id.inventoryBotImageButton);
 
-		dates = new ArrayList<>();
-		location_numbers = new ArrayList<>();
-		pallet_numbers = new ArrayList<>();
+		virtual_locations = new ArrayList<>();
+		for (Product p : HomeActivity.V_STORAGE) {
+			String l = p.getLocation();
+			if (!(virtual_locations.contains(l))) {
+				virtual_locations.add(l);
+			}
+		}
 
 		RL.setOnClickListener(this);
 		top_instructions.setOnClickListener(this);
@@ -136,25 +140,6 @@ public class InventoryActivity extends AppCompatActivity implements View.OnClick
 				scanIntegrator.initiateScan();
 			}
 		});
-
-		// Retrieve all of the racks and their IDs from the server
-		ParseQuery<ParseObject> query = new ParseQuery<>("Product");
-		query.findInBackground(new FindCallback<ParseObject>() {
-			@Override
-			public void done(List<ParseObject> objects, ParseException e) {
-				if (e == null) {
-					if (objects.size() > 0) {
-						for (ParseObject obj : objects) {
-							dates.add(obj.getString("dateIn"));
-							location_numbers.add(obj.getString("location"));
-							pallet_numbers.add(obj.getString("tag"));
-						}
-					}
-				}
-			}
-		});
-
-
 	}
 
 	@Override
@@ -235,64 +220,58 @@ public class InventoryActivity extends AppCompatActivity implements View.OnClick
 	}
 
 	public void searchPallet(View view) {
-		// if the pallet field is empty, throw an error
 		String pallet = pallet_tag.getText().toString();
+		// if the pallet field is empty, throw an error
 		if (pallet.equals("")) {
 			searchError('p');
 			return;
 		}
+		// Travese the Virutal Storage to find pallet
+		/// if it exists, show information and clear EditText field
+		for (Product p : HomeActivity.V_STORAGE) {
+			if (p.getTag().equals(pallet)) {
+				// Set up Strings for the formatting of the AlertDialog
+				String title = "Pallet #" + pallet;
 
+				String location = "Location: " + p.getLocation() + "\n";
+				String date_in = "\nDate in: " + p.getDate() + "\n";
+				String msg = location + date_in;
+
+				// Call the AlertDialog
+				searchAction(title, msg);
+				// Reset location field
+				pallet_tag.setText("");
+				return;
+			}
+		}
 		// if the pallet does not exist, throw an error
-		int position;
-		if (!(pallet_numbers.contains(pallet))) {
-			searchError('p');
-			return;
-		}
-		else {
-			Log.i("TRASH", "WORKING POSTION");
-			position = pallet_numbers.indexOf(pallet);
-		}
-
-		// Set up Strings for the formatting of the AlertDialog
-		String title = "Pallet #" + pallet;
-
-		String location = "Location: " + location_numbers.get(position) + "\n";
-		String date_in = "\nDate in: " + dates.get(position) + "\n";
-		String msg = location + date_in;
-		// Call the AlertDialog
-		searchAction(title, msg);
-
-		// Reset location field
-		pallet_tag.setText("");
+		searchError('p');
 	}
 
 	public void searchLocation(View view) {
-		// if the location field is empty, throw an error
 		String location = location_number.getText().toString();
+		// if the location field is empty, throw an error
 		if (location.equals("")) {
 			searchError('l');
 			return;
 		}
-
 		// if the location does not exist, throw an error
-		if (!(location_numbers.contains(location))) {
+		if (!(virtual_locations.contains(location))) {
 			searchError('l');
 			return;
 		}
 
 		// Set up Strings for the formatting of the AlertDialog
 		String title = "Location #" +location;
-
 		String msg = String.format("%1$-8s %2$32s\n", "Date in", "Pallet #");
-		/// Search for the pallet tags with the desired location
-		for (int i = 0; i < pallet_numbers.size(); i++) {
-			if (location_numbers.get(i).equals(location))
-				msg += String.format("%1$-30s %2$-10s%n", dates.get(i), pallet_numbers.get(i));
+		//Traverse the Vritual Storage to find all products in given location
+		for (Product p : HomeActivity.V_STORAGE) {
+			if (p.getLocation().equals(location)) {
+				msg += String.format("%1$-30s %2$-10s%n", p.getDate(), p.getTag());
+			}
 		}
-
 		// Call the AlertDialog
 		searchAction(title, msg);
-
 		// Reset location field
 		location_number.setText("");
 	}

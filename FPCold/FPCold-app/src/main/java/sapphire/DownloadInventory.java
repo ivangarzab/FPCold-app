@@ -58,6 +58,7 @@ public class DownloadInventory extends AsyncTask<Void, Void, Void> {
 	protected Void doInBackground(Void... params) {
 		ParseQuery<ParseObject> query = new ParseQuery<>("Product");
 		query.addAscendingOrder("dateIn");
+		query.addAscendingOrder("location");
 		query.findInBackground(new FindCallback<ParseObject>() {
 			@Override
 			public void done(List<ParseObject> objects, ParseException e) {

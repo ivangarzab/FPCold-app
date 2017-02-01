@@ -45,12 +45,12 @@ import sapphire.Product;
 public class MainActivity extends ActionBarActivity implements View.OnClickListener {
 
 	// Flag for the Sync button
-	public static boolean SYNCH = false;
+	public static boolean SYNCH = false;/*
 	// Variables for Virtual Storage updates
 	public static ArrayList<Product> TAKE_IN;
 	public static ArrayList<Product> TAKE_OUT;
 	public static ArrayList<Product> TAKE_TRANSFER;
-
+*/
 	// Activity's UI
 	private RelativeLayout RL;
 	private LinearLayout logo;
@@ -85,10 +85,6 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 				return handled;
 			}
 		});
-
-		TAKE_IN = new ArrayList<>();
-		TAKE_OUT = new ArrayList<>();
-		TAKE_TRANSFER = new ArrayList<>();
 	}
 
 	/**

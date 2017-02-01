@@ -55,7 +55,7 @@ public class HomeActivity extends AppCompatActivity {
 		/// if true, download the virtual storage
 		Intent i = getIntent();
 		if (i.getBooleanExtra("download", false)) {
-			getVirutalStorage();
+			getVirtualStorage();
 		}
 		else {
 			Log.i("TRASH", "Contents of V_STORAGE");
@@ -113,7 +113,7 @@ public class HomeActivity extends AppCompatActivity {
 		return CURRENT_USER.getString("name");
 	}
 
-	private void getVirutalStorage() {
+	private void getVirtualStorage() {
 		V_STORAGE = new ArrayList<>();
 		// Prepare the virtual storage for offline use
 		DownloadInventory DI = new DownloadInventory(context);
@@ -163,7 +163,9 @@ public class HomeActivity extends AppCompatActivity {
 			if (MainActivity.SYNCH == true) {
 				UploadInventory UI = new UploadInventory(context);
 				UI.execute();
+
 				MainActivity.SYNCH = false;
+				//getVirtualStorage();
 			}
 			else
 				Toast.makeText(context,

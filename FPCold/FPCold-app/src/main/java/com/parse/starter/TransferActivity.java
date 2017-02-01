@@ -302,7 +302,7 @@ public class TransferActivity extends AppCompatActivity implements View.OnClickL
 					old_location.setText("");
 					new_location.setText("");
 
-					MainActivity.TAKE_TRANSFER.add(p);
+					//MainActivity.TAKE_TRANSFER.add(p);
 					MainActivity.SYNCH  = true;
 					return;
 				}
