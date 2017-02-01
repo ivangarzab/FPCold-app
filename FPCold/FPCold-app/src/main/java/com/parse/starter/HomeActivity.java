@@ -5,8 +5,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -19,7 +17,12 @@ import android.widget.Toast;
 import com.parse.ParseUser;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+
+import sapphire.DownloadInventory;
+import sapphire.Product;
+import sapphire.UploadInventory;
 
 public class HomeActivity extends AppCompatActivity {
 
@@ -32,8 +35,10 @@ public class HomeActivity extends AppCompatActivity {
 	public static int TIER;
 	// Today's date
 	public static String DATE;
+	// Virtual Storage
+	public static ArrayList<Product> V_STORAGE;
 
-	// TextViews for greeting the user and the announcements
+	// TextViews for greeting the user, date and announcements
 	private TextView greet, date, announcement;
 
 	@Override
@@ -43,14 +48,31 @@ public class HomeActivity extends AppCompatActivity {
 		Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 		setSupportActionBar(toolbar);
 
+		// Set title
 		setTitle("Dashboard");
 
+		// Get boolean from calling activity
+		/// if true, download the virtual storage
+		Intent i = getIntent();
+		if (i.getBooleanExtra("download", false)) {
+			getVirutalStorage();
+		}
+		else {
+			Log.i("TRASH", "Contents of V_STORAGE");
+			for (int v = 0; v < HomeActivity.V_STORAGE.size(); v++) {
+				Log.i("TRASH", HomeActivity.V_STORAGE.get(v).toString());
+			}
+		}
+
+		// Initialize variablers
 		greet = (TextView) findViewById(R.id.greetingTextView);
 		date = (TextView)findViewById(R.id.homeDateTextView);
 		announcement = (TextView) findViewById(R.id.announcementTextView);
 
+		// Set the greeting EditText
 		greet.setText("Welcome " + getCurrentUser());
 
+		// Set the date for the app and home screen
 		SimpleDateFormat datestamp = new SimpleDateFormat("MM-dd-yy");
 		DATE = datestamp.format(new Date());
 		date.setText(DATE);
@@ -81,10 +103,23 @@ public class HomeActivity extends AppCompatActivity {
 		return super.onOptionsItemSelected(item);
 	}
 
+	/**
+	 * Get the name and tier of the current user for future ose
+	 * @return the name of the current user for greeting
+	 */
 	private String getCurrentUser() {
 		CURRENT_USER = ParseUser.getCurrentUser();
 		TIER = CURRENT_USER.getInt("tier");
 		return CURRENT_USER.getString("name");
+	}
+
+	private void getVirutalStorage() {
+		V_STORAGE = new ArrayList<>();
+		// Prepare the virtual storage for offline use
+		DownloadInventory DI = new DownloadInventory(context);
+		DI.execute();
+
+		V_STORAGE = DI.getVirtualStorage();
 	}
 
 	/**
@@ -123,6 +158,16 @@ public class HomeActivity extends AppCompatActivity {
 				Toast.makeText(getApplicationContext(), "SETTINGS!", Toast.LENGTH_LONG).show();
 			}
 			else denyAccess(context);
+		}
+		else if (view.getId() == R.id.syncHomeButton) {
+			if (MainActivity.SYNCH == true) {
+				UploadInventory UI = new UploadInventory(context);
+				UI.execute();
+				MainActivity.SYNCH = false;
+			}
+			else
+				Toast.makeText(context,
+						"There are no changes to be synchronized!", Toast.LENGTH_LONG).show();
 		}
 
 		if (flag) startActivity(i);

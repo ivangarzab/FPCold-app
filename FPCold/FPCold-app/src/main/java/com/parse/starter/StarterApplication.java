@@ -42,5 +42,14 @@ public class StarterApplication extends Application {
     	// Optionally enable public read access.
     	// defaultACL.setPublicReadAccess(true);
     	// ParseACL.setDefaultACL(defaultACL, true);
-    	}
+/*
+		for (int i = 000001; i<003001; i++) {
+			ParseObject product = new ParseObject("Product");
+			product.put("tag", String.valueOf(i));
+			product.put("location", "012649");
+			product.put("dateIn", "date");
+			product.saveEventually();
+		}
+		*/
+	}
 }

@@ -7,15 +7,11 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.InputType;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -24,26 +20,19 @@ import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.parse.FindCallback;
-import com.parse.GetCallback;
-import com.parse.ParseException;
-import com.parse.ParseObject;
-import com.parse.ParseQuery;
 import com.parse.ParseUser;
-import com.parse.SaveCallback;
 
 import java.util.ArrayList;
-import java.util.List;
 
+import sapphire.Product;
 import sapphire.StorageListView;
 
-public class TransferActivity extends AppCompatActivity implements View.OnClickListener{
+public class TransferActivity extends AppCompatActivity implements View.OnClickListener {
 
 	// Environment variables
 	final private Context context = this;
@@ -63,7 +52,6 @@ public class TransferActivity extends AppCompatActivity implements View.OnClickL
 
 	// Variables to store virtual storage information
 	private ArrayList<String> virtual_tags;
-	private ArrayList<String> virtual_ids;
 
 	// Supporting flag for calling the external Barcode Scanner app
 	private int flag;
@@ -84,16 +72,18 @@ public class TransferActivity extends AppCompatActivity implements View.OnClickL
 		RL = (RelativeLayout)findViewById(R.id.transferRelativeLayout);
 		instructions = (TextView)findViewById(R.id.transferInstructionsTextView);
 
+		///// UI variables
 		pallet_tag = (EditText)findViewById(R.id.transferFirstEditText);
 		old_location = (EditText)findViewById(R.id.transferSecondEditText);
 		new_location = (EditText)findViewById(R.id.transferThirdEditText);
 
+		///// Variables for Barcode Scanner app
 		first_image = (ImageButton)findViewById(R.id.transferFirstImageButton);
 		second_image = (ImageButton)findViewById(R.id.transferSecondImageButton);
 		third_image = (ImageButton)findViewById(R.id.transferThirdImageButton);
 
+		///// Arrays for temporal storage
 		virtual_tags = new ArrayList<>();
-		virtual_ids = new ArrayList<>();
 
 		flag = 0;
 
@@ -184,21 +174,10 @@ public class TransferActivity extends AppCompatActivity implements View.OnClickL
 			}
 		});
 
-		// Retrieve all of the racks and their IDs from the server
-		ParseQuery<ParseObject> query = new ParseQuery<>("Product");
-		query.findInBackground(new FindCallback<ParseObject>() {
-			@Override
-			public void done(List<ParseObject> objects, ParseException e) {
-				if (e == null) {
-					if (objects.size() > 0) {
-						for (ParseObject obj : objects) {
-							virtual_tags.add(obj.getString("tag"));
-							virtual_ids.add(obj.getObjectId());
-						}
-					}
-				}
-			}
-		});
+		// Retrieve all of the product tags for quicker error checking
+		for (Product p : HomeActivity.V_STORAGE) {
+			virtual_tags.add(p.getTag());
+		}
 	}
 
 	@Override
@@ -315,41 +294,31 @@ public class TransferActivity extends AppCompatActivity implements View.OnClickL
 				return;
 			}
 
-			int virtual_position = virtual_tags.indexOf(pallet);
-			// Try to do the transfer of pallet at old loc to new loc
-			ParseQuery<ParseObject> query = ParseQuery.getQuery("Product");
-			query.getInBackground(virtual_ids.get(virtual_position), new GetCallback<ParseObject>() {
-				@Override
-				public void done(ParseObject object, ParseException e) {
-					if (e == null) {
-						if (object.getString("location").equals(old_loc)) {
-							object.put("location", new_loc);
-							object.saveEventually(new SaveCallback() {
-								@Override
-								public void done(ParseException e) {
-									updateList(pallet, new_loc);
-									pallet_tag.setText("");
-									old_location.setText("");
-									new_location.setText("");
-								}
-							});
-						}
-						else {
-							Toast.makeText(context,
-									"Pallet tag is not stored on this location! Please, try again.",
-									Toast.LENGTH_LONG).show();
-							old_location.setText("");
-							return;
-						}
-					}
+			for (Product p : HomeActivity.V_STORAGE) {
+				if (p.getTag().equals(pallet) && p.getLocation().equals(old_loc)) {
+					p.setLocation(new_loc);
+					updateList(pallet, new_loc);
+					pallet_tag.setText("");
+					old_location.setText("");
+					new_location.setText("");
+
+					MainActivity.TAKE_TRANSFER.add(p);
+					MainActivity.SYNCH  = true;
+					return;
 				}
-			});
+			}
+			Toast.makeText(context,
+					"Pallet tag is not stored on this location! Please, try again.",
+					Toast.LENGTH_LONG).show();
+			old_location.setText("");
+			return;
 		}
 		// Finish button clicked
 		else if (view.getId() == R.id.transferFinishButton) {
 			// Go back to HomeActivity
 			finishAction();
 		}
+
 	}
 
 	/**
@@ -389,6 +358,7 @@ public class TransferActivity extends AppCompatActivity implements View.OnClickL
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
 						Intent i = new Intent(getApplicationContext(), HomeActivity.class);
+						i.putExtra("download", false);
 						startActivity(i);
 					}
 				})

@@ -8,6 +8,8 @@
  */
 package com.parse.starter;
 
+import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
@@ -31,8 +33,23 @@ import com.parse.ParseAnalytics;
 import com.parse.ParseException;
 import com.parse.ParseUser;
 
+import java.util.ArrayList;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+
+import sapphire.DownloadInventory;
+import sapphire.Product;
+
 
 public class MainActivity extends ActionBarActivity implements View.OnClickListener {
+
+	// Flag for the Sync button
+	public static boolean SYNCH = false;
+	// Variables for Virtual Storage updates
+	public static ArrayList<Product> TAKE_IN;
+	public static ArrayList<Product> TAKE_OUT;
+	public static ArrayList<Product> TAKE_TRANSFER;
 
 	// Activity's UI
 	private RelativeLayout RL;
@@ -68,6 +85,10 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 				return handled;
 			}
 		});
+
+		TAKE_IN = new ArrayList<>();
+		TAKE_OUT = new ArrayList<>();
+		TAKE_TRANSFER = new ArrayList<>();
 	}
 
 	/**
@@ -87,12 +108,14 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 			@Override
 			public void done(ParseUser user, ParseException e) {
 				if (user != null) {
-					//Toast.makeText(getApplicationContext(), "Log in was successful!", Toast.LENGTH_LONG).show();
+					// Start HomeActivity
 					Intent i = new Intent(getApplicationContext(), HomeActivity.class);
+					i.putExtra("download", true);
 					startActivity(i);
 				}
 				else
-					Toast.makeText(getApplicationContext(), "Unable to log in.  Please try again!", Toast.LENGTH_LONG).show();
+					Toast.makeText(getApplicationContext(),
+							"Unable to log in.  Please try again!", Toast.LENGTH_LONG).show();
 			}
 		});
 	}

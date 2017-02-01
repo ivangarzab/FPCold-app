@@ -7,7 +7,6 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -28,17 +27,12 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.parse.DeleteCallback;
-import com.parse.FindCallback;
-import com.parse.ParseException;
-import com.parse.ParseObject;
-import com.parse.ParseQuery;
+
 import com.parse.ParseUser;
-import com.parse.SaveCallback;
 
 import java.util.ArrayList;
-import java.util.List;
 
+import sapphire.Product;
 import sapphire.StorageListView;
 public class InOutActivity extends AppCompatActivity implements View.OnClickListener{
 
@@ -62,7 +56,7 @@ public class InOutActivity extends AppCompatActivity implements View.OnClickList
 	private ArrayList<String> locations;
 
 	// Variable to store database information temporarily
-	private ArrayList<String> rack_numbers;
+	private ArrayList<String> virtual_locations;
 
 	// Supporting flag for calling the external Barcode Scanner app
 	private boolean flag;
@@ -92,7 +86,7 @@ public class InOutActivity extends AppCompatActivity implements View.OnClickList
 		second_image = (ImageButton)findViewById(R.id.inoutSecondImageButton);
 
 		///// Arrays for temporal storage
-		rack_numbers = new ArrayList<>();
+		virtual_locations = new ArrayList<>();
 
 		// Set up the activity based on the type of transaction to be performed
 		activitySetup(TYPE);
@@ -189,22 +183,13 @@ public class InOutActivity extends AppCompatActivity implements View.OnClickList
 			}
 		});
 
-		// Populate the rack_numbers list for the outbound to check the virtual storage quicker
-		if (TYPE == 'o') {
-			// Retrieve all of the racks and their IDs from the server
-			ParseQuery<ParseObject> query = new ParseQuery<>("Product");
-			query.findInBackground(new FindCallback<ParseObject>() {
-				@Override
-				public void done(List<ParseObject> objects, ParseException e) {
-					if (e == null) {
-						if (objects.size() > 0) {
-							for (ParseObject obj : objects) {
-								rack_numbers.add(obj.getString("location"));
-							}
-						}
-					}
-				}
-			});
+		// Populate the virtual_locations list for the outbound to check for existence of locations
+		//  on the local virtual storage
+		for (Product p : HomeActivity.V_STORAGE) {
+			String l = p.getLocation();
+			if (!(virtual_locations.contains(l))) {
+				virtual_locations.add(l);
+			}
 		}
 	}
 
@@ -382,26 +367,16 @@ public class InOutActivity extends AppCompatActivity implements View.OnClickList
 			return;
 		}
 
-		// Save the new product into the virtual storage
-		// and reset EditText fields and update list if desired
-		ParseObject product = new ParseObject("Product");
-		product.put("tag", palletNo);
-		product.put("location", locationNo);
-		product.put("dateIn", HomeActivity.DATE);
-		product.saveEventually();
-		/*
-		product.saveEventually(new SaveCallback() {
-			@Override
-			public void done(ParseException e) {
-				if (update) updateList(palletNo, locationNo);
-				first_number.setText("");
-				second_number.setText("");
-			}
-		});
-		*/
+		// Save the new product into the virtual storage and TAKE_IN list
+		Product p = new Product(palletNo, locationNo, HomeActivity.DATE);
+		HomeActivity.V_STORAGE.add(p);
+		MainActivity.TAKE_IN.add(p);
+		// Reset EditText fields and update list if desired
 		if (update) updateList(palletNo, locationNo);
 		first_number.setText("");
 		second_number.setText("");
+
+		MainActivity.SYNCH  = true;
 	}
 
 	/**
@@ -412,13 +387,9 @@ public class InOutActivity extends AppCompatActivity implements View.OnClickList
 	 */
 	public void outStorageAction(final String palletNo, final String locationNo,
 								 final boolean update) {
-		// position of location Number on rack_numbers to get server object ID
-		int storage_position = rack_numbers.indexOf(locationNo);
-		Log.i("TRASH", palletNo +" " +locationNo);
-
-		// if the rack location does not exist in server
+		// if the rack location does not exist in virtual storage
 		/// then Toast the user and return
-		if (storage_position ==-1) {
+		if (virtual_locations.indexOf(locationNo) ==-1) {
 			Toast.makeText(context,
 					"Rack location number is invalid! Please, try again.",
 					Toast.LENGTH_LONG).show();
@@ -430,45 +401,29 @@ public class InOutActivity extends AppCompatActivity implements View.OnClickList
 		/// then Toast the user and return
 		if (pallets.contains(palletNo) && update) {
 			Toast.makeText(context,
-					"Pallet has already been stored in this order! Please, try again.",
+					"Pallet has already been used in this order! Please, try again.",
 					Toast.LENGTH_LONG).show();
 			second_number.setText("");
 			return;
 		}
 
-		ParseObject obj = new ParseObject("Product");
-		try {
-			obj.fetch();
-		} catch (ParseException e) {
-			e.printStackTrace();
-		}
+		//boolean tag = false;
+		for (Product p : HomeActivity.V_STORAGE) {
+			if (p.getTag().equals(palletNo) && p.getLocation().equals(locationNo)) {
+				HomeActivity.V_STORAGE.remove(p);
+				MainActivity.TAKE_OUT.add(p);
 
-		ParseQuery<ParseObject> query = new ParseQuery<>("Product");
-		query.findInBackground(new FindCallback<ParseObject>() {
-			@Override
-			public void done(List<ParseObject> objects, ParseException e) {
-				if (e == null) {
-					for (ParseObject object : objects) {
-						if (object.get("location").equals(locationNo)
-								&& object.get("tag").equals(palletNo)) {
-							object.deleteEventually(new DeleteCallback() {
-								@Override
-								public void done(ParseException e) {
-									if (update) updateList(palletNo, locationNo);
-									first_number.setText("");
-									second_number.setText("");
-								}
-							});
-							return;
-						}
-					}
-					Toast.makeText(context,
-							"Pallet tag is not stored on this location! Please, try again.",
-							Toast.LENGTH_LONG).show();
+				if (update) updateList(palletNo, locationNo);
+				first_number.setText("");
+				second_number.setText("");
 
-				}
+				MainActivity.SYNCH = true;
+				return;
 			}
-		});
+		}
+		Toast.makeText(context,
+				"Pallet tag is not stored on this location! Please, try again.",
+				Toast.LENGTH_LONG).show();
 	}
 
 	/**
@@ -526,6 +481,7 @@ public class InOutActivity extends AppCompatActivity implements View.OnClickList
 					public void onClick(DialogInterface dialog, int which) {
 						hideKeyboard();
 						Intent i = new Intent(getApplicationContext(), HomeActivity.class);
+						i.putExtra("download", false);
 						startActivity(i);
 					}
 				})
