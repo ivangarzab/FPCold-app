@@ -43,13 +43,14 @@ public class StarterApplication extends Application {
     	// defaultACL.setPublicReadAccess(true);
     	// ParseACL.setDefaultACL(defaultACL, true);
 /*
-		for (int i = 000001; i<003001; i++) {
+		for (int i = 555000; i<556000; i++) {
+			Log.i("TRASH", String.valueOf(i));
 			ParseObject product = new ParseObject("Product");
 			product.put("tag", String.valueOf(i));
-			product.put("location", "012649");
+			product.put("location", "005");
 			product.put("dateIn", "date");
-			product.saveEventually();
+			product.saveInBackground();
 		}
-		*/
+*/
 	}
 }

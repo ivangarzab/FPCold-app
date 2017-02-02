@@ -58,10 +58,12 @@ public class HomeActivity extends AppCompatActivity {
 			getVirtualStorage();
 		}
 		else {
-			Log.i("TRASH", "Contents of V_STORAGE");
+			int count = 0;
 			for (int v = 0; v < HomeActivity.V_STORAGE.size(); v++) {
-				Log.i("TRASH", HomeActivity.V_STORAGE.get(v).toString());
+				//Log.i("TRASH", HomeActivity.V_STORAGE.get(v).toString());
+				count++;
 			}
+			Log.i("TRASH", "# of contents in V_STORAGE: " + count);
 		}
 
 		// Initialize variablers

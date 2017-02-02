@@ -59,10 +59,12 @@ public class DownloadInventory extends AsyncTask<Void, Void, Void> {
 		ParseQuery<ParseObject> query = new ParseQuery<>("Product");
 		query.addAscendingOrder("dateIn");
 		query.addAscendingOrder("location");
+		query.setLimit(3000);
 		query.findInBackground(new FindCallback<ParseObject>() {
 			@Override
 			public void done(List<ParseObject> objects, ParseException e) {
 				if (e == null) {
+					Log.i("TRASH", "Parse found " +objects.size() +" objects");
 					for (ParseObject object : objects) {
 						String id = object.getObjectId();
 						String tag = object.getString("tag");
@@ -73,10 +75,13 @@ public class DownloadInventory extends AsyncTask<Void, Void, Void> {
 						virtual_storage.add(p);
 					}
 					HomeActivity.V_STORAGE = virtual_storage;
-					Log.i("TRASH", "Contents of V_STORAGE");
-					for (int i = 0; i < HomeActivity.V_STORAGE.size(); i++) {
-						Log.i("TRASH", HomeActivity.V_STORAGE.get(i).toString());
+
+					int count = 0;
+					for (int v = 0; v < HomeActivity.V_STORAGE.size(); v++) {
+						//Log.i("TRASH", HomeActivity.V_STORAGE.get(v).toString());
+						count++;
 					}
+					Log.i("TRASH", "# of contents in V_STORAGE: " + count);
 				}
 			}
 		});
