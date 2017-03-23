@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
+    android:orientation="vertical"
     android:id="@+id/inventoryRelativeLayout"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -117,7 +118,7 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="20sp"
+        android:layout_height="15sp"
         android:id="@+id/inventoryBufferRelativeLayout"
         android:layout_below="@+id/inventoryTopLinearLayout"
         android:layout_above="@+id/inventoryBotLinearLayout"

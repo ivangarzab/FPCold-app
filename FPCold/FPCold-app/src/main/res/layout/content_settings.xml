@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    android:orientation="vertical"
+    android:id="@+id/content_settings"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context="com.parse.starter.SettingsActivity"
+    tools:showIn="@layout/activity_settings"
+    android:background="@color/colorBackground">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/settingsTopLayout"
+        android:layout_weight="1">
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/settingsusersTopEditText"
+            android:hint="Full Name"
+            android:singleLine="true"
+            android:imeOptions="actionNext"
+            android:textColorHint="@color/colorSecondaryDark"
+            android:textColor="@color/colorSecondary"
+            android:textColorHighlight="@color/colorSecondaryLight"/>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <EditText
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/settingsUsersMidEditText"
+                android:layout_alignParentLeft="true"
+                android:layout_toLeftOf="@id/settingsUsersSpinner"
+                android:hint="4-digit Passcode"
+                android:singleLine="true"
+                android:imeOptions="actionNext"
+                android:textColorHint="@color/colorSecondaryDark"
+                android:textColor="@color/colorSecondary"
+                android:textColorHighlight="@color/colorSecondaryLight"/>
+
+            <Spinner
+                android:layout_width="128dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/settingsUsersSpinner"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                app:spinnerMode="dropdown"/>
+
+        </RelativeLayout>
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/settingsUsersButton"
+            android:text="Edit Users"/>
+
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/settingsMidLayout"
+        android:layout_weight="1">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/settingsTransactionsTextView"
+            android:text="Transactions:"
+            android:textSize="20sp"
+            android:textColor="@color/colorMainText"/>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/settingsTransactionsButtonLayout">
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/firstTransactionsButton"
+                android:text="today"
+                android:layout_weight="1"/>
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/secondTransactionsButton"
+                android:text="Week"
+                android:layout_weight="1"/>
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/thirdTransactionsButton"
+                android:text="all"
+                android:layout_weight="1"/>
+
+        </LinearLayout>
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/deleteTransactionsButton"
+            android:text="Delete all transactions"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/settingsBotLayout"
+        android:layout_weight="1">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/settingsAnnTextView"
+            android:text="Send Announcement:"
+            android:textSize="20sp"
+            android:textColor="@color/colorMainText"/>
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/settingsAnnEditText"
+            android:hint="Dear Workers..."
+            android:singleLine="true"
+            android:imeOptions="actionGo"
+            android:textColorHint="@color/colorSecondaryDark"
+            android:textColor="@color/colorSecondary"
+            android:textColorHighlight="@color/colorSecondaryLight"/>
+
+    </LinearLayout>
+
+</LinearLayout>

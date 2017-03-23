@@ -155,9 +155,9 @@ public class HomeActivity extends AppCompatActivity {
 		}
 		else if (view.getId() == R.id.settingsHomeButton) {
 			if (TIER == 1) {
-				//i = new Intent(context, SettingsActivity.class);
-				//flag = true;
-				Toast.makeText(getApplicationContext(), "SETTINGS!", Toast.LENGTH_LONG).show();
+				i = new Intent(context, SettingsActivity.class);
+				flag = true;
+				//Toast.makeText(getApplicationContext(), "SETTINGS!", Toast.LENGTH_LONG).show();
 			}
 			else denyAccess(context);
 		} /*

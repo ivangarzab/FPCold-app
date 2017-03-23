@@ -20,5 +20,11 @@
     <string name="title_activity_transfer">Transfer Activity</string>
     <string name="title_activity_inventory">Inventory Activity</string>
     <string name="title_activity_inventory_list">Inventory List</string>
+    <string name="title_activity_settings">Settings Activity</string>
+
+    <string-array name="tiers_array">
+        <item>Admin</item>
+        <item>Worker</item>
+    </string-array>
 
 </resources>
