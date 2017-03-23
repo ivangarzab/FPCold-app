@@ -93,15 +93,10 @@ public class InventoryListView extends BaseAdapter {
 		TextView second = (TextView)vi.findViewById(R.id.secondFieldTextView);
 		TextView third = (TextView)vi.findViewById(R.id.thirdFieldTextView);
 
-		if (type == 'l') {
+		if (type == 'l' || type == 'd') {
 			first.setText(locations.get(position));
 			second.setText(pallets.get(position));
 			third.setText(dates.get(position));
-		}
-		else if (type == 'd') {
-			first.setText(dates.get(position));
-			second.setText(pallets.get(position));
-			third.setText(locations.get(position));
 		}
 		else if (type == 'p') {
 			first.setText(pallets.get(position));

@@ -43,17 +43,6 @@
             android:theme="@style/AppTheme.NoActionBar">
         </activity>
         <activity
-            android:name=".InboundActivity"
-            android:label="@string/title_activity_inbound"
-            android:parentActivityName=".HomeActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:windowSoftInputMode="stateAlwaysHidden|adjustPan">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.parse.starter.HomeActivity"/>
-        </activity>
-        <activity
             android:name=".InOutActivity"
             android:label="@string/title_activity_in_out"
             android:parentActivityName=".HomeActivity"
@@ -74,7 +63,7 @@
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.parse.starter.HomeActivity"/>
-            </activity>
+        </activity>
         <activity
             android:name=".InventoryActivity"
             android:label="@string/title_activity_inventory"

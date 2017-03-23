@@ -18,7 +18,7 @@
         android:textColor="@color/colorButton"
         android:paddingLeft="3dp"
         android:paddingTop="3sp"
-        android:paddingBottom="3sp"/>
+        android:gravity="left"/>
 
     <TextView
         android:layout_width="wrap_content"
@@ -28,10 +28,11 @@
         android:text="SecondField"
         android:textSize="20sp"
         android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
         android:textColor="@color/colorButton"
+        android:paddingRight="3dp"
         android:paddingTop="3sp"
-        android:paddingBottom="3sp"
         android:gravity="right"/>
 
     <TextView
@@ -39,15 +40,15 @@
         android:layout_height="wrap_content"
         android:id="@+id/thirdFieldTextView"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="ThirdField"
-        android:textSize="20sp"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:textColor="@color/colorButton"
-        android:paddingRight="3dp"
-        android:paddingTop="3sp"
-        android:paddingBottom="3sp"/>
+        android:text="DateField"
+        android:textSize="15sp"
+        android:layout_below="@+id/firstFieldTextView"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:textColor="@color/colorSecondary"
+        android:paddingLeft="3dp"
+        android:paddingBottom="3sp"
+        android:gravity="left"/>
 
 
 </RelativeLayout>

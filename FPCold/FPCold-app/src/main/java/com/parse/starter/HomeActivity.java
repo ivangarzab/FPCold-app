@@ -160,7 +160,7 @@ public class HomeActivity extends AppCompatActivity {
 				Toast.makeText(getApplicationContext(), "SETTINGS!", Toast.LENGTH_LONG).show();
 			}
 			else denyAccess(context);
-		}
+		} /*
 		else if (view.getId() == R.id.syncHomeButton) {
 			if (MainActivity.SYNCH == true) {
 				UploadInventory UI = new UploadInventory(context);
@@ -173,6 +173,7 @@ public class HomeActivity extends AppCompatActivity {
 				Toast.makeText(context,
 						"There are no changes to be synchronized!", Toast.LENGTH_LONG).show();
 		}
+		*/
 
 		if (flag) startActivity(i);
 	}

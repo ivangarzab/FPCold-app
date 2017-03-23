@@ -6,8 +6,10 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -35,7 +37,6 @@ public class InventoryList extends AppCompatActivity {
 	// Title variables
 	private TextView title1;
 	private TextView title2;
-	private TextView title3;
 
 	// Variables for ListView setup
 	private ListView lv;
@@ -62,7 +63,6 @@ public class InventoryList extends AppCompatActivity {
 		// Initiate titles
 		title1 = (TextView)findViewById(R.id.inventoryListTitle1TextView);
 		title2 = (TextView)findViewById(R.id.inventoryListTitle2TextView);
-		title3 = (TextView)findViewById(R.id.inventoryListTitle3TextView);
 
 		///// Prepare ListView and components
 		lv = (ListView)findViewById(R.id.inventoryListView);
@@ -151,20 +151,21 @@ public class InventoryList extends AppCompatActivity {
 			setTitle("Inventory List: by pallet");
 			title1.setText("PALLET");
 			title2.setText("LOCATION");
-			title3.setText("DATE IN");
 		}
 		else if (t == 'l') {
 			setTitle("Inventory List: by location");
 			title1.setText("LOCATION");
 			title2.setText("PALLET");
-			title3.setText("DATE IN");
 		}
 		else if (t == 'd') {
 			setTitle("Inventory List: by date");
-			title1.setText("DATE IN");
+			title1.setText("LOCATION");
 			title2.setText("PALLET");
-			title3.setText("LOCATION");
 		}
+	}
+
+	public void shareExcel(View view) {
+		Log.i("TRASH", "Share Excel file");
 	}
 
 }

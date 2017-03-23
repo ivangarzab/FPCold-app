@@ -18,8 +18,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/greetingTextView"
-        android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="Hi, &lt;user>"
+        android:textSize="23sp"
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
@@ -142,8 +142,7 @@
         android:text="Every good week starts with a Monday!"
         android:textColor="@color/colorMainText"
         android:layout_alignParentBottom="true"
-        android:layout_marginTop="15dp"
-        android:layout_marginBottom="15dp"/>
+        android:layout_marginTop="15dp"/>
 
 
 </RelativeLayout>
