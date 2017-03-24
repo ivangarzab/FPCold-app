@@ -179,8 +179,8 @@ public class InventoryList extends AppCompatActivity {
 		Map<String, Object[]> tempInfo = new TreeMap<>();
 		tempInfo.put("1", new Object[] {"Location", "Pallet Tag", "Date"});
 		// Store all of the information into the Map object
-		for (int i =1; i <pallets.size(); i++) {
-			tempInfo.put(String.valueOf(i+1), new Object[] {locations.get(i),
+		for (int i =0; i <pallets.size(); i++) {
+			tempInfo.put(String.valueOf(i+2), new Object[] {locations.get(i),
 					pallets.get(i), dates.get(i)});
 		}
 		// Debug
