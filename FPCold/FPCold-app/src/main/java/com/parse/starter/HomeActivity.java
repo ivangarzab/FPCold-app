@@ -1,5 +1,6 @@
 package com.parse.starter;
 
+import android.animation.ValueAnimator;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -11,6 +12,9 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.view.animation.LinearInterpolator;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -39,7 +43,7 @@ public class HomeActivity extends AppCompatActivity {
 	public static ArrayList<Product> V_STORAGE;
 
 	// TextViews for greeting the user, date and announcements
-	private TextView greet, date, announcement;
+	private TextView greet, date, announcement1, announcement2;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -69,7 +73,8 @@ public class HomeActivity extends AppCompatActivity {
 		// Initialize variablers
 		greet = (TextView) findViewById(R.id.greetingTextView);
 		date = (TextView)findViewById(R.id.homeDateTextView);
-		announcement = (TextView) findViewById(R.id.announcementTextView);
+		announcement1 = (TextView) findViewById(R.id.announcement1TextView);
+		announcement2 = (TextView) findViewById(R.id.announcement2TextView);
 
 		// Set the greeting EditText
 		greet.setText("Welcome " + getCurrentUser());
@@ -78,6 +83,25 @@ public class HomeActivity extends AppCompatActivity {
 		SimpleDateFormat datestamp = new SimpleDateFormat("MM-dd-yy");
 		DATE = datestamp.format(new Date());
 		date.setText(DATE);
+
+		final ValueAnimator animator;
+		if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.HONEYCOMB) {
+			animator = ValueAnimator.ofFloat(0.0f, 1.0f);
+			animator.setRepeatCount(ValueAnimator.INFINITE);
+			animator.setInterpolator(new LinearInterpolator());
+			animator.setDuration(9000L);
+			animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+				@Override
+				public void onAnimationUpdate(ValueAnimator animation) {
+					final float progress = (float) animation.getAnimatedValue();
+					final float width = announcement1.getWidth();
+					final float translationX = width * progress;
+					announcement1.setTranslationX(translationX);
+					announcement2.setTranslationX(translationX - width);
+				}
+			});
+			animator.start();
+		}
 	}
 
 	@Override

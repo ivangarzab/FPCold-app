@@ -51,7 +51,7 @@
         android:layout_height="match_parent"
         android:id="@+id/homeLinearLayout"
         android:layout_below="@id/textClock"
-        android:layout_above="@+id/announcementTextView"
+        android:layout_above="@+id/announcementLayout"
         android:layout_marginTop="10dp"
         >
 
@@ -135,14 +135,30 @@
 
     </LinearLayout>
 
-    <TextView
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/announcementTextView"
-        android:text="Every good week starts with a Monday!"
-        android:textColor="@color/colorMainText"
+        android:id="@+id/announcementLayout"
         android:layout_alignParentBottom="true"
-        android:layout_marginTop="15dp"/>
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="15sp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/announcement2TextView"
+            android:text="Every good week starts with a Monday!"
+            android:textColor="@color/colorMainText"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/announcement1TextView"
+            android:text="Every good week starts with a Monday!"
+            android:textColor="@color/colorMainText"/>
+
+    </RelativeLayout>
 
 
 </RelativeLayout>
