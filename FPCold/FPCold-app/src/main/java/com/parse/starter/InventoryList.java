@@ -21,9 +21,12 @@ import com.parse.ParseUser;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 import sapphire.InventoryListView;
 import sapphire.Product;
+import sapphire.Spreadsheet;
 
 public class InventoryList extends AppCompatActivity {
 
@@ -164,8 +167,29 @@ public class InventoryList extends AppCompatActivity {
 		}
 	}
 
+	/**
+	 * Action for ImageButton.
+	 * Store all of the pallet information into a Map object, and send through AsyncTask
+	 *
+	 * @param view : Pressed button's View
+	 */
 	public void shareExcel(View view) {
-		Log.i("TRASH", "Share Excel file");
+
+		// Create the Map object and set the first line/title lines
+		Map<String, Object[]> tempInfo = new TreeMap<>();
+		tempInfo.put("1", new Object[] {"Location", "Pallet Tag", "Date"});
+		// Store all of the information into the Map object
+		for (int i =1; i <pallets.size(); i++) {
+			tempInfo.put(String.valueOf(i+1), new Object[] {locations.get(i),
+					pallets.get(i), dates.get(i)});
+		}
+		// Debug
+		Log.i("TRASH", "Excel is working...?");
+		// Initiate the AsyncTask object and execute
+		Spreadsheet excel = new Spreadsheet(context, tempInfo);
+		excel.execute();
 	}
+
+
 
 }
