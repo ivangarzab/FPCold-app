@@ -23,8 +23,9 @@
     <string name="title_activity_settings">Settings Activity</string>
 
     <string-array name="tiers_array">
-        <item>Admin</item>
+        <item>TIER:</item>
         <item>Worker</item>
+        <item>Admin</item>
     </string-array>
 
 </resources>
