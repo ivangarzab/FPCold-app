@@ -46,6 +46,9 @@ public class InventoryActivity extends AppCompatActivity implements View.OnClick
 	// Virutal storage variable for error support
 	ArrayList<String> virtual_locations;
 
+	//
+	private char list_type = 'n';
+
 	// Supporting flag for calling the external Barcode Scanner app
 	boolean flag;
 
@@ -320,11 +323,63 @@ public class InventoryActivity extends AppCompatActivity implements View.OnClick
 			Toast.makeText(getApplicationContext(), "Batch Search", Toast.LENGTH_LONG).show();
 		}
 		else if (view.getId() == R.id.inventoryBotAllButton) {
-			i = new Intent(context, InventoryList.class);
-			i.putExtra("type", 'l');
-			startActivity(i);
+			viewInventory();
 			//Toast.makeText(getApplicationContext(), "All Inventory", Toast.LENGTH_LONG).show();
 		}
+	}
+
+	/**
+	 * Invokes the AlertDialog to prompt the user to select a filter for the InventoryList
+	 */
+	private void viewInventory() {
+		// Set selection choices
+		String[] choices_list = getResources().getStringArray(R.array.filters_array);
+		int choice_check = -1;
+
+		// Invoke the AlertDialog and functionality
+		AlertDialog.Builder adb = new AlertDialog.Builder(context);
+		adb.setTitle("Select a Filter for Inventory");
+		adb.setSingleChoiceItems(choices_list, choice_check, new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				if (which == 0) {
+					list_type = 'l';
+				}
+				else if (which == 1) {
+					list_type = 'p';
+				}
+				else if (which == 2) {
+					list_type = 'd';
+				}
+			}
+		});
+		adb.setCancelable(false)
+				.setPositiveButton("GO", new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						//// If no filter was selected, prompt the user through Toast
+						if (list_type == 'n') {
+							Toast.makeText(context, "Cannot proceed without a filter for inventory.",
+									Toast.LENGTH_LONG).show();
+						}
+						//// If a filter was selected, start InventoryList activity
+						// which desired filter
+						else {
+							Intent i = new Intent(context, InventoryList.class);
+							i.putExtra("type", list_type);
+							startActivity(i);
+						}
+					}
+				})
+				.setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						list_type = 'n';
+						dialog.cancel();
+					}
+				});
+		AlertDialog ad = adb.create();
+		ad.show();
 	}
 
 	/**
