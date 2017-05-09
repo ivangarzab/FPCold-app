@@ -13,20 +13,12 @@ import android.view.View;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.parse.FindCallback;
-import com.parse.ParseException;
-import com.parse.ParseObject;
-import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
 
 import sapphire.InventoryListView;
 import sapphire.Product;
-import sapphire.Spreadsheet;
 
 public class InventoryList extends AppCompatActivity {
 
@@ -174,7 +166,8 @@ public class InventoryList extends AppCompatActivity {
 	 * @param view : Pressed button's View
 	 */
 	public void shareExcel(View view) {
-
+		Log.i("TRASH", "Share Excel!");
+		/*
 		// Create the Map object and set the first line/title lines
 		Map<String, Object[]> tempInfo = new TreeMap<>();
 		tempInfo.put("1", new Object[] {"Location", "Pallet Tag", "Date"});
@@ -188,6 +181,7 @@ public class InventoryList extends AppCompatActivity {
 		// Initiate the AsyncTask object and execute
 		Spreadsheet excel = new Spreadsheet(context, tempInfo);
 		excel.execute();
+		*/
 	}
 
 

@@ -96,12 +96,6 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.parse.starter.HomeActivity"/>
         </activity>
-
-        <provider
-            android:name="sapphire.ShareContentProvider"
-            android:authorities="sapphire"
-            android:exported="true"
-            />
     </application>
 
 </manifest>
