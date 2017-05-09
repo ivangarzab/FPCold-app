@@ -19,7 +19,7 @@
         android:layout_height="wrap_content"
         android:id="@+id/greetingTextView"
         android:text="Hi, &lt;user>"
-        android:textSize="23sp"
+        android:textSize="18sp"
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
@@ -43,7 +43,8 @@
         android:layout_below="@+id/greetingTextView"
         android:layout_toRightOf="@+id/homeDateTextView"
         android:layout_marginLeft="6sp"
-        android:textColor="@color/colorMainText"/>
+        android:textColor="@color/colorMainText"
+        android:textSize="15sp"/>
 
     <LinearLayout
         android:orientation="vertical"

@@ -20,7 +20,7 @@
         android:layout_height="wrap_content"
         android:id="@+id/transferInstructionsTextView"
         android:text="First scan the pallet tag to be moved, followed by the location where the pallet is to be moved."
-        android:textSize="20sp"
+        android:textSize="15sp"
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
@@ -32,7 +32,7 @@
         android:layout_height="wrap_content"
         android:id="@+id/transferScannersLinearLayout"
         android:layout_below="@+id/transferInstructionsTextView"
-        android:layout_marginTop="35sp">
+        android:layout_marginTop="20sp">
 
 
         <RelativeLayout
@@ -78,7 +78,7 @@
              android:layout_width="wrap_content"
              android:layout_height="wrap_content"
              android:id="@+id/transferOldLocationRelativeLayout"
-             android:layout_marginTop="20dp"
+             android:layout_marginTop="5sp"
              android:layout_weight="1">
              <ImageButton
                 android:layout_width="wrap_content"
@@ -118,7 +118,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/transferNewLocationRelativeLayout"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="5sp"
             android:layout_weight="1">
             <ImageButton
                 android:layout_width="wrap_content"
