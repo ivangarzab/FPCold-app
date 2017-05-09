@@ -8,21 +8,14 @@
  */
 package com.parse.starter;
 
-import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
-import android.util.Log;
 import android.view.KeyEvent;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
-import android.view.Window;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -33,24 +26,9 @@ import com.parse.ParseAnalytics;
 import com.parse.ParseException;
 import com.parse.ParseUser;
 
-import java.util.ArrayList;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
-
-import sapphire.DownloadInventory;
-import sapphire.Product;
-
 
 public class MainActivity extends ActionBarActivity implements View.OnClickListener {
 
-	// Flag for the Sync button
-	public static boolean SYNCH = false;/*
-	// Variables for Virtual Storage updates
-	public static ArrayList<Product> TAKE_IN;
-	public static ArrayList<Product> TAKE_OUT;
-	public static ArrayList<Product> TAKE_TRANSFER;
-*/
 	// Activity's UI
 	private RelativeLayout RL;
 	private LinearLayout logo;
@@ -106,7 +84,6 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 				if (user != null) {
 					// Start HomeActivity
 					Intent i = new Intent(getApplicationContext(), HomeActivity.class);
-					i.putExtra("download", true);
 					startActivity(i);
 				}
 				else

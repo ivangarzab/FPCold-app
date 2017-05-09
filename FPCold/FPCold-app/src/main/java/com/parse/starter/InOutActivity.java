@@ -28,9 +28,15 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
+import com.parse.DeleteCallback;
+import com.parse.FindCallback;
+import com.parse.ParseException;
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import sapphire.Product;
 import sapphire.StorageListView;
@@ -183,15 +189,23 @@ public class InOutActivity extends AppCompatActivity implements View.OnClickList
 			}
 		});
 
-		// Populate the virtual_locations list for the outbound to check for existence of locations
-		//  on the local virtual storage
+		// Populate the virutal_locations list for the outbound to check for existence of locations
+		// on the server
 		if (TYPE == 'o') {
-			for (Product p : HomeActivity.V_STORAGE) {
-				String l = p.getLocation();
-				if (!(virtual_locations.contains(l))) {
-					virtual_locations.add(l);
+			// Retrieve all of the racks and their IDs from the server
+			ParseQuery<ParseObject> query = new ParseQuery<>("Product");
+			query.findInBackground(new FindCallback<ParseObject>() {
+				@Override
+				public void done(List<ParseObject> objects, ParseException e) {
+					if (e == null) {
+						if (objects.size() > 0) {
+							for (ParseObject obj : objects) {
+								virtual_locations.add(obj.getString("location"));
+							}
+						}
+					}
 				}
-			}
+			});
 		}
 	}
 
@@ -369,16 +383,17 @@ public class InOutActivity extends AppCompatActivity implements View.OnClickList
 			return;
 		}
 
-		// Save the new product into the virtual storage and TAKE_IN list
-		Product p = new Product(palletNo, locationNo, HomeActivity.DATE);
-		HomeActivity.V_STORAGE.add(p);
-		//MainActivity.TAKE_IN.add(p);
+		// Create a new product and store it on the server
+		ParseObject product = new ParseObject("Product");
+		product.put("tag", palletNo);
+		product.put("location", locationNo);
+		product.put("dateIn", HomeActivity.DATE);
+		product.saveEventually();
+
 		// Reset EditText fields and update list if desired
 		if (update) updateList(palletNo, locationNo);
 		first_number.setText("");
 		second_number.setText("");
-
-		MainActivity.SYNCH  = true;
 	}
 
 	/**
@@ -409,23 +424,32 @@ public class InOutActivity extends AppCompatActivity implements View.OnClickList
 			return;
 		}
 
-		//boolean tag = false;
-		for (Product p : HomeActivity.V_STORAGE) {
-			if (p.getTag().equals(palletNo) && p.getLocation().equals(locationNo)) {
-				HomeActivity.V_STORAGE.remove(p);
-				//MainActivity.TAKE_OUT.add(p);
+		ParseQuery<ParseObject> query = new ParseQuery<>("Product");
+		query.findInBackground(new FindCallback<ParseObject>() {
+			@Override
+			public void done(List<ParseObject> objects, ParseException e) {
+				if (e == null) {
+					for (ParseObject object : objects) {
+						if (object.get("location").equals(locationNo)
+								&& object.get("tag").equals(palletNo)) {
+							object.deleteEventually(new DeleteCallback() {
+								@Override
+								public void done(ParseException e) {
+									if (update) updateList(palletNo, locationNo);
+									first_number.setText("");
+									second_number.setText("");
+								}
+							});
+							return;
+						}
+					}
+					Toast.makeText(context,
+							"Pallet tag is not stored on this location! Please, try again.",
+							Toast.LENGTH_LONG).show();
 
-				if (update) updateList(palletNo, locationNo);
-				first_number.setText("");
-				second_number.setText("");
-
-				MainActivity.SYNCH = true;
-				return;
+				}
 			}
-		}
-		Toast.makeText(context,
-				"Pallet tag is not stored on this location! Please, try again.",
-				Toast.LENGTH_LONG).show();
+		});
 	}
 
 	/**

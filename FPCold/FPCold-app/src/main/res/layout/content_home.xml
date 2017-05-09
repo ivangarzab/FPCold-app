@@ -109,7 +109,7 @@
                 android:text="INVENTORY"
                 android:onClick="homeButtonAction"
                 android:layout_weight="1"
-
+                android:layout_marginRight="45sp"
                 android:background="@drawable/rest_button"
                 android:textColor="@color/colorMainText"/>
             <Button
@@ -119,18 +119,9 @@
                 android:text="SETTINGS"
                 android:onClick="homeButtonAction"
                 android:layout_weight="1"
-                android:layout_marginLeft="5sp"
+                android:layout_marginLeft="45sp"
                 android:layout_marginRight="5sp"
                 android:background="@drawable/rest_button"
-                android:textColor="@color/colorMainText"/>
-            <Button
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:id="@+id/syncHomeButton"
-                android:text="SYNC"
-                android:onClick="homeButtonAction"
-                android:layout_weight="1"
-                android:background="@drawable/sync_button"
                 android:textColor="@color/colorMainText"/>
         </LinearLayout>
 

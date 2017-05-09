@@ -25,9 +25,16 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.parse.FindCallback;
+import com.parse.GetCallback;
+import com.parse.ParseException;
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
 import com.parse.ParseUser;
+import com.parse.SaveCallback;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import sapphire.Product;
 import sapphire.StorageListView;
@@ -52,6 +59,7 @@ public class TransferActivity extends AppCompatActivity implements View.OnClickL
 
 	// Variables to store virtual storage information
 	private ArrayList<String> virtual_tags;
+	private ArrayList<String> virtual_ids;
 
 	// Supporting flag for calling the external Barcode Scanner app
 	private int flag;
@@ -84,6 +92,7 @@ public class TransferActivity extends AppCompatActivity implements View.OnClickL
 
 		///// Arrays for temporal storage
 		virtual_tags = new ArrayList<>();
+		virtual_ids = new ArrayList<>();
 
 		flag = 0;
 
@@ -175,9 +184,20 @@ public class TransferActivity extends AppCompatActivity implements View.OnClickL
 		});
 
 		// Retrieve all of the product tags for quicker error checking
-		for (Product p : HomeActivity.V_STORAGE) {
-			virtual_tags.add(p.getTag());
-		}
+		ParseQuery<ParseObject> query = new ParseQuery<>("Product");
+		query.findInBackground(new FindCallback<ParseObject>() {
+			@Override
+			public void done(List<ParseObject> objects, ParseException e) {
+				if (e == null) {
+					if (objects.size() > 0) {
+						for (ParseObject obj : objects) {
+							virtual_tags.add(obj.getString("tag"));
+							virtual_ids.add(obj.getObjectId());
+						}
+					}
+				}
+			}
+		});
 	}
 
 	@Override
@@ -294,24 +314,35 @@ public class TransferActivity extends AppCompatActivity implements View.OnClickL
 				return;
 			}
 
-			for (Product p : HomeActivity.V_STORAGE) {
-				if (p.getTag().equals(pallet) && p.getLocation().equals(old_loc)) {
-					p.setLocation(new_loc);
-					updateList(pallet, new_loc);
-					pallet_tag.setText("");
-					old_location.setText("");
-					new_location.setText("");
-
-					//MainActivity.TAKE_TRANSFER.add(p);
-					MainActivity.SYNCH  = true;
-					return;
+			int virtual_position = virtual_tags.indexOf(pallet);
+			// Try to do the transfer of pallet at old loc to new loc
+			ParseQuery<ParseObject> query = ParseQuery.getQuery("Product");
+			query.getInBackground(virtual_ids.get(virtual_position), new GetCallback<ParseObject>() {
+				@Override
+				public void done(ParseObject object, ParseException e) {
+					if (e == null) {
+						if (object.getString("location").equals(old_loc)) {
+							object.put("location", new_loc);
+							object.saveEventually(new SaveCallback() {
+								@Override
+								public void done(ParseException e) {
+									updateList(pallet, new_loc);
+									pallet_tag.setText("");
+									old_location.setText("");
+									new_location.setText("");
+								}
+							});
+						}
+						else {
+							Toast.makeText(context,
+									"Pallet tag is not stored on this location! Please, try again.",
+									Toast.LENGTH_LONG).show();
+							old_location.setText("");
+							return;
+						}
+					}
 				}
-			}
-			Toast.makeText(context,
-					"Pallet tag is not stored on this location! Please, try again.",
-					Toast.LENGTH_LONG).show();
-			old_location.setText("");
-			return;
+			});
 		}
 		// Finish button clicked
 		else if (view.getId() == R.id.transferFinishButton) {

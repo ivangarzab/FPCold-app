@@ -8,25 +8,16 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.view.animation.LinearInterpolator;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.parse.ParseUser;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
-
-import sapphire.DownloadInventory;
-import sapphire.Product;
-import sapphire.UploadInventory;
 
 public class HomeActivity extends AppCompatActivity {
 
@@ -39,8 +30,6 @@ public class HomeActivity extends AppCompatActivity {
 	public static int TIER;
 	// Today's date
 	public static String DATE;
-	// Virtual Storage
-	public static ArrayList<Product> V_STORAGE;
 
 	// TextViews for greeting the user, date and announcements
 	private TextView greet, date, announcement1, announcement2;
@@ -54,21 +43,6 @@ public class HomeActivity extends AppCompatActivity {
 
 		// Set title
 		setTitle("Dashboard");
-
-		// Get boolean from calling activity
-		/// if true, download the virtual storage
-		Intent i = getIntent();
-		if (i.getBooleanExtra("download", false)) {
-			getVirtualStorage();
-		}
-		else {
-			int count = 0;
-			for (int v = 0; v < HomeActivity.V_STORAGE.size(); v++) {
-				//Log.i("TRASH", HomeActivity.V_STORAGE.get(v).toString());
-				count++;
-			}
-			Log.i("TRASH", "# of contents in V_STORAGE: " + count);
-		}
 
 		// Initialize variablers
 		greet = (TextView) findViewById(R.id.greetingTextView);
@@ -139,15 +113,6 @@ public class HomeActivity extends AppCompatActivity {
 		return CURRENT_USER.getString("name");
 	}
 
-	private void getVirtualStorage() {
-		V_STORAGE = new ArrayList<>();
-		// Prepare the virtual storage for offline use
-		DownloadInventory DI = new DownloadInventory(context);
-		DI.execute();
-
-		V_STORAGE = DI.getVirtualStorage();
-	}
-
 	/**
 	 * Decide which button was pressed and perform the corresponding action
 	 * @param view : Pressed button's View
@@ -184,28 +149,10 @@ public class HomeActivity extends AppCompatActivity {
 				//Toast.makeText(getApplicationContext(), "SETTINGS!", Toast.LENGTH_LONG).show();
 			}
 			else denyAccess(context);
-		} /*
-		else if (view.getId() == R.id.syncHomeButton) {
-			if (MainActivity.SYNCH == true) {
-				UploadInventory UI = new UploadInventory(context);
-				UI.execute();
-
-				MainActivity.SYNCH = false;
-				//getVirtualStorage();
-			}
-			else
-				Toast.makeText(context,
-						"There are no changes to be synchronized!", Toast.LENGTH_LONG).show();
 		}
-		*/
 
 		if (flag) startActivity(i);
 	}
-
-	/**
-	 * Do nothing when back button is pressed for this activity
-	 */
-	public void onBackPressed() { }
 
 	/**
 	 * Static method for the use all around the app
@@ -226,4 +173,9 @@ public class HomeActivity extends AppCompatActivity {
 		AlertDialog ad = adb.create();
 		ad.show();
 	}
+
+	/**
+	 * Do nothing when back button is pressed for this activity
+	 */
+	public void onBackPressed() { }
 }

@@ -13,9 +13,14 @@ import android.view.View;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.parse.FindCallback;
+import com.parse.ParseException;
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import sapphire.InventoryListView;
 import sapphire.Product;
@@ -102,13 +107,27 @@ public class InventoryList extends AppCompatActivity {
 			}
 		});		*/
 
-		// Show the inventory WITHOUT any sorting
-		for (Product p : HomeActivity.V_STORAGE) {
-			pallets.add(p.getTag());
-			locations.add(p.getLocation());
-			dates.add(p.getDate());
-		}
-		lv.setAdapter(IA);
+		// Retrieve all of the rack numbers, product tags and their dates
+		ParseQuery<ParseObject> query = new ParseQuery<>("Product");
+		if (TYPE == 'l')
+			query.addAscendingOrder("location");
+		if (TYPE == 'd')
+			query.addAscendingOrder("dateIn");
+		query.findInBackground(new FindCallback<ParseObject>() {
+			@Override
+			public void done(List<ParseObject> objects, ParseException e) {
+				if (e == null) {
+					if (objects.size() > 0) {
+						for (ParseObject obj : objects) {
+							pallets.add(obj.getString("tag"));
+							locations.add(obj.getString("location"));
+							dates.add(obj.getString("dateIn"));
+						}
+						lv.setAdapter(IA);
+					}
+				}
+			}
+		});
 	}
 
 	@Override
