@@ -4,10 +4,12 @@ import android.IntentIntegrator;
 import android.IntentResult;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -25,6 +27,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.parse.DeleteCallback;
 import com.parse.FindCallback;
 import com.parse.GetCallback;
 import com.parse.ParseException;
@@ -314,7 +317,11 @@ public class TransferActivity extends AppCompatActivity implements View.OnClickL
 				return;
 			}
 
-			int virtual_position = virtual_tags.indexOf(pallet);
+			//int virtual_position = virtual_tags.indexOf(pallet);
+			ServerAccess access = new ServerAccess(old_loc, new_loc, pallet,
+					virtual_tags.indexOf(pallet));
+			access.execute();
+			/*
 			// Try to do the transfer of pallet at old loc to new loc
 			ParseQuery<ParseObject> query = ParseQuery.getQuery("Product");
 			query.getInBackground(virtual_ids.get(virtual_position), new GetCallback<ParseObject>() {
@@ -343,6 +350,7 @@ public class TransferActivity extends AppCompatActivity implements View.OnClickL
 					}
 				}
 			});
+			*/
 		}
 		// Finish button clicked
 		else if (view.getId() == R.id.transferFinishButton) {
@@ -421,5 +429,74 @@ public class TransferActivity extends AppCompatActivity implements View.OnClickL
 	public void hideKeyboard() {
 		InputMethodManager imm = (InputMethodManager)getSystemService(INPUT_METHOD_SERVICE);
 		imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+	}
+
+
+
+	public class ServerAccess extends AsyncTask<Void, Void, Void> {
+
+		// Declaring functional variables
+		private String old_loc;
+		private String new_loc;
+		private String pallet;
+		private int position;
+		// ProgressDialog to show while performing
+		private ProgressDialog PD;
+
+		// Constructor method
+		public ServerAccess(String old_loc, String new_loc, String pallet, int position) {
+			this.old_loc = old_loc;
+			this.new_loc = new_loc;
+			this.pallet = pallet;
+			this.position = position;
+		}
+
+		@Override
+		protected void onPreExecute() {
+			super.onPreExecute();
+			//Showing progress dialog while accessing server
+			PD = ProgressDialog.show(context, "Accessing Server", "Please wait...", false, false);
+		}
+
+		@Override
+		protected void onPostExecute(Void aVoid) {
+			super.onPostExecute(aVoid);
+			//Dismissing the progress dialog
+			PD.dismiss();
+		}
+
+		@Override
+		protected Void doInBackground(Void... params) {
+			// Try to do the transfer of pallet at old loc to new loc
+			ParseQuery<ParseObject> query = ParseQuery.getQuery("Product");
+			query.getInBackground(virtual_ids.get(position), new GetCallback<ParseObject>() {
+				@Override
+				public void done(ParseObject object, ParseException e) {
+					if (e == null) {
+						if (object.getString("location").equals(old_loc)) {
+							object.put("location", new_loc);
+							object.saveInBackground(new SaveCallback() {
+								@Override
+								public void done(ParseException e) {
+									updateList(pallet, new_loc);
+									pallet_tag.setText("");
+									old_location.setText("");
+									new_location.setText("");
+								}
+							});
+						}
+						else {
+							Toast.makeText(context,
+									"Pallet tag is not stored on this location! Please, try again.",
+									Toast.LENGTH_LONG).show();
+							old_location.setText("");
+							return;
+						}
+					}
+				}
+			});
+
+			return null;
+		}
 	}
 }

@@ -8,7 +8,10 @@
  */
 package com.parse.starter;
 
+import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.KeyEvent;
@@ -28,6 +31,9 @@ import com.parse.ParseUser;
 
 
 public class MainActivity extends ActionBarActivity implements View.OnClickListener {
+
+	// Activity's Context
+	final private Context context = this;
 
 	// Activity's UI
 	private RelativeLayout RL;
@@ -51,6 +57,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 		RL.setOnClickListener(this);
 		logo.setOnClickListener(this);
 
+		// Set the Soft Keyboard action key into a GO action
 		pinNumber.setOnEditorActionListener(new TextView.OnEditorActionListener() {
 			@Override
 			public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
@@ -74,23 +81,12 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 		InputMethodManager imm = (InputMethodManager)getSystemService(INPUT_METHOD_SERVICE);
 		imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
 
-		// User PIN #
+		// Get User's PIN #
 		String pin = pinNumber.getText().toString();
 
-		// Attempt to login with Parse
-		ParseUser.logInInBackground(pin, pin, new LogInCallback() {
-			@Override
-			public void done(ParseUser user, ParseException e) {
-				if (user != null) {
-					// Start HomeActivity
-					Intent i = new Intent(getApplicationContext(), HomeActivity.class);
-					startActivity(i);
-				}
-				else
-					Toast.makeText(getApplicationContext(),
-							"Unable to log in.  Please try again!", Toast.LENGTH_LONG).show();
-			}
-		});
+		// Create login AsyncTask and execute in order to attempt a login
+		ServerLogin login = new ServerLogin(pin);
+		login.execute();
 	}
 
 	/**
@@ -109,4 +105,54 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 	 * Do nothing when back button is pressed for this activity
 	 */
 	public void onBackPressed() { }
+
+
+
+	/**
+	 * AsyncTask Object that attempts to login while creating a progressDialog
+	 * Unables the user from sending the login request more than once!
+	 */
+	public class ServerLogin extends AsyncTask<Void, Void, Void> {
+
+		// Declaring functional variables
+		private String PIN;
+		// ProgressDialog to show while performing
+		private ProgressDialog PD;
+
+		// Constructor method
+		public ServerLogin(String pin) {	this.PIN = pin;	}
+
+		@Override
+		protected void onPreExecute() {
+			super.onPreExecute();
+			//Showing progress dialog while accessing server
+			PD = ProgressDialog.show(context, "Loggin you in", "Please wait...", false, false);
+		}
+
+		@Override
+		protected void onPostExecute(Void aVoid) {
+			super.onPostExecute(aVoid);
+			//Dismissing the progress dialog
+			PD.dismiss();
+		}
+
+		@Override
+		protected Void doInBackground(Void... params) {
+			// Attempt to login with Parse
+			ParseUser.logInInBackground(PIN, PIN, new LogInCallback() {
+				@Override
+				public void done(ParseUser user, ParseException e) {
+					if (user != null) {
+						// Start HomeActivity
+						Intent i = new Intent(context, HomeActivity.class);
+						startActivity(i);
+					}
+					else
+						Toast.makeText(context,
+								"Unable to log in.  Please try again!", Toast.LENGTH_LONG).show();
+				}
+			});
+			return null;
+		}
+	}
 }

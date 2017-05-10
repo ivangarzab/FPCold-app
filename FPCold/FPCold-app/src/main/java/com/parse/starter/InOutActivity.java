@@ -4,10 +4,12 @@ import android.IntentIntegrator;
 import android.IntentResult;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -30,10 +32,12 @@ import android.widget.Toast;
 
 import com.parse.DeleteCallback;
 import com.parse.FindCallback;
+import com.parse.LogInCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
+import com.parse.SaveCallback;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -383,6 +387,9 @@ public class InOutActivity extends AppCompatActivity implements View.OnClickList
 			return;
 		}
 
+		ServerAccess access = new ServerAccess(palletNo, locationNo, update);
+		access.execute();
+/*
 		// Create a new product and store it on the server
 		ParseObject product = new ParseObject("Product");
 		product.put("tag", palletNo);
@@ -394,6 +401,7 @@ public class InOutActivity extends AppCompatActivity implements View.OnClickList
 		if (update) updateList(palletNo, locationNo);
 		first_number.setText("");
 		second_number.setText("");
+*/
 	}
 
 	/**
@@ -423,7 +431,10 @@ public class InOutActivity extends AppCompatActivity implements View.OnClickList
 			second_number.setText("");
 			return;
 		}
+		ServerAccess access = new ServerAccess(palletNo, locationNo, update);
+		access.execute();
 
+/*
 		ParseQuery<ParseObject> query = new ParseQuery<>("Product");
 		query.findInBackground(new FindCallback<ParseObject>() {
 			@Override
@@ -450,6 +461,7 @@ public class InOutActivity extends AppCompatActivity implements View.OnClickList
 				}
 			}
 		});
+		*/
 	}
 
 	/**
@@ -542,5 +554,90 @@ public class InOutActivity extends AppCompatActivity implements View.OnClickList
 	public void hideKeyboard() {
 		InputMethodManager imm = (InputMethodManager)getSystemService(INPUT_METHOD_SERVICE);
 		imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+	}
+
+
+
+	public class ServerAccess extends AsyncTask<Void, Void, Void> {
+
+		// Declaring functional variables
+		private String palletNo;
+		private	String locationNo;
+		private boolean update;
+		// ProgressDialog to show while performing
+		private ProgressDialog PD;
+
+		// Constructor method
+		public ServerAccess(String pallet, String location, boolean update) {
+			this.palletNo = pallet;
+			this.locationNo = location;
+			this.update = update;
+
+		}
+
+		@Override
+		protected void onPreExecute() {
+			super.onPreExecute();
+			//Showing progress dialog while accessing server
+			PD = ProgressDialog.show(context, "Accessing Server", "Please wait...", false, false);
+		}
+
+		@Override
+		protected void onPostExecute(Void aVoid) {
+			super.onPostExecute(aVoid);
+			//Dismissing the progress dialog
+			PD.dismiss();
+		}
+
+		@Override
+		protected Void doInBackground(Void... params) {
+			switch (TYPE) {
+				case 'i':
+					// Create a new product and store it on the server
+					ParseObject product = new ParseObject("Product");
+					product.put("tag", palletNo);
+					product.put("location", locationNo);
+					product.put("dateIn", HomeActivity.DATE);
+					product.saveInBackground(new SaveCallback() {
+						@Override
+						public void done(ParseException e) {
+							// Reset EditText fields and update list if desired
+							if (update) updateList(palletNo, locationNo);
+							first_number.setText("");
+							second_number.setText("");
+						}
+					});
+					break;
+				case 'o':
+					ParseQuery<ParseObject> query = new ParseQuery<>("Product");
+					query.findInBackground(new FindCallback<ParseObject>() {
+						@Override
+						public void done(List<ParseObject> objects, ParseException e) {
+							if (e == null) {
+								for (ParseObject object : objects) {
+									if (object.get("location").equals(locationNo)
+											&& object.get("tag").equals(palletNo)) {
+										object.deleteEventually(new DeleteCallback() {
+											@Override
+											public void done(ParseException e) {
+												if (update) updateList(palletNo, locationNo);
+												first_number.setText("");
+												second_number.setText("");
+											}
+										});
+										return;
+									}
+								}
+								Toast.makeText(context,
+										"Pallet tag is not stored on this location! Please, try again.",
+										Toast.LENGTH_LONG).show();
+							}
+						}
+					});
+					break;
+			}
+
+			return null;
+		}
 	}
 }
