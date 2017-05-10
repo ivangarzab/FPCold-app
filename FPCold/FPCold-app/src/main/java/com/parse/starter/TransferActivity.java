@@ -36,17 +36,23 @@ import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import sapphire.Product;
 import sapphire.StorageListView;
+import sapphire.Transaction;
 
 public class TransferActivity extends AppCompatActivity implements View.OnClickListener {
 
 	// Environment variables
 	final private Context context = this;
 	final private Activity activity = this;
+
+	// Transaction object for record-keeping
+	private Transaction TRANSACTION;
 
 	// Variables for the UI
 	private RelativeLayout RL;
@@ -78,6 +84,8 @@ public class TransferActivity extends AppCompatActivity implements View.OnClickL
 		setTitle("TRANSFER");
 		getSupportActionBar().setBackgroundDrawable(
 				new ColorDrawable(getResources().getColor(R.color.colorTransfer)));
+
+		openTransaction("TRANSFER");
 
 		// Initialization of all variables
 		RL = (RelativeLayout)findViewById(R.id.transferRelativeLayout);
@@ -396,6 +404,7 @@ public class TransferActivity extends AppCompatActivity implements View.OnClickL
 				.setPositiveButton("YES", new DialogInterface.OnClickListener() {
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
+						closeTransaction();
 						Intent i = new Intent(getApplicationContext(), HomeActivity.class);
 						i.putExtra("download", false);
 						startActivity(i);
@@ -409,6 +418,34 @@ public class TransferActivity extends AppCompatActivity implements View.OnClickL
 				});
 		AlertDialog ad = adb.create();
 		ad.show();
+	}
+
+	public void openTransaction(String type) {
+		// Get current date and time
+		SimpleDateFormat datestamp = new SimpleDateFormat("MM-dd-yy HH:mm");
+		String date = datestamp.format(new Date());
+		// Initiate Transaction object
+		TRANSACTION = new Transaction(HomeActivity.CURRENT_USER.getString("name"), date, type);
+	}
+
+	public void closeTransaction() {
+		// Get current date and time
+		SimpleDateFormat datestamp = new SimpleDateFormat("MM-dd-yy HH:mm");
+		String date = datestamp.format(new Date());
+		// Generate Transaction's Description
+		String desc = "";
+		for (int i = 0; i < pallets.size(); i++) {
+			desc += pallets.get(i) + " --> " + locations.get(i) + "\n";
+		}
+
+		if (desc.equals("")) return;
+		else {
+			// Set Transaction endTime and Description
+			TRANSACTION.setEndTime(date);
+			TRANSACTION.setDescription(desc);
+			// Save Transaction in the server
+			TRANSACTION.sendTransaction();
+		}
 	}
 
 	/**

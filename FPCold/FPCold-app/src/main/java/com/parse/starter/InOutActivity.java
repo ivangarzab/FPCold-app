@@ -39,16 +39,23 @@ import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import sapphire.Product;
 import sapphire.StorageListView;
+import sapphire.Transaction;
+
 public class InOutActivity extends AppCompatActivity implements View.OnClickListener{
 
 	// Environment variables
 	final private Context context = this;
 	final private Activity activity = this;
+
+	// Transaction object for record-keeping
+	private Transaction TRANSACTION;
 
 	// States the type of transaction to be performed by app
 	private char TYPE;
@@ -99,7 +106,7 @@ public class InOutActivity extends AppCompatActivity implements View.OnClickList
 		virtual_locations = new ArrayList<>();
 
 		// Set up the activity based on the type of transaction to be performed
-		activitySetup(TYPE);
+		activitySetup();
 
 		///// Prepare ListView
 		lv = (ListView)findViewById(R.id.checkedInoutListView);
@@ -130,7 +137,6 @@ public class InOutActivity extends AppCompatActivity implements View.OnClickList
 						});
 				AlertDialog ad = adb.create();
 				ad.show();
-
 				return true;
 			}
 		});
@@ -155,7 +161,6 @@ public class InOutActivity extends AppCompatActivity implements View.OnClickList
 					first_number.setInputType(InputType.TYPE_NULL);
 					handled = true;
 				}
-
 				return handled;
 			}
 		});
@@ -169,7 +174,6 @@ public class InOutActivity extends AppCompatActivity implements View.OnClickList
 					hideKeyboard();
 					handled = true;
 				}
-
 				return handled;
 			}
 		});
@@ -269,17 +273,13 @@ public class InOutActivity extends AppCompatActivity implements View.OnClickList
 					"No scan data received!", Toast.LENGTH_SHORT);
 			t.show();
 		}
-
 	}
 
 	/**
 	 * Do the necessary adjustments depending on the type of transaction to be performed on this
 	 *  activity
-	 * @param c : defines the type of transaction to be performed:
-	 *          c = 'i' : inbound
-	 *          c = 'o' : outbound
 	 */
-	public void activitySetup(char c) {
+	public void activitySetup() {
 		// String for the instructions TextView
 		String inst = "";
 		// Hints to be placed on the correct EditTexts
@@ -287,7 +287,7 @@ public class InOutActivity extends AppCompatActivity implements View.OnClickList
 		String location_hint = "Location Number";
 
 		// We are performing an inbound
-		if (c == 'i') {
+		if (TYPE == 'i') {
 			setTitle("IN");
 			getSupportActionBar().setBackgroundDrawable(
 					new ColorDrawable(getResources().getColor(R.color.colorInbound)));
@@ -295,9 +295,11 @@ public class InOutActivity extends AppCompatActivity implements View.OnClickList
 					"followed by the location number where it will be stored to.";
 			first_number.setHint(pallet_hint);
 			second_number.setHint(location_hint);
+
+			openTransaction("INBOUND");
 		}
 		// We are performing an outbound
-		else if (c == 'o') {
+		else if (TYPE == 'o') {
 			setTitle("OUT");
 			getSupportActionBar().setBackgroundDrawable(
 					new ColorDrawable(getResources().getColor(R.color.colorOutbound)));
@@ -305,6 +307,8 @@ public class InOutActivity extends AppCompatActivity implements View.OnClickList
 					"followed by the pallet tag that will be unloaded.";
 			first_number.setHint(location_hint);
 			second_number.setHint(pallet_hint);
+
+			openTransaction("OUTBOUND");
 		}
 		else Log.i("TRASH", "Something went wrong on activitySetup!");
 		instructions.setText(inst);
@@ -387,21 +391,9 @@ public class InOutActivity extends AppCompatActivity implements View.OnClickList
 			return;
 		}
 
+		// Create an IN AsyncTask object and execute the server access
 		ServerAccess access = new ServerAccess(palletNo, locationNo, update);
 		access.execute();
-/*
-		// Create a new product and store it on the server
-		ParseObject product = new ParseObject("Product");
-		product.put("tag", palletNo);
-		product.put("location", locationNo);
-		product.put("dateIn", HomeActivity.DATE);
-		product.saveEventually();
-
-		// Reset EditText fields and update list if desired
-		if (update) updateList(palletNo, locationNo);
-		first_number.setText("");
-		second_number.setText("");
-*/
 	}
 
 	/**
@@ -431,37 +423,10 @@ public class InOutActivity extends AppCompatActivity implements View.OnClickList
 			second_number.setText("");
 			return;
 		}
+
+		// Create an OUT AsyncTask object and execute the server access
 		ServerAccess access = new ServerAccess(palletNo, locationNo, update);
 		access.execute();
-
-/*
-		ParseQuery<ParseObject> query = new ParseQuery<>("Product");
-		query.findInBackground(new FindCallback<ParseObject>() {
-			@Override
-			public void done(List<ParseObject> objects, ParseException e) {
-				if (e == null) {
-					for (ParseObject object : objects) {
-						if (object.get("location").equals(locationNo)
-								&& object.get("tag").equals(palletNo)) {
-							object.deleteEventually(new DeleteCallback() {
-								@Override
-								public void done(ParseException e) {
-									if (update) updateList(palletNo, locationNo);
-									first_number.setText("");
-									second_number.setText("");
-								}
-							});
-							return;
-						}
-					}
-					Toast.makeText(context,
-							"Pallet tag is not stored on this location! Please, try again.",
-							Toast.LENGTH_LONG).show();
-
-				}
-			}
-		});
-		*/
 	}
 
 	/**
@@ -517,6 +482,7 @@ public class InOutActivity extends AppCompatActivity implements View.OnClickList
 				.setPositiveButton("YES", new DialogInterface.OnClickListener() {
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
+						closeTransaction();
 						hideKeyboard();
 						Intent i = new Intent(getApplicationContext(), HomeActivity.class);
 						i.putExtra("download", false);
@@ -531,6 +497,34 @@ public class InOutActivity extends AppCompatActivity implements View.OnClickList
 				});
 		AlertDialog ad = adb.create();
 		ad.show();
+	}
+
+	public void openTransaction(String type) {
+		// Get current date and time
+		SimpleDateFormat datestamp = new SimpleDateFormat("MM-dd-yy HH:mm");
+		String date = datestamp.format(new Date());
+		// Initiate Transaction object
+		TRANSACTION = new Transaction(HomeActivity.CURRENT_USER.getString("name"), date, type);
+	}
+
+	public void closeTransaction() {
+		// Get current date and time
+		SimpleDateFormat datestamp = new SimpleDateFormat("MM-dd-yy HH:mm");
+		String date = datestamp.format(new Date());
+		// Generate Transaction's Description
+		String desc = "";
+		for (int i = 0; i < pallets.size(); i++) {
+			desc += pallets.get(i) + " --> " + locations.get(i) + "\n";
+		}
+
+		if (desc.equals("")) return;
+		else {
+			// Set Transaction endTime and Description
+			TRANSACTION.setEndTime(date);
+			TRANSACTION.setDescription(desc);
+			// Save Transaction in the server
+			TRANSACTION.sendTransaction();
+		}
 	}
 
 	/**
