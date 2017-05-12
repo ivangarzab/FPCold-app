@@ -8,19 +8,28 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.TabLayout;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.InputType;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -31,10 +40,13 @@ import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
+import org.w3c.dom.Text;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import sapphire.Product;
+import sapphire.StorageListView;
 
 public class InventoryActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -42,23 +54,35 @@ public class InventoryActivity extends AppCompatActivity implements View.OnClick
 	final private Context context = this;
 	final private Activity activity = this;
 
+	// Variables for tab management
+	/// Link derivative, which will keep every
+	//// loaded fragment in memory. If this becomes too memory intensive, it
+	//// may be best to switch to a
+	private SectionsPagerAdapter mSectionsPagerAdapter;
+	/// The link that will host the section contents.
+	private ViewPager mViewPager;
+	// Indicates which tab the user is currently viewing
+	private int TAB;
+
 	// Variables for the UI
 	private RelativeLayout RL;
-	private TextView top_instructions, bot_instructions;
-	private EditText pallet_tag, location_number;
-	private ImageButton pallet_camera, location_camera;
+	private TextView instructions, result;
+	private EditText textField;
+	private Button button;
+	private ImageButton imageButton;
 
 	// Support variables for error checking
 	ArrayList<String> location_numbers;
 	ArrayList<String> pallet_numbers;
 	ArrayList<String> dates;
 
-	//
+	// Variables for ListView which will show the individual search results
+	private ListView lv;
+	private ArrayAdapter AA;
+	private ArrayList<String> results;
+
+	// Defines which filter to apply on the InventoryList view
 	private char list_type = 'n';
-
-	// Supporting flag for calling the external Barcode Scanner app
-	boolean flag;
-
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -68,48 +92,51 @@ public class InventoryActivity extends AppCompatActivity implements View.OnClick
 		setSupportActionBar(toolbar);
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-		setTitle("INVENTORY");
+		// Create the adapter that will return a fragment for each of the three
+		// primary sections of the activity.
+		mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
+		// Set up the ViewPager with the sections adapter.
+		mViewPager = (ViewPager) findViewById(R.id.container);
+		mViewPager.setAdapter(mSectionsPagerAdapter);
+		// Set up the TabLayout for the parent View
+		TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
+		tabLayout.setupWithViewPager(mViewPager);
 
+		setTitle("SEARCH INVENTORY");
+
+		// Initiate UI elements
 		RL = (RelativeLayout)findViewById(R.id.inventoryRelativeLayout);
-		top_instructions = (TextView)findViewById(R.id.inventoryTopInstructionsTextView);
-		bot_instructions = (TextView)findViewById(R.id.inventoryBotInstructionsTextView);
+		instructions = (TextView)findViewById(R.id.inventoryInstructionsTextView);
+		result = (TextView)findViewById(R.id.inventoryResultsTextView);
+		textField = (EditText)findViewById(R.id.inventoryEditText);
+		button = (Button)findViewById(R.id.inventoryButton);
+		imageButton = (ImageButton)findViewById(R.id.inventoryImageButton);
 
-		pallet_tag = (EditText)findViewById(R.id.inventoryTopEditText);
-		pallet_camera = (ImageButton)findViewById(R.id.inventoryTopImageButton);
-		location_number = (EditText)findViewById(R.id.inventoryBotEditText);
-		location_camera = (ImageButton)findViewById(R.id.inventoryBotImageButton);
-
+		// Initiate arrayLists for error checking
 		location_numbers = new ArrayList<>();
 		pallet_numbers = new ArrayList<>();
 		dates = new ArrayList<>();
 
+		// Initiate variables for ListView which will show the results for
+		/// individual searches
+		lv = (ListView)findViewById(R.id.inventoryListView);
+		results = new ArrayList<String>();
+		AA = new ArrayAdapter(context, android.R.layout.simple_list_item_1, results);
+		lv.setAdapter(AA);
+
+		// Set native OnClickListeners to hide the softkeyboard when in use
 		RL.setOnClickListener(this);
-		top_instructions.setOnClickListener(this);
-		bot_instructions.setOnClickListener(this);
+		instructions.setOnClickListener(this);
 
-		pallet_tag.setInputType(InputType.TYPE_NULL);
-		location_number.setInputType(InputType.TYPE_NULL);
-
-		pallet_tag.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+		// Block any input from the soft keyboard towards the textField
+		textField.setInputType(InputType.TYPE_NULL);
+		// Hide the soft keyboard for the textField when the View is opened
+		textField.setOnEditorActionListener(new TextView.OnEditorActionListener() {
 			@Override
 			public boolean onEditorAction(TextView v, int i, KeyEvent event) {
 				boolean handled = false;
 				if (i == EditorInfo.IME_ACTION_DONE) {
-					pallet_tag.setInputType(InputType.TYPE_NULL);
-					hideKeyboard();
-					handled = true;
-				}
-
-				return handled;
-			}
-		});
-
-		location_number.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-			@Override
-			public boolean onEditorAction(TextView v, int i, KeyEvent event) {
-				boolean handled = false;
-				if (i == EditorInfo.IME_ACTION_DONE) {
-					location_number.setInputType(InputType.TYPE_NULL);
+					textField.setInputType(InputType.TYPE_NULL);
 					hideKeyboard();
 					handled = true;
 				}
@@ -119,21 +146,44 @@ public class InventoryActivity extends AppCompatActivity implements View.OnClick
 		});
 
 		// Set the extra OnClickListeners to call external app Barcode Scanner
-		pallet_camera.setOnClickListener(new View.OnClickListener() {
+		imageButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				flag = false;
 				IntentIntegrator scanIntegrator = new IntentIntegrator(activity);
 				scanIntegrator.initiateScan();
 			}
 		});
 
-		location_camera.setOnClickListener(new View.OnClickListener() {
+		// Setup Tabs PageChangeListener in order to know which tab is currently showing
+		final ViewPager.OnPageChangeListener changer = new ViewPager.OnPageChangeListener() {
 			@Override
-			public void onClick(View v) {
-				flag = true;
-				IntentIntegrator scanIntegrator = new IntentIntegrator(activity);
-				scanIntegrator.initiateScan();
+			public void onPageScrolled(int position, float positionOffset,
+									   int positionOffsetPixels) { }
+
+			@Override
+			public void onPageScrollStateChanged(int state) { }
+
+			@Override
+			public void onPageSelected(int position) {
+				switch (position) {
+					case 0:
+						TAB = 1;
+						activitySetup();
+						break;
+					case 1:
+						TAB = 2;
+						activitySetup();
+						break;
+					default:
+						break;
+				}
+			}
+		};
+		mViewPager.setOnPageChangeListener(changer);
+		mViewPager.post(new Runnable() {
+			@Override
+			public void run() {
+				changer.onPageSelected(mViewPager.getCurrentItem());
 			}
 		});
 
@@ -168,8 +218,6 @@ public class InventoryActivity extends AppCompatActivity implements View.OnClick
 		// automatically handle clicks on the Home/Up button, so long
 		// as you specify a parent activity in AndroidManifest.xml.
 		int id = item.getItemId();
-
-		//noinspection SimplifiableIfStatement
 		switch (id) {
 			case R.id.logout:
 				ParseUser.logOut();
@@ -183,10 +231,7 @@ public class InventoryActivity extends AppCompatActivity implements View.OnClick
 
 	/**
 	 * Method receiving the results from the Barcode Scanner app
-	 *   if flag is false:
-	 *      assign results to first EditText (pallet)
-	 *   else if flag is true:
-	 *      assign results to second EditText (location)
+	 *   if there is a result, paste it on the textField
 	 *   else if no scan is done, Toast the user
 	 * @param requestCode : Necessary for the receiving of information from BarcodeScanner
 	 * @param resultCode : Necessary for the receiving of information from BarcodeScanner
@@ -196,19 +241,41 @@ public class InventoryActivity extends AppCompatActivity implements View.OnClick
 		IntentResult scanningResult = IntentIntegrator.parseActivityResult(requestCode,
 				resultCode, intent);
 		if (scanningResult != null) {
-			if (!flag) {
-				pallet_tag.setText(scanningResult.getContents());
-			}
-			else {//(flag)
-				location_number.setText(scanningResult.getContents());
-			}
+			textField.setText(scanningResult.getContents());
 		}
 		else {
 			Toast t = Toast.makeText(getApplicationContext(),
 					"No scan data received!", Toast.LENGTH_SHORT);
 			t.show();
 		}
+	}
 
+	/**
+	 * Sets up the Activity depending on the current tab:
+	 *   if TAB == 1 then we show the Inventory actions
+	 *   else if TAB == 2 then we show the Pallet actions
+	 */
+	public void activitySetup() {
+		result.setText("Individual Search Results:");
+		String inst = "";
+		String hint = "";
+		String butt = "";
+		textField.setText("");
+
+		if (TAB == 1) {
+			inst = "Scan a Location Number to find all of its contents:";
+			hint = "Location Number";
+			butt = "View All Inventory";
+		}
+		else if (TAB == 2) {
+			inst = "Scan a Pallet Tag to find it on the virtual storage:";
+			hint = "Pallet Tag";
+			butt = "Search Pallet Tags by Batch";
+		}
+
+		instructions.setText(inst);
+		textField.setHint(hint);
+		button.setText(butt);
 	}
 
 	/**
@@ -216,108 +283,66 @@ public class InventoryActivity extends AppCompatActivity implements View.OnClick
 	 * @param view : View which calls the method
 	 */
 	public void keyboardAction(View view) {
-		int id = view.getId();
-
-		if (id == R.id.inventoryTopKeyboardImageButton) {
-			pallet_tag.requestFocus();
-			pallet_tag.setInputType(InputType.TYPE_CLASS_TEXT);
-			InputMethodManager mgr = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-			mgr.showSoftInput(pallet_tag, InputMethodManager.SHOW_FORCED);
-		}
-		else if (id == R.id.inventoryBotKeyboardImageButton) {
-			location_number.requestFocus();
-			location_number.setInputType(InputType.TYPE_CLASS_TEXT);
-			InputMethodManager mgr = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-			mgr.showSoftInput(location_number, InputMethodManager.SHOW_FORCED);
-		}
+		textField.requestFocus();
+		textField.setInputType(InputType.TYPE_CLASS_TEXT);
+		InputMethodManager mgr = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+		mgr.showSoftInput(textField, InputMethodManager.SHOW_FORCED);
 	}
 
-	public void searchPallet(View view) {
-		// if the pallet field is empty, throw an error
-		String pallet = pallet_tag.getText().toString();
-		if (pallet.equals("")) {
-			searchError('p');
+	public void searchAction (View view) {
+		results.clear();
+		// if the textField is empty, throw an error
+		String search = textField.getText().toString();
+		if (search.equals("")) {
+			searchError();
 			return;
 		}
 
-		// if the pallet does not exist, throw an error
-		int position;
-		if (!(pallet_numbers.contains(pallet))) {
-			searchError('p');
-			return;
+		if (TAB == 1) {
+			// if the location does not exist, throw an error
+			if (!(location_numbers.contains(search))) {
+				searchError();
+				return;
+			}
+			for (int i = 0; i < location_numbers.size(); i++) {
+				if (location_numbers.get(i).equals(search)) {
+					results.add(pallet_numbers.get(i));
+				}
+			}
+			result.setText("Location Number " + search + " contains:");
+			AA.notifyDataSetChanged();
 		}
-		else {
-			position = pallet_numbers.indexOf(pallet);
+		else if (TAB == 2) {
+			// if the pallet is not on the inventory, throw an error
+			// else, get its position on the support ArrayList
+			int position;
+			if (!(pallet_numbers.contains(search))) {
+				searchError();
+				return;
+			}
+			else {
+				position = pallet_numbers.indexOf(search);
+			}
+
+			result.setText("Pallet tag " + search + " location: ");
+			results.add(location_numbers.get(position));
+			// Notify the Adapter to update the view of the listView
+			AA.notifyDataSetChanged();
 		}
-
-		// Set up Strings for the formatting of the AlertDialog
-		String title = "Pallet #" + pallet;
-
-		String location = "Location: " + location_numbers.get(position) + "\n";
-		String date_in = "\nDate in: " + dates.get(position) + "\n";
-		String msg = location + date_in;
-
-		// Call the AlertDialog
-		searchAction(title, msg);
-		// Reset location field
-		pallet_tag.setText("");
 	}
 
-	public void searchLocation(View view) {
-		String location = location_number.getText().toString();
-		// if the location field is empty, throw an error
-		if (location.equals("")) {
-			searchError('l');
-			return;
-		}
+	public void searchError() {
+		result.setText("Individual Search Results:");
+		results.clear();
 
-		// if the location does not exist, throw an error
-		if (!(location_numbers.contains(location))) {
-			searchError('l');
-			return;
-		}
-
-		// Set up Strings for the formatting of the AlertDialog
-		String title = "Location #" +location;
-
-		String msg = String.format("%1$-8s %2$32s\n", "Date in", "Pallet #");
-		/// Search for the pallet tags with the desired location
-		for (int i = 0; i < pallet_numbers.size(); i++) {
-			if (location_numbers.get(i).equals(location))
-				msg += String.format("%1$-30s %2$-10s%n", dates.get(i), pallet_numbers.get(i));
-		}
-
-		// Call the AlertDialog
-		searchAction(title, msg);
-
-		// Reset location field
-		location_number.setText("");
-	}
-
-	public void searchAction(String title, String message) {
-		AlertDialog.Builder adb = new AlertDialog.Builder(context);
-		adb.setTitle(title);
-		adb.setMessage(message)
-				.setCancelable(false)
-				.setNegativeButton("CONFIRM", new DialogInterface.OnClickListener() {
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-						dialog.cancel();
-					}
-				});
-		AlertDialog ad = adb.create();
-		ad.show();
-	}
-
-	public void searchError(char c) {
 		String message;
-		if (c == 'l') {
+		if (TAB == 1) {
 			message = "There was an error with the location number!\nPlease, try again.";
-			location_number.setText("");
+			textField.setText("");
 		}
-		else if (c == 'p') {
+		else if (TAB == 2) {
 			message = "There was an error with the pallet tag!\nPlease, try again.";
-			pallet_tag.setText("");
+			textField.setText("");
 		}
 		else return;
 
@@ -342,19 +367,23 @@ public class InventoryActivity extends AppCompatActivity implements View.OnClick
 	public void buttonsAction(View view) {
 		Intent i = null;
 
-		if (view.getId() == R.id.inventoryTopAllButton) {
+		if (TAB == 1) {
+			viewInventory();
+		}
+		else if (TAB == 2) {
 			//i = new Intent(context, SearchBatchActivity.class);
 			//startActivity(i);
 			Toast.makeText(getApplicationContext(), "Batch Search", Toast.LENGTH_LONG).show();
-		}
-		else if (view.getId() == R.id.inventoryBotAllButton) {
-			viewInventory();
-			//Toast.makeText(getApplicationContext(), "All Inventory", Toast.LENGTH_LONG).show();
 		}
 	}
 
 	/**
 	 * Invokes the AlertDialog to prompt the user to select a filter for the InventoryList
+	 * Filters:
+	 *   Location
+	 *   Pallet Tag
+	 *   Date
+	 * Starts the InventoryList Activity once a filter has been chosen
 	 */
 	private void viewInventory() {
 		// Set selection choices
@@ -414,10 +443,7 @@ public class InventoryActivity extends AppCompatActivity implements View.OnClick
 	@Override
 	public void onClick(View v) {
 		if (v.getId() == R.id.inventoryRelativeLayout ||
-				v.getId() == R.id.inventoryTopInstructionsTextView ||
-				v.getId() == R.id.inventoryBotInstructionsTextView ||
-				v.getId() == R.id.inventoryTopLinearLayout ||
-				v.getId() == R.id.inventoryBotLinearLayout) {
+				v.getId() == R.id.inventoryInstructionsTextView) {
 			hideKeyboard();
 		}
 	}
@@ -428,5 +454,73 @@ public class InventoryActivity extends AppCompatActivity implements View.OnClick
 	public void hideKeyboard() {
 		InputMethodManager imm = (InputMethodManager)getSystemService(INPUT_METHOD_SERVICE);
 		imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+	}
+
+
+
+	/**
+	 * A placeholder fragment containing a simple view.
+	 */
+	public static class PlaceholderFragment extends Fragment {
+		/**
+		 * The fragment argument representing the section number for this
+		 * fragment.
+		 */
+		private static final String ARG_SECTION_NUMBER = "section_number";
+
+		public PlaceholderFragment() {
+		}
+
+		/**
+		 * Returns a new instance of this fragment for the given section
+		 * number.
+		 */
+		public static PlaceholderFragment newInstance(int sectionNumber) {
+			PlaceholderFragment fragment = new PlaceholderFragment();
+			Bundle args = new Bundle();
+			args.putInt(ARG_SECTION_NUMBER, sectionNumber);
+			fragment.setArguments(args);
+			return fragment;
+		}
+
+		@Override
+		public View onCreateView(LayoutInflater inflater, ViewGroup container,
+								 Bundle savedInstanceState) {
+			View rootView = inflater.inflate(R.layout.content_inventory, container, false);
+			return rootView;
+		}
+	}
+
+	/**
+	 * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
+	 * one of the sections/tabs/pages.
+	 */
+	public class SectionsPagerAdapter extends FragmentPagerAdapter {
+
+		public SectionsPagerAdapter(FragmentManager fm) {
+			super(fm);
+		}
+
+		@Override
+		public Fragment getItem(int position) {
+			// getItem is called to instantiate the fragment for the given page.
+			// Return a PlaceholderFragment (defined as a static inner class below).
+			return PlaceholderFragment.newInstance(position + 1);
+		}
+
+		@Override
+		public int getCount() {	return 2; }
+
+		@Override
+		public CharSequence getPageTitle(int position) {
+			// Show tab titles
+			switch (position) {
+				case 0:
+					return "by LOCATION";
+				case 1:
+					return "by PALLET";
+			}
+			return null;
+		}
 	}
 }

@@ -264,7 +264,7 @@ public class InOutActivity extends AppCompatActivity implements View.OnClickList
 			if (!flag) {
 				first_number.setText(scanningResult.getContents());
 			}
-			else {//(flag)
+			else { //(flag)
 				second_number.setText(scanningResult.getContents());
 			}
 		}
