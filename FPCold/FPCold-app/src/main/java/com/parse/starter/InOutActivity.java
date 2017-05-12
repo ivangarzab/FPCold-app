@@ -485,7 +485,6 @@ public class InOutActivity extends AppCompatActivity implements View.OnClickList
 						closeTransaction();
 						hideKeyboard();
 						Intent i = new Intent(getApplicationContext(), HomeActivity.class);
-						i.putExtra("download", false);
 						startActivity(i);
 					}
 				})
@@ -579,6 +578,11 @@ public class InOutActivity extends AppCompatActivity implements View.OnClickList
 		@Override
 		protected void onPostExecute(Void aVoid) {
 			super.onPostExecute(aVoid);
+
+			// Reset EditText fields and update list if desired
+			if (update) updateList(palletNo, locationNo);
+			first_number.setText("");
+			second_number.setText("");
 			//Dismissing the progress dialog
 			PD.dismiss();
 		}
@@ -592,15 +596,14 @@ public class InOutActivity extends AppCompatActivity implements View.OnClickList
 					product.put("tag", palletNo);
 					product.put("location", locationNo);
 					product.put("dateIn", HomeActivity.DATE);
-					product.saveInBackground(new SaveCallback() {
-						@Override
-						public void done(ParseException e) {
-							// Reset EditText fields and update list if desired
-							if (update) updateList(palletNo, locationNo);
-							first_number.setText("");
-							second_number.setText("");
-						}
-					});
+
+					// Save the object on the current thread
+					/// and proceed to the onPostExecute method
+					try {
+						product.save();
+					} catch (ParseException in_error) {
+						in_error.printStackTrace();
+					}
 					break;
 				case 'o':
 					ParseQuery<ParseObject> query = new ParseQuery<>("Product");
@@ -611,14 +614,13 @@ public class InOutActivity extends AppCompatActivity implements View.OnClickList
 								for (ParseObject object : objects) {
 									if (object.get("location").equals(locationNo)
 											&& object.get("tag").equals(palletNo)) {
-										object.deleteEventually(new DeleteCallback() {
-											@Override
-											public void done(ParseException e) {
-												if (update) updateList(palletNo, locationNo);
-												first_number.setText("");
-												second_number.setText("");
-											}
-										});
+										// Delete the object on the current thread
+										/// and proceed to the onPostExecute method
+										try {
+											object.delete();
+										} catch (ParseException out_error) {
+											out_error.printStackTrace();
+										}
 										return;
 									}
 								}

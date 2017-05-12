@@ -132,26 +132,25 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 		@Override
 		protected void onPostExecute(Void aVoid) {
 			super.onPostExecute(aVoid);
+			// Start HomeActivity
+			Intent i = new Intent(context, HomeActivity.class);
+			startActivity(i);
 			//Dismissing the progress dialog
 			PD.dismiss();
 		}
 
 		@Override
 		protected Void doInBackground(Void... params) {
-			// Attempt to login with Parse
-			ParseUser.logInInBackground(PIN, PIN, new LogInCallback() {
-				@Override
-				public void done(ParseUser user, ParseException e) {
-					if (user != null) {
-						// Start HomeActivity
-						Intent i = new Intent(context, HomeActivity.class);
-						startActivity(i);
-					}
-					else
-						Toast.makeText(context,
-								"Unable to log in.  Please try again!", Toast.LENGTH_LONG).show();
-				}
-			});
+			// Attempt to login with Parse in the current thread
+			/// and proceed to the onPostExecute method
+			try {
+				ParseUser.logIn(PIN, PIN);
+			} catch (ParseException e) {
+				Toast.makeText(context,
+						"Unable to log in.  Please try again!", Toast.LENGTH_LONG).show();
+
+				e.printStackTrace();
+			}
 			return null;
 		}
 	}

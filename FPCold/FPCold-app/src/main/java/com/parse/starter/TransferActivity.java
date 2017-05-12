@@ -406,7 +406,6 @@ public class TransferActivity extends AppCompatActivity implements View.OnClickL
 					public void onClick(DialogInterface dialog, int which) {
 						closeTransaction();
 						Intent i = new Intent(getApplicationContext(), HomeActivity.class);
-						i.putExtra("download", false);
 						startActivity(i);
 					}
 				})
@@ -498,6 +497,11 @@ public class TransferActivity extends AppCompatActivity implements View.OnClickL
 		@Override
 		protected void onPostExecute(Void aVoid) {
 			super.onPostExecute(aVoid);
+
+			updateList(pallet, new_loc);
+			pallet_tag.setText("");
+			old_location.setText("");
+			new_location.setText("");
 			//Dismissing the progress dialog
 			PD.dismiss();
 		}
@@ -512,15 +516,13 @@ public class TransferActivity extends AppCompatActivity implements View.OnClickL
 					if (e == null) {
 						if (object.getString("location").equals(old_loc)) {
 							object.put("location", new_loc);
-							object.saveInBackground(new SaveCallback() {
-								@Override
-								public void done(ParseException e) {
-									updateList(pallet, new_loc);
-									pallet_tag.setText("");
-									old_location.setText("");
-									new_location.setText("");
-								}
-							});
+							// Save the changes to the object in the current thread
+							/// and proceed to the onPostExecute method
+							try {
+								object.save();
+							} catch (ParseException transfer_error) {
+								transfer_error.printStackTrace();
+							}
 						}
 						else {
 							Toast.makeText(context,
