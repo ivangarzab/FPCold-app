@@ -12,13 +12,14 @@
     </shared>
   </component>
   <component name="AndroidLogFilters">
+    <option name="TOOL_WINDOW_CUSTOM_FILTER" value="TRASH" />
     <option name="TOOL_WINDOW_LOG_LEVEL" value="info" />
     <option name="TOOL_WINDOW_CONFIGURED_FILTER" value="Show only selected application" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="2b8189f4-df9f-4f8c-814a-e7ce9aa3295b" name="Default" comment="Add the excel feature&#10;-  Create a CSV file with the information from InventoryList&#10;-  Share file with user's desired app">
+    <list default="true" id="2b8189f4-df9f-4f8c-814a-e7ce9aa3295b" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/FPCold-app/src/main/java/com/parse/starter/MainActivity.java" afterPath="$PROJECT_DIR$/FPCold-app/src/main/java/com/parse/starter/MainActivity.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/FPCold-app/src/main/java/com/parse/starter/InOutActivity.java" afterPath="$PROJECT_DIR$/FPCold-app/src/main/java/com/parse/starter/InOutActivity.java" />
     </list>
     <ignored path="FPCold.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -54,7 +55,7 @@
       <file leaf-file-name="AndroidManifest.xml" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/FPCold-app/src/main/AndroidManifest.xml">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="697">
+            <state relative-caret-position="1734">
               <caret line="102" column="42" selection-start-line="102" selection-start-column="42" selection-end-line="102" selection-end-column="42" />
               <folding />
             </state>
@@ -64,21 +65,26 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="MainActivity.java" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/FPCold-app/src/main/java/com/parse/starter/MainActivity.java">
+      <file leaf-file-name="InOutActivity.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/FPCold-app/src/main/java/com/parse/starter/InOutActivity.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="266">
-              <caret line="145" column="90" selection-start-line="145" selection-start-column="90" selection-end-line="145" selection-end-column="90" />
-              <folding />
+            <state relative-caret-position="511">
+              <caret line="620" column="60" selection-start-line="620" selection-start-column="60" selection-end-line="620" selection-end-column="60" />
+              <folding>
+                <element signature="e#6571#6863#0" expanded="true" />
+                <element signature="e#6862#6863#0" expanded="true" />
+                <element signature="e#19701#20453#0" expanded="true" />
+                <element signature="e#20452#20453#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="InOutActivity.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/FPCold-app/src/main/java/com/parse/starter/InOutActivity.java">
+      <file leaf-file-name="TransferActivity.java" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/FPCold-app/src/main/java/com/parse/starter/TransferActivity.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-1261">
-              <caret line="502" column="41" selection-start-line="502" selection-start-column="8" selection-end-line="503" selection-end-column="51" />
+            <state relative-caret-position="4655">
+              <caret line="470" column="0" selection-start-line="470" selection-start-column="0" selection-end-line="470" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -1768,7 +1774,6 @@
         <option value="$PROJECT_DIR$/FPCold-app/src/main/res/layout/activity_inventory.xml" />
         <option value="$PROJECT_DIR$/FPCold-app/src/main/res/layout/content_transfer.xml" />
         <option value="$PROJECT_DIR$/FPCold-app/build/intermediates/res/merged/debug/layout/content_inventory.xml" />
-        <option value="$PROJECT_DIR$/FPCold-app/src/main/java/com/parse/starter/InOutActivity.java" />
         <option value="$PROJECT_DIR$/FPCold-app/src/main/res/layout/content_inventory.xml" />
         <option value="$PROJECT_DIR$/FPCold-app/src/main/java/com/parse/starter/InventoryActivity.java" />
         <option value="$PROJECT_DIR$/FPCold-app/src/main/java/apache/ResultSetHelper.java" />
@@ -1779,6 +1784,7 @@
         <option value="$PROJECT_DIR$/FPCold-app/src/main/java/com/parse/starter/InventoryList.java" />
         <option value="$PROJECT_DIR$/FPCold-app/src/main/java/apache/ResultSetHelperService.java" />
         <option value="$PROJECT_DIR$/FPCold-app/src/main/java/com/parse/starter/MainActivity.java" />
+        <option value="$PROJECT_DIR$/FPCold-app/src/main/java/com/parse/starter/InOutActivity.java" />
       </list>
     </option>
   </component>
@@ -1832,6 +1838,9 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="ProjectPane" />
+      <pane id="Scratches" />
+      <pane id="PackagesPane" />
       <pane id="AndroidView">
         <subPane>
           <PATH>
@@ -1885,9 +1894,6 @@
         </subPane>
       </pane>
       <pane id="Scope" />
-      <pane id="Scratches" />
-      <pane id="PackagesPane" />
-      <pane id="ProjectPane" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -2315,7 +2321,14 @@
       <option name="project" value="LOCAL" />
       <updated>1494628818963</updated>
     </task>
-    <option name="localTasksCounter" value="14" />
+    <task id="LOCAL-00014" summary="Fix crash: Failed login attempt">
+      <created>1497213914446</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1497213914446</updated>
+    </task>
+    <option name="localTasksCounter" value="15" />
     <servers />
   </component>
   <component name="TodoView" selected-index="4">
@@ -2391,7 +2404,8 @@
     <MESSAGE value="Fix AsyncTask for Login, In&amp;Out and Transfers &#10;-  Waits for API call before dismissing the ProgressDialog&#10;Added the Pallet Tag filter to InventoryList query" />
     <MESSAGE value="Reinovate InventoryActivity&#10;-  Changed general View&#10;-  Make a Tabbed Activity&#10;-  Fix the Java class" />
     <MESSAGE value="Add the excel feature&#10;-  Create a CSV file with the information from InventoryList&#10;-  Share file with user's desired app" />
-    <option name="LAST_COMMIT_MESSAGE" value="Add the excel feature&#10;-  Create a CSV file with the information from InventoryList&#10;-  Share file with user's desired app" />
+    <MESSAGE value="Fix crash: Failed login attempt" />
+    <option name="LAST_COMMIT_MESSAGE" value="Fix crash: Failed login attempt" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager />
@@ -2575,13 +2589,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/FPCold-app/src/main/java/com/parse/starter/TransferActivity.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="160">
-          <caret line="470" column="0" selection-start-line="470" selection-start-column="0" selection-end-line="470" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/FPCold-app/build/intermediates/res/merged/debug/layout/content_inventory.xml">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="73">
@@ -2749,9 +2756,17 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/FPCold-app/src/main/java/com/parse/starter/MainActivity.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="266">
+          <caret line="145" column="90" selection-start-line="145" selection-start-column="90" selection-end-line="145" selection-end-column="90" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/FPCold-app/src/main/AndroidManifest.xml">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="697">
+        <state relative-caret-position="1734">
           <caret line="102" column="42" selection-start-line="102" selection-start-column="42" selection-end-line="102" selection-end-column="42" />
           <folding />
         </state>
@@ -2762,16 +2777,21 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/FPCold-app/src/main/java/com/parse/starter/InOutActivity.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1261">
-          <caret line="502" column="41" selection-start-line="502" selection-start-column="8" selection-end-line="503" selection-end-column="51" />
-          <folding />
+        <state relative-caret-position="511">
+          <caret line="620" column="60" selection-start-line="620" selection-start-column="60" selection-end-line="620" selection-end-column="60" />
+          <folding>
+            <element signature="e#6571#6863#0" expanded="true" />
+            <element signature="e#6862#6863#0" expanded="true" />
+            <element signature="e#19701#20453#0" expanded="true" />
+            <element signature="e#20452#20453#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/FPCold-app/src/main/java/com/parse/starter/MainActivity.java">
+    <entry file="file://$PROJECT_DIR$/FPCold-app/src/main/java/com/parse/starter/TransferActivity.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="266">
-          <caret line="145" column="90" selection-start-line="145" selection-start-column="90" selection-end-line="145" selection-end-column="90" />
+        <state relative-caret-position="4655">
+          <caret line="470" column="0" selection-start-line="470" selection-start-column="0" selection-end-line="470" selection-end-column="0" />
           <folding />
         </state>
       </provider>

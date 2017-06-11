@@ -199,22 +199,20 @@ public class InOutActivity extends AppCompatActivity implements View.OnClickList
 
 		// Populate the virutal_locations list for the outbound to check for existence of locations
 		// on the server
-		if (TYPE == 'o') {
-			// Retrieve all of the racks and their IDs from the server
-			ParseQuery<ParseObject> query = new ParseQuery<>("Product");
-			query.findInBackground(new FindCallback<ParseObject>() {
-				@Override
-				public void done(List<ParseObject> objects, ParseException e) {
-					if (e == null) {
-						if (objects.size() > 0) {
-							for (ParseObject obj : objects) {
-								virtual_locations.add(obj.getString("location"));
-							}
+		// Retrieve all of the racks and their IDs from the server
+		ParseQuery<ParseObject> query = new ParseQuery<>("Product");
+		query.findInBackground(new FindCallback<ParseObject>() {
+			@Override
+			public void done(List<ParseObject> objects, ParseException e) {
+				if (e == null) {
+					if (objects.size() > 0) {
+						for (ParseObject obj : objects) {
+							virtual_locations.add(obj.getString("location"));
 						}
 					}
 				}
-			});
-		}
+			}
+		});
 	}
 
 	@Override
@@ -381,6 +379,7 @@ public class InOutActivity extends AppCompatActivity implements View.OnClickList
 	 */
 	public void inStorageAction(final String palletNo, final String locationNo,
 								final boolean update) {
+		Log.i("TRASH", "In");
 		// If the pallet is already on the pallet list attached to ListView
 		/// then Toast the user and return
 		if (pallets.contains(palletNo) && update) {
@@ -392,7 +391,7 @@ public class InOutActivity extends AppCompatActivity implements View.OnClickList
 		}
 
 		// Create an IN AsyncTask object and execute the server access
-		ServerAccess access = new ServerAccess(palletNo, locationNo, update);
+		ServerAccess access = new ServerAccess(palletNo, locationNo, update, 'i');
 		access.execute();
 	}
 
@@ -404,9 +403,10 @@ public class InOutActivity extends AppCompatActivity implements View.OnClickList
 	 */
 	public void outStorageAction(final String palletNo, final String locationNo,
 								 final boolean update) {
+		Log.i("TRASH", "Out");
 		// if the rack location does not exist in virtual storage
 		/// then Toast the user and return
-		if (virtual_locations.indexOf(locationNo) ==-1) {
+		if (virtual_locations.indexOf(locationNo) == -1) {
 			Toast.makeText(context,
 					"Rack location number is invalid! Please, try again.",
 					Toast.LENGTH_LONG).show();
@@ -425,7 +425,7 @@ public class InOutActivity extends AppCompatActivity implements View.OnClickList
 		}
 
 		// Create an OUT AsyncTask object and execute the server access
-		ServerAccess access = new ServerAccess(palletNo, locationNo, update);
+		ServerAccess access = new ServerAccess(palletNo, locationNo, update, 'o');
 		access.execute();
 	}
 
@@ -557,15 +557,16 @@ public class InOutActivity extends AppCompatActivity implements View.OnClickList
 		private String palletNo;
 		private	String locationNo;
 		private boolean update;
+		private char type;
 		// ProgressDialog to show while performing
 		private ProgressDialog PD;
 
 		// Constructor method
-		public ServerAccess(String pallet, String location, boolean update) {
+		public ServerAccess(String pallet, String location, boolean update, char type) {
 			this.palletNo = pallet;
 			this.locationNo = location;
 			this.update = update;
-
+			this.type = type;
 		}
 
 		@Override
@@ -589,7 +590,7 @@ public class InOutActivity extends AppCompatActivity implements View.OnClickList
 
 		@Override
 		protected Void doInBackground(Void... params) {
-			switch (TYPE) {
+			switch (type) {
 				case 'i':
 					// Create a new product and store it on the server
 					ParseObject product = new ParseObject("Product");
