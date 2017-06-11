@@ -40,13 +40,10 @@ import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
-import org.w3c.dom.Text;
-
 import java.util.ArrayList;
 import java.util.List;
 
-import sapphire.Product;
-import sapphire.StorageListView;
+import static com.parse.starter.R.color.colorMainText;
 
 public class InventoryActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -121,7 +118,16 @@ public class InventoryActivity extends AppCompatActivity implements View.OnClick
 		/// individual searches
 		lv = (ListView)findViewById(R.id.inventoryListView);
 		results = new ArrayList<String>();
-		AA = new ArrayAdapter(context, android.R.layout.simple_list_item_1, results);
+		AA = new ArrayAdapter(context, android.R.layout.simple_list_item_1, results) {
+
+			@Override
+			public View getView(int position, View convertView, ViewGroup parent) {
+				View view = super.getView(position, convertView, parent);
+				TextView text = (TextView) view.findViewById(android.R.id.text1);
+				text.setTextColor(getResources().getColor(colorMainText));
+				return view;
+			}
+		};
 		lv.setAdapter(AA);
 
 		// Set native OnClickListeners to hide the softkeyboard when in use
@@ -135,8 +141,9 @@ public class InventoryActivity extends AppCompatActivity implements View.OnClick
 			@Override
 			public boolean onEditorAction(TextView v, int i, KeyEvent event) {
 				boolean handled = false;
-				if (i == EditorInfo.IME_ACTION_DONE) {
+				if (i == EditorInfo.IME_ACTION_GO) {
 					textField.setInputType(InputType.TYPE_NULL);
+					searchAction(null);
 					hideKeyboard();
 					handled = true;
 				}
@@ -261,6 +268,8 @@ public class InventoryActivity extends AppCompatActivity implements View.OnClick
 		String hint = "";
 		String butt = "";
 		textField.setText("");
+		results.clear();
+		AA.notifyDataSetChanged();
 
 		if (TAB == 1) {
 			inst = "Scan a Location Number to find all of its contents:";
@@ -309,7 +318,7 @@ public class InventoryActivity extends AppCompatActivity implements View.OnClick
 					results.add(pallet_numbers.get(i));
 				}
 			}
-			result.setText("Location Number " + search + " contains:");
+			result.setText("Location " + search + " contains:");
 			AA.notifyDataSetChanged();
 		}
 		else if (TAB == 2) {
@@ -324,11 +333,12 @@ public class InventoryActivity extends AppCompatActivity implements View.OnClick
 				position = pallet_numbers.indexOf(search);
 			}
 
-			result.setText("Pallet tag " + search + " location: ");
+			result.setText("Pallet " + search + "'s location: ");
 			results.add(location_numbers.get(position));
 			// Notify the Adapter to update the view of the listView
 			AA.notifyDataSetChanged();
 		}
+		textField.setText("");
 	}
 
 	public void searchError() {
