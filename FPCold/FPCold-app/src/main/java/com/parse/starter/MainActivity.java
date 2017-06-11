@@ -116,11 +116,15 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
 		// Declaring functional variables
 		private String PIN;
+		private boolean flag;
 		// ProgressDialog to show while performing
 		private ProgressDialog PD;
 
 		// Constructor method
-		public ServerLogin(String pin) {	this.PIN = pin;	}
+		public ServerLogin(String pin) {
+			this.PIN = pin;
+			this.flag = false;
+		}
 
 		@Override
 		protected void onPreExecute() {
@@ -132,9 +136,14 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 		@Override
 		protected void onPostExecute(Void aVoid) {
 			super.onPostExecute(aVoid);
-			// Start HomeActivity
-			Intent i = new Intent(context, HomeActivity.class);
-			startActivity(i);
+			if (flag) {
+				// Start HomeActivity
+				Intent i = new Intent(context, HomeActivity.class);
+				startActivity(i);
+			}
+			else
+				Toast.makeText(context,
+						"Unable to log in.  Please try again!", Toast.LENGTH_LONG).show();
 			//Dismissing the progress dialog
 			PD.dismiss();
 		}
@@ -145,10 +154,9 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 			/// and proceed to the onPostExecute method
 			try {
 				ParseUser.logIn(PIN, PIN);
+				flag = true;
 			} catch (ParseException e) {
-				Toast.makeText(context,
-						"Unable to log in.  Please try again!", Toast.LENGTH_LONG).show();
-
+				flag = false;
 				e.printStackTrace();
 			}
 			return null;
