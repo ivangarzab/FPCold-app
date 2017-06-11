@@ -3,6 +3,7 @@ package com.parse.starter;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -19,9 +20,15 @@ import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
+import apache.CSVWriter;
 import sapphire.InventoryListView;
 import sapphire.Product;
 
@@ -44,9 +51,6 @@ public class InventoryList extends AppCompatActivity {
 	private ArrayList<String> pallets;
 	private ArrayList<String> locations;
 	private ArrayList<String> dates;
-
-	// Virutal Storage holder for sorting
-	private ArrayList<Product> VS;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -182,30 +186,67 @@ public class InventoryList extends AppCompatActivity {
 	}
 
 	/**
-	 * Action for ImageButton.
-	 * Store all of the pallet information into a Map object, and send through AsyncTask
-	 *
-	 * @param view : Pressed button's View
+	 * Create a CSV file with the information from the current Activity
+	 * and invoke the share() method in order to share the file
+	 * @param view : View that called this method
+	 * @throws IOException : Throw if there is an error writing into the file
 	 */
-	public void shareExcel(View view) {
-		Log.i("TRASH", "Share Excel!");
-		/*
-		// Create the Map object and set the first line/title lines
-		Map<String, Object[]> tempInfo = new TreeMap<>();
-		tempInfo.put("1", new Object[] {"Location", "Pallet Tag", "Date"});
-		// Store all of the information into the Map object
-		for (int i =0; i <pallets.size(); i++) {
-			tempInfo.put(String.valueOf(i+2), new Object[] {locations.get(i),
-					pallets.get(i), dates.get(i)});
+	public void createCSVFile(View view) throws IOException {
+		SimpleDateFormat datestamp = new SimpleDateFormat("MM-dd-yy HH:mm");
+		String date = datestamp.format(new Date());
+		String fileName = "inventory." + date + ".csv";
+		File cacheDir = context.getCacheDir();
+		File f = new File(cacheDir, fileName);
+
+		// Initiate CSVWriter
+		CSVWriter writer;
+		if(f.exists() && !f.isDirectory()){
+			FileWriter mFileWriter = new FileWriter(f.getPath() , true);
+			writer = new CSVWriter(mFileWriter);
 		}
-		// Debug
-		Log.i("TRASH", "Excel is working...?");
-		// Initiate the AsyncTask object and execute
-		Spreadsheet excel = new Spreadsheet(context, tempInfo);
-		excel.execute();
-		*/
+		else {
+			writer = new CSVWriter(new FileWriter(f.getPath()));
+		}
+
+		// Write data to CSV file and close
+		List<String[]> data = new ArrayList<>();
+		switch (TYPE) {
+			case 'p':
+				data.add(new String[] {"Inventory as of " + HomeActivity.DATE
+						+ " sorted by pallet tag"});
+				break;
+			case 'l':
+				data.add(new String[] {"Inventory as of " + HomeActivity.DATE
+						+ " sorted by location"});
+				break;
+			case 'd':
+				data.add(new String[] {"Inventory as of " + HomeActivity.DATE
+						+ " sorted by date"});
+				break;
+		}
+		data.add(new String[] {"Date", "Location", "Pallet Tag"});
+		for (int i = 0; i < pallets.size(); i++) {
+			data.add(new String[] {dates.get(i), locations.get(i), pallets.get(i)});
+		}
+
+		writer.writeAll(data);
+		writer.close();
+
+		share(fileName);
 	}
 
-
-
+	/**
+	 * Invoke the ShareContent Intent
+	 * @param fileName : Name of the file that will be shared
+	 */
+	public void share(String fileName) {
+		Uri fileUri = Uri.parse("content://" + "sapphire" + "/"+fileName);
+		Log.i("TRASH", "sending "+fileUri.toString()+" ...");
+		Intent shareIntent = new Intent();
+		shareIntent.setAction(Intent.ACTION_SEND);
+		shareIntent.putExtra(Intent.EXTRA_STREAM, fileUri);
+		shareIntent.setType("application/octet-stream");
+		context.startActivity(Intent.createChooser(shareIntent, "Send to")
+				.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+	}
 }

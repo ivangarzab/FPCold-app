@@ -36,7 +36,7 @@
                 android:layout_alignParentEnd="true"
                 android:layout_alignParentRight="true"
                 android:background="@color/colorBackground"
-                android:onClick="shareExcel"/>
+                android:onClick="createCSVFile"/>
 
         </RelativeLayout>
 

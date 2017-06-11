@@ -14,6 +14,7 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
 
     <uses-permission android:name="android.permission.WRITE_INTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
 
     <application
         android:name=".StarterApplication"
@@ -97,6 +98,11 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.parse.starter.HomeActivity"/>
         </activity>
+        <provider
+            android:name="sapphire.ShareContentProvider"
+            android:authorities="sapphire"
+            android:exported="true"
+            />
     </application>
 
 </manifest>
