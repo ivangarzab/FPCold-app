@@ -531,7 +531,7 @@ public class InOutActivity extends AppCompatActivity implements View.OnClickList
 			TRANSACTION.setEndTime(date);
 			TRANSACTION.setDescription(desc);
 			// Save Transaction in the server
-			TRANSACTION.sendTransaction();
+			TRANSACTION.saveTransaction();
 		}
 	}
 
