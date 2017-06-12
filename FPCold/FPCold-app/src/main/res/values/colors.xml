@@ -16,4 +16,5 @@
     <color name="colorOutbound">#660000</color>
     <color name="colorTransfer">#003366</color>
     <color name="colorSync">#4B0082</color>
+    <color name="colorDelete">#FF0000</color>
 </resources>

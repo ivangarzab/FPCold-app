@@ -1,0 +1,48 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             xmlns:tools="http://schemas.android.com/tools"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent"
+             android:background="@color/colorBackground"
+             tools:context=".SettingsAnnouncement">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/announcementInfoTextView"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="5sp"
+        android:layout_marginTop="5sp"
+        android:text="@string/announcement_fragment_info"
+        android:textSize="23sp"
+        android:textColor="@color/colorMainText"/>
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/announcementEditText"
+        android:layout_below="@id/announcementInfoTextView"
+        android:layout_marginTop="10sp"
+        android:layout_marginLeft="5sp"
+        android:layout_marginRight="5sp"
+        android:textColor="@color/colorSecondary"
+        android:hint="@string/announcement_fragment_hint"
+        android:textColorHint="@color/colorSecondaryDark"
+        android:lines="4"
+        android:maxLength="36"
+        android:gravity="top"/>
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/announcementButton"
+        android:layout_below="@+id/announcementEditText"
+        android:layout_marginTop="10sp"
+        android:layout_marginLeft="10sp"
+        android:layout_marginRight="10sp"
+        android:text="SEND"
+        android:textColor="@color/colorMainText"
+        android:background="@color/colorSecondary"/>
+
+</RelativeLayout>
