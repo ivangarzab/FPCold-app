@@ -1,18 +1,24 @@
 package com.parse.starter;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.parse.FindCallback;
 import com.parse.ParseException;
@@ -44,6 +50,7 @@ public class InventoryList extends AppCompatActivity {
 	// Title variables
 	private TextView title1;
 	private TextView title2;
+	private TextView total;
 
 	// Variables for ListView setup
 	private ListView lv;
@@ -67,6 +74,7 @@ public class InventoryList extends AppCompatActivity {
 		// Initiate titles
 		title1 = (TextView)findViewById(R.id.inventoryListTitle1TextView);
 		title2 = (TextView)findViewById(R.id.inventoryListTitle2TextView);
+		total = (TextView)findViewById(R.id.inventoryListInfoTextView);
 
 		///// Prepare ListView and components
 		lv = (ListView)findViewById(R.id.inventoryListView);
@@ -76,26 +84,28 @@ public class InventoryList extends AppCompatActivity {
 		IA = new InventoryListView(activity, TYPE, pallets, locations, dates);
 
 		// Set up the activity depending on the active filter (TYPE)
-		activitySetup(TYPE);
+		//activitySetup(TYPE);
+		ServerAccess access = new ServerAccess();
+		access.execute();
 
 		// Unrack product when a row is long-clicked
-		/*
 		lv.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
 			@Override
-			public boolean onItemLongClick(AdapterView<?> adapterView, View view,
-										   final int i, long l) {
+			public boolean onItemLongClick(AdapterView<?> parent, View view,
+										   final int position, long id) {
 				AlertDialog.Builder adb = new AlertDialog.Builder(context);
 				adb.setTitle("Warning!");
-				adb.setMessage("Would you like to unrack this product")
+				adb.setMessage("Would you like to unrack this product?")
 						.setCancelable(false)
 						.setPositiveButton("YES", new DialogInterface.OnClickListener() {
 							@Override
 							public void onClick(DialogInterface dialog, int which) {
 								Intent i = new Intent(context, InOutActivity.class);
-								i.putExtra("type", 'o');
+								i.putExtra("type", 'u');
 								i.putExtra("inventory", true);
-								i.putExtra("pallet", pallets.get(i));
-								i.putExtra("location", locations.get(i));
+								i.putExtra("pallet", pallets.get(position));
+								i.putExtra("location", locations.get(position));
+								startActivity(i);
 							}
 						})
 						.setNegativeButton("NO", new DialogInterface.OnClickListener() {
@@ -109,32 +119,9 @@ public class InventoryList extends AppCompatActivity {
 
 				return true;
 			}
-		});		*/
-
-		// Retrieve all of the rack numbers, product tags and their dates
-		ParseQuery<ParseObject> query = new ParseQuery<>("Product");
-		// Add filtering constraints to the query based on the user's choice
-		if (TYPE == 'l')
-			query.addAscendingOrder("location");
-		if (TYPE == 'p')
-			query.addAscendingOrder("tag");
-		if (TYPE == 'd')
-			query.addAscendingOrder("dateIn");
-		query.findInBackground(new FindCallback<ParseObject>() {
-			@Override
-			public void done(List<ParseObject> objects, ParseException e) {
-				if (e == null) {
-					if (objects.size() > 0) {
-						for (ParseObject obj : objects) {
-							pallets.add(obj.getString("tag"));
-							locations.add(obj.getString("location"));
-							dates.add(obj.getString("dateIn"));
-						}
-						lv.setAdapter(IA);
-					}
-				}
-			}
 		});
+
+
 	}
 
 	@Override
@@ -248,5 +235,80 @@ public class InventoryList extends AppCompatActivity {
 		shareIntent.setType("application/octet-stream");
 		context.startActivity(Intent.createChooser(shareIntent, "Send to")
 				.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+	}
+
+
+	public class ServerAccess extends AsyncTask<Void, Void, Void> {
+
+		// Declaring functional variables
+
+		// ProgressDialog to show while performing
+		private ProgressDialog PD;
+
+		// Constructor method
+		public ServerAccess() { }
+
+		@Override
+		protected void onPreExecute() {
+			super.onPreExecute();
+			//Showing progress dialog while accessing server
+			PD = ProgressDialog.show(context, "Accessing Server", "Please wait...", false, false);
+		}
+
+		@Override
+		protected void onPostExecute(Void aVoid) {
+			super.onPostExecute(aVoid);
+
+			lv.setAdapter(IA);
+			total.setText("Total No. pallets: " + pallets.size());
+			activitySetup(TYPE);
+
+			//Dismissing the progress dialog
+			PD.dismiss();
+		}
+
+		@Override
+		protected Void doInBackground(Void... params) {
+			// Retrieve all of the rack numbers, product tags and their dates
+			ParseQuery<ParseObject> query = new ParseQuery<>("Product");
+			// Add filtering constraints to the query based on the user's choice
+			if (TYPE == 'l')
+				query.addAscendingOrder("location");
+			if (TYPE == 'p')
+				query.addAscendingOrder("tag");
+			if (TYPE == 'd')
+				query.addAscendingOrder("dateIn");
+			try {
+				List<ParseObject> objects = query.find();
+				if (objects.size() > 0) {
+					for (ParseObject obj : objects) {
+						pallets.add(obj.getString("tag"));
+						locations.add(obj.getString("location"));
+						dates.add(obj.getString("dateIn"));
+					}
+				}
+
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
+			query.findInBackground(new FindCallback<ParseObject>() {
+				@Override
+				public void done(List<ParseObject> objects, ParseException e) {
+					if (e == null) {
+						if (objects.size() > 0) {
+							for (ParseObject obj : objects) {
+								pallets.add(obj.getString("tag"));
+								locations.add(obj.getString("location"));
+								dates.add(obj.getString("dateIn"));
+							}
+							lv.setAdapter(IA);
+						}
+						total.setText("Total No. pallets: " + pallets.size());
+					}
+				}
+			});
+
+			return null;
+		}
 	}
 }

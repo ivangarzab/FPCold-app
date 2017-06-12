@@ -297,7 +297,7 @@ public class InOutActivity extends AppCompatActivity implements View.OnClickList
 			openTransaction("INBOUND");
 		}
 		// We are performing an outbound
-		else if (TYPE == 'o') {
+		else if (TYPE == 'o' || TYPE == 'u') {
 			setTitle("OUT");
 			getSupportActionBar().setBackgroundDrawable(
 					new ColorDrawable(getResources().getColor(R.color.colorOutbound)));
@@ -305,6 +305,17 @@ public class InOutActivity extends AppCompatActivity implements View.OnClickList
 					"followed by the pallet tag that will be unloaded.";
 			first_number.setHint(location_hint);
 			second_number.setHint(pallet_hint);
+
+			if (TYPE == 'u') {
+				Intent i = getIntent();
+				String loc = i.getStringExtra("location");
+				String pal = i.getStringExtra("pallet");
+				first_number.setText(loc);
+				second_number.setText(pal);
+
+				TYPE = 'o';
+				//outStorageAction(pal, loc, true);
+			}
 
 			openTransaction("OUTBOUND");
 		}
@@ -379,7 +390,6 @@ public class InOutActivity extends AppCompatActivity implements View.OnClickList
 	 */
 	public void inStorageAction(final String palletNo, final String locationNo,
 								final boolean update) {
-		Log.i("TRASH", "In");
 		// If the pallet is already on the pallet list attached to ListView
 		/// then Toast the user and return
 		if (pallets.contains(palletNo) && update) {
@@ -403,7 +413,6 @@ public class InOutActivity extends AppCompatActivity implements View.OnClickList
 	 */
 	public void outStorageAction(final String palletNo, final String locationNo,
 								 final boolean update) {
-		Log.i("TRASH", "Out");
 		// if the rack location does not exist in virtual storage
 		/// then Toast the user and return
 		if (virtual_locations.indexOf(locationNo) == -1) {
@@ -558,6 +567,7 @@ public class InOutActivity extends AppCompatActivity implements View.OnClickList
 		private	String locationNo;
 		private boolean update;
 		private char type;
+		private boolean flag;
 		// ProgressDialog to show while performing
 		private ProgressDialog PD;
 
@@ -567,6 +577,7 @@ public class InOutActivity extends AppCompatActivity implements View.OnClickList
 			this.locationNo = location;
 			this.update = update;
 			this.type = type;
+			this.flag = false;
 		}
 
 		@Override
@@ -580,10 +591,19 @@ public class InOutActivity extends AppCompatActivity implements View.OnClickList
 		protected void onPostExecute(Void aVoid) {
 			super.onPostExecute(aVoid);
 
-			// Reset EditText fields and update list if desired
-			if (update) updateList(palletNo, locationNo);
-			first_number.setText("");
-			second_number.setText("");
+			if (flag == false) {
+				// if the pallet is not found on the object query, inform the user
+				Toast.makeText(context,
+						"Pallet tag is not stored on this location! Please, try again.",
+						Toast.LENGTH_LONG).show();
+				second_number.setText("");
+			}
+			else {
+				// Reset EditText fields and update list if desired
+				if (update) updateList(palletNo, locationNo);
+				first_number.setText("");
+				second_number.setText("");
+			}
 			//Dismissing the progress dialog
 			PD.dismiss();
 		}
@@ -602,35 +622,29 @@ public class InOutActivity extends AppCompatActivity implements View.OnClickList
 					/// and proceed to the onPostExecute method
 					try {
 						product.save();
+						flag = true;
 					} catch (ParseException in_error) {
 						in_error.printStackTrace();
 					}
 					break;
 				case 'o':
 					ParseQuery<ParseObject> query = new ParseQuery<>("Product");
-					query.findInBackground(new FindCallback<ParseObject>() {
-						@Override
-						public void done(List<ParseObject> objects, ParseException e) {
-							if (e == null) {
-								for (ParseObject object : objects) {
-									if (object.get("location").equals(locationNo)
-											&& object.get("tag").equals(palletNo)) {
-										// Delete the object on the current thread
-										/// and proceed to the onPostExecute method
-										try {
-											object.delete();
-										} catch (ParseException out_error) {
-											out_error.printStackTrace();
-										}
-										return;
-									}
-								}
-								Toast.makeText(context,
-										"Pallet tag is not stored on this location! Please, try again.",
-										Toast.LENGTH_LONG).show();
+					//boolean flag = false;
+					try {
+						List<ParseObject> objects = query.find();
+						for (ParseObject object : objects) {
+							if (object.get("location").equals(locationNo)
+									&& object.get("tag").equals(palletNo)) {
+								// Delete the object on the current thread
+								/// and proceed to the onPostExecute method
+								object.delete();
+								flag = true;
+								break;
 							}
 						}
-					});
+					} catch (ParseException e) {
+						e.printStackTrace();
+					}
 					break;
 			}
 
