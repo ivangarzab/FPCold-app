@@ -14,10 +14,15 @@ import android.view.View;
 import android.view.animation.LinearInterpolator;
 import android.widget.TextView;
 
+import com.parse.FindCallback;
+import com.parse.ParseException;
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 public class HomeActivity extends AppCompatActivity {
 
@@ -52,6 +57,7 @@ public class HomeActivity extends AppCompatActivity {
 
 		// Set the greeting EditText
 		greet.setText("Welcome " + getCurrentUser());
+		setLatestAnnouncement();
 
 		// Set the date for the app and home screen
 		SimpleDateFormat datestamp = new SimpleDateFormat("MM-dd-yy");
@@ -111,6 +117,36 @@ public class HomeActivity extends AppCompatActivity {
 		CURRENT_USER = ParseUser.getCurrentUser();
 		TIER = CURRENT_USER.getInt("tier");
 		return CURRENT_USER.getString("name");
+	}
+
+	/**
+	 * Calls server for the lastest announcement, and deletes the rest of them
+	 */
+	private void setLatestAnnouncement() {
+		ParseQuery<ParseObject> query = new ParseQuery<>("Announcement");
+		query.addDescendingOrder("createdAt");
+		query.findInBackground(new FindCallback<ParseObject>() {
+			@Override
+			public void done(List<ParseObject> objects, ParseException e) {
+				if (e == null) {
+					for (int i = 0; i < objects.size(); i++) {
+						// Display the latest announcement
+						if (i < 1) {
+							announcement1.setText(objects.get(0).getString("announcement"));
+							announcement2.setText(objects.get(0).getString("announcement"));
+						}
+						// Delete all old announcements
+						else {
+							try {
+								objects.get(i).delete();
+							} catch (ParseException delete_error) {
+								delete_error.printStackTrace();
+							}
+						}
+					}
+				} else e.printStackTrace();
+			}
+		});
 	}
 
 	/**

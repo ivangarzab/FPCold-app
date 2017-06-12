@@ -140,14 +140,12 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/announcement2TextView"
-            android:text="Every good week starts with a Monday!"
             android:textColor="@color/colorMainText"/>
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/announcement1TextView"
-            android:text="Every good week starts with a Monday!"
             android:textColor="@color/colorMainText"/>
 
     </RelativeLayout>

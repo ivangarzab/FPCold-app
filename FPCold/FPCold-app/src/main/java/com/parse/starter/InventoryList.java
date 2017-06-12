@@ -304,7 +304,7 @@ public class InventoryList extends AppCompatActivity {
 							lv.setAdapter(IA);
 						}
 						total.setText("Total No. pallets: " + pallets.size());
-					}
+					} else e.printStackTrace();
 				}
 			});
 
