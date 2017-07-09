@@ -291,22 +291,6 @@ public class InventoryList extends AppCompatActivity {
 			} catch (ParseException e) {
 				e.printStackTrace();
 			}
-			query.findInBackground(new FindCallback<ParseObject>() {
-				@Override
-				public void done(List<ParseObject> objects, ParseException e) {
-					if (e == null) {
-						if (objects.size() > 0) {
-							for (ParseObject obj : objects) {
-								pallets.add(obj.getString("tag"));
-								locations.add(obj.getString("location"));
-								dates.add(obj.getString("dateIn"));
-							}
-							lv.setAdapter(IA);
-						}
-						total.setText("Total No. pallets: " + pallets.size());
-					} else e.printStackTrace();
-				}
-			});
 
 			return null;
 		}
