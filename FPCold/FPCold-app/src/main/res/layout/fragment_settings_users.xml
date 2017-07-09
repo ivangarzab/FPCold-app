@@ -46,7 +46,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/usersInfoTopTextView"
+            android:id="@+id/usersInfoTitleTextView"
             android:layout_marginTop="5sp"
             android:text="@string/users_fragment_title"
             android:textSize="23sp"
@@ -55,14 +55,14 @@
         <Spinner
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:id="@+id/editUserTopSpinner"
+            android:id="@+id/usersTopSpinner"
             android:layout_weight="1"
             android:layout_marginTop="10sp" />
 
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/addUserNameTextView"
+            android:id="@+id/usersNameTextView"
             android:layout_marginTop="10sp"
             android:hint="@string/users_fragment_name"
             android:singleLine="true"
@@ -81,21 +81,22 @@
             <EditText
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:id="@+id/addUserPasscodeTextView"
+                android:id="@+id/usersPasscodeTextView"
                 android:layout_weight="1"
                 android:hint="@string/users_fragment_passcode"
+                android:inputType="number"
                 android:singleLine="true"
                 android:maxLines="1"
                 android:maxLength="4"
-                android:imeOptions="actionNext"
+                android:imeOptions="actionDone"
                 android:textColorHint="@color/colorSecondaryDark"
                 android:textColor="@color/colorSecondary"
                 android:textColorHighlight="@color/colorSecondaryLight"/>
 
             <Spinner
-                android:id="@+id/addUserTierSpinner"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:id="@+id/usersTierSpinner"
                 android:layout_weight="1"
                 android:entries="@array/tiers_array" />
 
@@ -104,6 +105,7 @@
         <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:id="@+id/usersActionButton"
             android:layout_marginTop="10sp"
             android:text="@string/users_fragment_button"
             android:textColor="@color/colorMainText"

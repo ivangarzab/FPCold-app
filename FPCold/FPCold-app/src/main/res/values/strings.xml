@@ -15,9 +15,9 @@
     <string name="title_activity_settings">Settings Activity</string>
 
     <string-array name="tiers_array">
-        <item>TIER:</item>
-        <item>Worker</item>
-        <item>Admin</item>
+        <item>Tier</item>
+        <item>1: Admin</item>
+        <item>2: Worker</item>
     </string-array>
 
     <string-array name="filters_array">
@@ -37,5 +37,8 @@
     <string name="users_fragment_name">Name</string>
     <string name="users_fragment_passcode">4-digit Passcode</string>
     <string name="users_fragment_button">ACTION</string>
+    <string-array name="users_add">
+        <item>New User</item>
+    </string-array>
 
 </resources>
