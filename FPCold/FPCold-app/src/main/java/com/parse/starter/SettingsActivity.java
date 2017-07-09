@@ -1,75 +1,63 @@
 package com.parse.starter;
 
-import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
-import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
+import android.support.design.widget.TabLayout;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.internal.widget.AdapterViewCompat;
 import android.support.v7.widget.Toolbar;
+
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.view.ViewPager;
+import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.Spinner;
 
 import com.parse.ParseUser;
 
-public class SettingsActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
+public class SettingsActivity extends AppCompatActivity {
 
-	// Environment variables
-	final private Context context = this;
-	final private Activity activity = this;
+	/**
+	 * The {@link android.support.v4.view.PagerAdapter} that will provide
+	 * fragments for each of the sections. We use a
+	 * {@link FragmentPagerAdapter} derivative, which will keep every
+	 * loaded fragment in memory. If this becomes too memory intensive, it
+	 * may be best to switch to a
+	 * {@link android.support.v4.app.FragmentStatePagerAdapter}.
+	 */
+	private SectionsPagerAdapter mSectionsPagerAdapter;
 
-	private EditText name, pass, announce;
-	private Button u_add, u_all, t_first, t_second, t_third, t_delete;
-	private Spinner spinner;
-
-	private int tier;
+	/**
+	 * The {@link ViewPager} that will host the section contents.
+	 */
+	private ViewPager mViewPager;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_settings);
+
 		Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 		setSupportActionBar(toolbar);
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+		// Create the adapter that will return a fragment for each of the three
+		// primary sections of the activity.
+		mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
+
+		// Set up the ViewPager with the sections adapter.
+		mViewPager = (ViewPager) findViewById(R.id.container);
+		mViewPager.setAdapter(mSectionsPagerAdapter);
+
+		TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
+		tabLayout.setupWithViewPager(mViewPager);
 
 		setTitle("SETTINGS");
-
-		name = (EditText)findViewById(R.id.settingsUsersTopEditText);
-		pass = (EditText)findViewById(R.id.settingsUsersMidEditText);
-		spinner = (Spinner)findViewById(R.id.settingsUsersSpinner);
-		u_add = (Button)findViewById(R.id.settingsAddUsersButton);
-		u_all = (Button)findViewById(R.id.settingsAllUsersButton);
-
-		t_first = (Button)findViewById(R.id.settingsFirstTransactionsButton);
-		t_second = (Button)findViewById(R.id.settingsSecondTransactionsButton);
-		t_third = (Button)findViewById(R.id.settingsThirdTransactionsButton);
-		t_delete = (Button)findViewById(R.id.settingsDeleteTransactionsButton);
-
-		announce = (EditText)findViewById(R.id.settingsAnnEditText);
-
-		// Create an ArrayAdapter using the string array and a default spinner layout
-		ArrayAdapter<CharSequence> AA = ArrayAdapter.createFromResource(this,
-				R.array.tiers_array, R.layout.custom_spinner_item);
-		// Specify the layout to use when the list of choices appears
-		AA.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-		// Apply the adapter to the spinner
-		spinner.setAdapter(AA);
-		spinner.setOnItemSelectedListener(this);
-
 	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.menu_home, menu);
+		getMenuInflater().inflate(R.menu.menu_settings, menu);
 		return true;
 	}
 
@@ -81,38 +69,63 @@ public class SettingsActivity extends AppCompatActivity implements AdapterView.O
 		int id = item.getItemId();
 
 		//noinspection SimplifiableIfStatement
-		switch (id) {
-			case R.id.logout:
-				ParseUser.logOut();
-				Intent i = new Intent(getApplicationContext(), MainActivity.class);
-				startActivity(i);
-				return true;
-			default:
-				return super.onOptionsItemSelected(item);
+		if (id == R.id.logout) {
+			ParseUser.logOut();
+			Intent i = new Intent(getApplicationContext(), MainActivity.class);
+			startActivity(i);
+			return true;
 		}
+
+		return super.onOptionsItemSelected(item);
 	}
 
+	/**
+	 * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
+	 * one of the sections/tabs/pages.
+	 */
+	public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
-
-	@Override
-	public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-		parent.getItemAtPosition(position);
-
-		if (position == 2) {
-
-		}
-		else if (position == 1) {
-
-		}
-		else { // position == 0
-
+		public SectionsPagerAdapter(FragmentManager fm) {
+			super(fm);
 		}
 
-	}
+		@Override
+		public Fragment getItem(int position) {
+			// getItem is called to instantiate the fragment for the given page.
+			// Return a PlaceholderFragment (defined as a static inner class below).
+			switch (position) {
+				case 0:
+					SettingsAnnouncement tab1 = new SettingsAnnouncement();
+					return tab1;
+				case 1:
+					SettingsReports tab2 = new SettingsReports();
+					return tab2;
+				case 2:
+					SettingsUsers tab3 = new SettingsUsers();
+					return tab3;
+				default:
+					return null;
+			}
+			//return PlaceholderFragment.newInstance(position + 1);
+		}
 
-	@Override
-	public void onNothingSelected(AdapterView<?> parent) {
-		// THROW AN ERROR MESSAGE
-		/// Do the same as else statement in previous method
+		@Override
+		public int getCount() {
+			// Show 3 total pages.
+			return 3;
+		}
+
+		@Override
+		public CharSequence getPageTitle(int position) {
+			switch (position) {
+				case 0:
+					return "ANNOUNCE";
+				case 1:
+					return "REPORTS";
+				case 2:
+					return "USERS";
+			}
+			return null;
+		}
 	}
 }

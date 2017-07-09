@@ -66,7 +66,7 @@ public class Transaction {
 		return END_TIME;
 	}
 
-	public void sendTransaction() {
+	public void saveTransaction() {
 		ParseObject t = new ParseObject("Transaction");
 		t.put("user", AUTHOR);
 		t.put("type", TRANSACTION_TYPE);

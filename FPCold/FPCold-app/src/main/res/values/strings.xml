@@ -34,4 +34,9 @@
         <item>Date</item>
     </string-array>
 
+    <string name="announcement_fragment_info">Send Announcement:</string>
+    <string name="announcement_fragment_hint">Dear Wrokers...  max. 36 chars</string>
+
+    <string name="reports_fragment_info">Share Report:</string>
+
 </resources>

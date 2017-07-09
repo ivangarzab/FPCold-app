@@ -227,7 +227,7 @@ public class InventoryList extends AppCompatActivity {
 	 * @param fileName : Name of the file that will be shared
 	 */
 	public void share(String fileName) {
-		Uri fileUri = Uri.parse("content://" + "sapphire" + "/"+fileName);
+		Uri fileUri = Uri.parse("content://" + "sapphire" + "/" + fileName);
 		Log.i("TRASH", "sending "+fileUri.toString()+" ...");
 		Intent shareIntent = new Intent();
 		shareIntent.setAction(Intent.ACTION_SEND);

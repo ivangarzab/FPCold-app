@@ -443,7 +443,7 @@ public class TransferActivity extends AppCompatActivity implements View.OnClickL
 			TRANSACTION.setEndTime(date);
 			TRANSACTION.setDescription(desc);
 			// Save Transaction in the server
-			TRANSACTION.sendTransaction();
+			TRANSACTION.saveTransaction();
 		}
 	}
 

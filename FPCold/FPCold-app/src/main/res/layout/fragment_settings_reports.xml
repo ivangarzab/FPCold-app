@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:background="@color/colorBackground"
+              tools:context=".SettingsReports">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/reportsInfoTextView"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="5sp"
+        android:layout_marginTop="5sp"
+        android:text="@string/reports_fragment_info"
+        android:textSize="23sp"
+        android:textColor="@color/colorMainText"/>
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/reportsButtonLinearLayout"
+        android:layout_below="@id/reportsInfoTextView"
+        android:layout_marginTop="15sp">
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/reportsButtonTopLinearLayout"
+        android:layout_below="@id/reportsInfoTextView"
+        android:layout_marginBottom="15sp">
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/reportsDayButton"
+                android:layout_weight="1"
+                android:layout_marginLeft="5sp"
+                android:layout_marginRight="5sp"
+                android:text="Day"
+                android:textColor="@color/colorMainText"
+                android:background="@color/colorSecondary"/>
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/reportsWeekButton"
+                android:layout_weight="1"
+                android:layout_marginLeft="5sp"
+                android:layout_marginRight="5sp"
+                android:text="Week"
+                android:textColor="@color/colorMainText"
+                android:background="@color/colorSecondary"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/reportsButtonBotLinearLayout"
+        android:layout_below="@id/reportsButtonTopLinearLayout"
+        android:layout_marginBottom="15sp">
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/reportsMonthButton"
+            android:layout_weight="1"
+            android:layout_marginLeft="5sp"
+            android:layout_marginRight="5sp"
+            android:text="Month"
+            android:textColor="@color/colorMainText"
+            android:background="@color/colorSecondary"/>
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/reportsAllButton"
+            android:layout_weight="1"
+            android:layout_marginLeft="5sp"
+            android:layout_marginRight="5sp"
+            android:text="All"
+            android:textColor="@color/colorMainText"
+            android:background="@color/colorSecondary"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/reportsDeleteButton"
+        android:layout_below="@id/reportsButtonLinearLayout"
+        android:layout_marginLeft="5sp"
+        android:layout_marginRight="5sp"
+        android:text="Delete Transaction History"
+        android:textColor="@color/colorMainText"
+        android:background="@color/colorDelete"/>
+
+</RelativeLayout>
