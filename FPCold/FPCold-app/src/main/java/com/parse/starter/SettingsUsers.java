@@ -1,8 +1,11 @@
 package com.parse.starter;
 
+import android.app.ProgressDialog;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +14,12 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.parse.ParseException;
+import com.parse.ParseObject;
+import com.parse.ParseUser;
+import com.parse.SignUpCallback;
 
 /**
  * Created by Sapphire on 6/12/2017.
@@ -21,7 +30,7 @@ public class SettingsUsers extends Fragment implements View.OnClickListener {
 	private View VIEW;
 	private char ACTION;
 	private Button add, edit, confirm;
-	private EditText name, passcode;
+	public EditText name, passcode;
 	private Spinner user, tier;
 	private TextView title;
 
@@ -82,7 +91,7 @@ public class SettingsUsers extends Fragment implements View.OnClickListener {
 
 	private void setAction(char c) {
 		if (c == 'a') {
-			ACTION = 'e';
+			ACTION = c;
 			add.setBackgroundColor(getResources().getColor(R.color.colorSecondary));
 			edit.setBackgroundColor(getResources().getColor(R.color.colorBackgroundLight));
 /*
@@ -96,11 +105,10 @@ public class SettingsUsers extends Fragment implements View.OnClickListener {
 			name.setText("");
 			passcode.setText("");
 			tier.setSelection(0);
-			title.setText("Add User");
+			title.setText("Add User:");
 			confirm.setText("ADD");
 		}
 		else if (c == 'e') {
-			ACTION = 'a';
 			edit.setBackgroundColor(getResources().getColor(R.color.colorSecondary));
 			add.setBackgroundColor(getResources().getColor(R.color.colorBackgroundLight));
 /*
@@ -114,17 +122,110 @@ public class SettingsUsers extends Fragment implements View.OnClickListener {
 			name.setText("");
 			passcode.setText("");
 			tier.setSelection(0);
-			title.setText("Edit User");
+			title.setText("Edit User:");
 			confirm.setText("EDIT");
 		}
 	}
 
 	private void actionButton() {
-		if (ACTION == 'a') {
+		if (name.getText().toString().equals("") || passcode.getText().toString().equals("") ||
+				tier.getSelectedItemPosition() == 0) {
+			Toast.makeText(VIEW.getContext(),
+					"Whoops! One or more fields is missing. Please try again",
+					Toast.LENGTH_LONG).show();
+			return;
+		}
 
+		if (ACTION == 'a') {
+			ServerSignup signup = new ServerSignup();
+			signup.execute();
 		}
 		else if (ACTION == 'e') {
+			Toast.makeText(VIEW.getContext(), "EDIT USER", Toast.LENGTH_LONG).show();
+		}
+	}
 
+
+	public class ServerSignup extends AsyncTask<Void, Void, Void> {
+
+		private String n, p;
+		private int t;
+		// ProgressDialog to show while performing
+		private ProgressDialog PD;
+
+		// Constructor method
+		public ServerSignup() {
+			this.n = name.getText().toString();
+			this.p = passcode.getText().toString();
+			this.t = Integer.valueOf(tier.getSelectedItem().toString().substring(0, 1));
+		}
+
+		@Override
+		protected void onPreExecute() {
+			super.onPreExecute();
+			//Showing progress dialog while accessing server
+			PD = ProgressDialog.show(getActivity(), "Signing up", "Please wait...",
+					false, false);
+		}
+
+		@Override
+		protected void onPostExecute(Void aVoid) {
+			super.onPostExecute(aVoid);
+
+			name.setText("");
+			passcode.setText("");
+			tier.setSelection(0);
+			Toast.makeText(VIEW.getContext(), "Sign up successful!",
+					Toast.LENGTH_LONG).show();
+			//Dismissing the progress dialog
+			PD.dismiss();
+		}
+
+		@Override
+		protected Void doInBackground(Void... params) {
+			ParseUser user = new ParseUser();
+			user.setUsername(p);
+			user.setPassword(p);
+			user.put("name", n);
+			user.put("tier", t);
+			try {
+				user.signUp();
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
+
+			return null;
+		}
+	}
+
+	public class ServerUser extends AsyncTask<Void, Void, Void> {
+
+		// ProgressDialog to show while performing
+		private ProgressDialog PD;
+
+		// Constructor method
+		public ServerUser() { }
+
+		@Override
+		protected void onPreExecute() {
+			super.onPreExecute();
+			//Showing progress dialog while accessing server
+			PD = ProgressDialog.show(getActivity(), "Updating User", "Please wait...",
+					false, false);
+		}
+
+		@Override
+		protected void onPostExecute(Void aVoid) {
+			super.onPostExecute(aVoid);
+
+			//Dismissing the progress dialog
+			PD.dismiss();
+		}
+
+		@Override
+		protected Void doInBackground(Void... params) {
+
+			return null;
 		}
 	}
 }
