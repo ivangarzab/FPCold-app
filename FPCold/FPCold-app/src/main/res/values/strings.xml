@@ -1,12 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--
-  ~ Copyright (c) 2015-present, Parse, LLC.
-  ~ All rights reserved.
-  ~
-  ~ This source code is licensed under the BSD-style license found in the
-  ~ LICENSE file in the root directory of this source tree. An additional grant
-  ~ of patent rights can be found in the PATENTS file in the same directory.
-  -->
 <resources>
     <string name="parse_app_id">oXBUzU2b8IcKRVx5r2GS</string>
     <string name="parse_client_key">BG5i3UF7cHGkXsEVcY5f</string>
@@ -38,5 +30,12 @@
     <string name="announcement_fragment_hint">Dear Wrokers...  max. 36 chars</string>
 
     <string name="reports_fragment_info">Share Report:</string>
+
+    <string name="users_fragment_add_user">ADD USER</string>
+    <string name="users_fragment_edit_user">EDIT USER</string>
+    <string name="users_fragment_title">Action User</string>
+    <string name="users_fragment_name">Name</string>
+    <string name="users_fragment_passcode">4-digit Passcode</string>
+    <string name="users_fragment_button">ACTION</string>
 
 </resources>
