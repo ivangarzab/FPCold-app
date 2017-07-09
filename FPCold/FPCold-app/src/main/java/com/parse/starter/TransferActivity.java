@@ -472,19 +472,22 @@ public class TransferActivity extends AppCompatActivity implements View.OnClickL
 	public class ServerAccess extends AsyncTask<Void, Void, Void> {
 
 		// Declaring functional variables
-		private String old_loc;
-		private String new_loc;
+		private String location_old;
+		private String location_new;
 		private String pallet;
 		private int position;
+		// Success of transfer
+		private boolean flag;
 		// ProgressDialog to show while performing
 		private ProgressDialog PD;
 
 		// Constructor method
 		public ServerAccess(String old_loc, String new_loc, String pallet, int position) {
-			this.old_loc = old_loc;
-			this.new_loc = new_loc;
+			this.location_old = old_loc;
+			this.location_new = new_loc;
 			this.pallet = pallet;
 			this.position = position;
+			flag = false;
 		}
 
 		@Override
@@ -498,10 +501,18 @@ public class TransferActivity extends AppCompatActivity implements View.OnClickL
 		protected void onPostExecute(Void aVoid) {
 			super.onPostExecute(aVoid);
 
-			updateList(pallet, new_loc);
-			pallet_tag.setText("");
-			old_location.setText("");
-			new_location.setText("");
+			if (flag == true) {
+				updateList(pallet, location_new);
+				pallet_tag.setText("");
+				old_location.setText("");
+				new_location.setText("");
+			}
+			else {
+				Toast.makeText(context,
+						"Pallet tag is not stored on this location! Please, try again.",
+						Toast.LENGTH_LONG).show();
+				old_location.setText("");
+			}
 			//Dismissing the progress dialog
 			PD.dismiss();
 		}
@@ -510,31 +521,20 @@ public class TransferActivity extends AppCompatActivity implements View.OnClickL
 		protected Void doInBackground(Void... params) {
 			// Try to do the transfer of pallet at old loc to new loc
 			ParseQuery<ParseObject> query = ParseQuery.getQuery("Product");
-			query.getInBackground(virtual_ids.get(position), new GetCallback<ParseObject>() {
-				@Override
-				public void done(ParseObject object, ParseException e) {
-					if (e == null) {
-						if (object.getString("location").equals(old_loc)) {
-							object.put("location", new_loc);
-							// Save the changes to the object in the current thread
-							/// and proceed to the onPostExecute method
-							try {
-								object.save();
-							} catch (ParseException transfer_error) {
-								transfer_error.printStackTrace();
-							}
-						}
-						else {
-							Toast.makeText(context,
-									"Pallet tag is not stored on this location! Please, try again.",
-									Toast.LENGTH_LONG).show();
-							old_location.setText("");
-							return;
-						}
+			try {
+				List<ParseObject> objects = query.find();
+				for (ParseObject object : objects) {
+					if (object.get("location").equals(location_old)) {
+						object.put("location", location_new);
+						// Save the changes to the object in the current thread
+						/// and proceed to the onPostExecute method
+						object.save();
+						flag = true;
 					}
 				}
-			});
-
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
 			return null;
 		}
 	}
